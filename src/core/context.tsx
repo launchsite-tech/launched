@@ -16,12 +16,12 @@ const LaunchedContext = createContext<{
     [key: string]: {
       data: TagValue;
       setData: (value: TagValue) => void;
-      tag: RefObject<HTMLElement & Record<string, any>>;
+      tag: RefObject<HTMLElement>;
     };
   };
   useTag: (
     key: string
-  ) => readonly [TagValue, RefObject<HTMLElement & Record<string, any>>];
+  ) => readonly [TagValue, <T extends HTMLElement | null>(el: T) => void];
 } | null>(null);
 
 export default function Launched({
@@ -45,7 +45,7 @@ export default function Launched({
         locked: conf.locked,
         ...(typeof value === "object" ? value : {}),
       });
-      const tag = useRef<HTMLElement & Record<string, any>>(null);
+      const tag = useRef<HTMLElement | null>(null);
 
       return [
         key,
@@ -63,7 +63,15 @@ export default function Launched({
 
     if (!tag) throw new Error(`Tag "${key}" not found.`);
 
-    return [tag.data, tag.tag] as const;
+    return [tag.data, <T extends (HTMLElement | null)>(el: T) => {
+      if (!el) throw new Error("Element is null.");
+
+      if (tag.tag.current) {
+        throw new Error(`Tag "${key}" already bound to an element.`);
+      }
+
+      tags[key]!.tag.current = el;
+    }] as const;
   }
 
   return (
