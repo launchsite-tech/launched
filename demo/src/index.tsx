@@ -3,8 +3,8 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 
-import Launched from "launched";
-import type { Config } from "launched";
+import Launched from "./dist";
+import type { Config } from "./dist";
 
 const config: Config = {
   tags: {

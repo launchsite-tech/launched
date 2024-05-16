@@ -1,12 +1,19 @@
 import logo from "./logo.svg";
 import "./App.css";
 
+import { useLaunched } from "./dist";
+
 function App() {
+  const { useTag } = useLaunched();
+
+  const [description, descriptionTag] = useTag("description");
+  const [image, imageTag] = useTag("image");
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
+        <p ref={descriptionTag}>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
         <a

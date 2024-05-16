@@ -1,7 +1,8 @@
-import React, { createContext, RefObject } from "react";
+import React, { useRef, useState, createContext } from "react";
 import type { TagValue, PartialTagValue } from "../types/tag.d.ts";
+import type { RefObject } from "react";
 
-interface Config {
+export interface Config {
   tags: Record<string, PartialTagValue>;
   locked?: boolean;
 }
@@ -11,14 +12,16 @@ const defaults: Partial<Config> = {
 };
 
 const LaunchedContext = createContext<{
-  tags: Record<
-    string,
-    {
+  tags: {
+    [key: string]: {
       data: TagValue;
       setData: (value: TagValue) => void;
-      tag: RefObject<HTMLElement>;
-    }
-  >;
+      tag: RefObject<HTMLElement & Record<string, any>>;
+    };
+  };
+  useTag: (
+    key: string
+  ) => readonly [TagValue, RefObject<HTMLElement & Record<string, any>>];
 } | null>(null);
 
 export default function Launched({
@@ -36,13 +39,13 @@ export default function Launched({
 
   const tags = Object.fromEntries(
     Object.entries(conf.tags).map(([key, value]) => {
-      const [data, setData] = React.useState<TagValue>({
+      const [data, setData] = useState<TagValue>({
         type: "text",
         value,
         locked: conf.locked,
         ...(typeof value === "object" ? value : {}),
       });
-      const tag = React.useRef<HTMLElement>(null);
+      const tag = useRef<HTMLElement & Record<string, any>>(null);
 
       return [
         key,
@@ -55,11 +58,27 @@ export default function Launched({
     })
   );
 
+  function useTag(key: string) {
+    const tag = tags[key];
+
+    if (!tag) throw new Error(`Tag "${key}" not found.`);
+
+    return [tag.data, tag.tag] as const;
+  }
+
   return (
-    <LaunchedContext.Provider value={{ tags }}>
+    <LaunchedContext.Provider value={{ tags, useTag }}>
       {children}
     </LaunchedContext.Provider>
   );
 }
 
-export type { Config };
+export function useLaunched() {
+  const context = React.useContext(LaunchedContext);
+
+  if (!context) {
+    throw new Error("useLaunched must be used within a LaunchedProvider.");
+  }
+
+  return context;
+}
