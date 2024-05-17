@@ -4,7 +4,7 @@ import type {
   PartialTagValue,
   Tag,
   TagSchema,
-} from "../types/tag.d.ts";
+} from "../types/tag";
 
 export interface Config<Schema extends TagSchema<Schema>> {
   tags: Schema;
@@ -20,6 +20,34 @@ interface LaunchedContextValue<Schema extends TagSchema<Schema>> {
   useTag<S extends Schema>(
     key: keyof S
   ): readonly [S[typeof key], <T extends HTMLElement | null>(el: T) => void];
+}
+
+function makeTags<Schema extends TagSchema<Schema>>(config: Config<Schema>) {
+return Object.fromEntries(
+      Object.entries(config.tags).map(([key, value]) => {
+        const options: Partial<TagValue> = typeof value === "object" ? value! : {};
+
+        const [data, setData] = useState<TagValue>(Object.assign(
+          {
+            type: "text",
+            value: (typeof value === "object" ? options.value : value) as PartialTagValue | Record<string, PartialTagValue>,
+            locked: config.locked,
+          },
+            options
+          ) as TagValue
+        )
+        const el = useRef<HTMLElement | null>(null);
+
+        return [
+          key,
+          {
+            data,
+            setData,
+            el,
+          } as Tag,
+        ];
+      })
+    ) as Record<keyof Schema, Tag>;
 }
 
 export default class Launched<Schema extends TagSchema<Schema>> {
@@ -42,26 +70,7 @@ export default class Launched<Schema extends TagSchema<Schema>> {
       throw new Error("No tags provided.");
     }
 
-    this.tags = Object.fromEntries(
-      Object.entries(this.config.tags).map(([key, value]) => {
-        const [data, setData] = useState<TagValue>({
-          type: "text",
-          value: value as PartialTagValue | Record<string, PartialTagValue>,
-          locked: this.config.locked,
-          ...(typeof value === "object" ? value : {}),
-        });
-        const el = useRef<HTMLElement | null>(null);
-
-        return [
-          key,
-          {
-            data,
-            setData,
-            el,
-          } as Tag,
-        ];
-      })
-    ) as Record<keyof Schema, Tag>;
+    this.tags = makeTags(config);
 
     this.Provider = ({ children }: { children: React.ReactNode }) => {
       return (
@@ -80,11 +89,11 @@ export default class Launched<Schema extends TagSchema<Schema>> {
     }
 
     return useContext(
-      Launched.instance.context
+      this.context
     ) as LaunchedContextValue<Schema>;
   }
 
-  useTag<S extends Schema>(key: keyof S) {
+  useTag<S extends Schema = Schema>(key: keyof S) {
     const tag = this.tags[key];
 
     if (!tag) throw new Error(`Tag "${String(key)}" not found.`);
@@ -98,7 +107,7 @@ export default class Launched<Schema extends TagSchema<Schema>> {
           throw new Error(`Tag "${String(key)}" already bound to an element.`);
         }
 
-        (this.tags[key]!.el.current as T) = el;
+        (this.tags[key].el.current as T) = el;
       },
     ] as const;
   }

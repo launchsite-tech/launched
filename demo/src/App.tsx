@@ -1,4 +1,3 @@
-import logo from "./logo.svg";
 import "./App.css";
 
 import { useLaunched } from "./dist/core/context";
@@ -10,18 +9,14 @@ function App() {
   const [description, descriptionTag] = useTag<Schema>("description");
   const [image, imageTag] = useTag<Schema>("image");
 
-  type real<Schema, key extends keyof Schema> = Schema[key] extends {
-    value: infer T;
-  }
-    ? T
-    : never;
-  type Image = real<Schema, "image">;
+  const d = description as Schema["description"];
+  const i = image as Schema["image"];
 
   return (
     <div className="App">
       <header className="App-header">
-        <img ref={imageTag} src={logo} className="App-logo" alt="logo" />
-        <p ref={descriptionTag}>{description}</p>
+        <img ref={imageTag} src={i.value.src} className="App-logo" alt={i.value.alt} />
+        <p ref={descriptionTag}>{d}</p>
         <a
           className="App-link"
           href="https://reactjs.org"
