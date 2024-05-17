@@ -3,15 +3,18 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 
-import Launched from "./dist";
+import Launched, { LaunchedProvider } from "./dist/core/context";
 import type { Config } from "./dist";
+import type { Schema } from "./siteSchema";
 
-const config: Config = {
+const config: Config<Schema> = {
   tags: {
-    description: "This is a description.",
+    description: "hello there.",
     image: {
-      alt: "image",
-      src: "https://via.placeholder.com/150",
+      value: {
+        alt: "React logo",
+        src: "https://reactjs.org/logo-og.png",
+      },
     },
   },
 };
@@ -19,10 +22,13 @@ const config: Config = {
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
+new Launched(config);
+
 root.render(
   <React.StrictMode>
-    <Launched config={config}>
+    <LaunchedProvider>
       <App />
-    </Launched>
+    </LaunchedProvider>
   </React.StrictMode>
 );
