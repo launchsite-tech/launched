@@ -7,30 +7,25 @@ function App() {
 
   const [title, titleTag] = useTag<Schema>("title");
   const [description, descriptionTag] = useTag<Schema>("description");
-  // const [cards, cardsTag] = useTag<Schema>("cards");
-  const [person, personTag] = useTag<Schema>("person");
+  const [cards, cardsTag] = useTag<Schema>("cards");
 
   const t = title as FlatTagSchema<Schema>["title"];
   const d = description as FlatTagSchema<Schema>["description"];
-  // const c = cards as FlatTagSchema<Schema>["cards"];
-  const p = person as FlatTagSchema<FlatTagSchema<Schema>>["person"];
+  const c = cards as FlatTagSchema<Schema>["cards"];
 
   return (
     <main>
       <h1 ref={titleTag}>{t}</h1>
       <p ref={descriptionTag}>{d}</p>
-      {/* <ul ref={cardsTag}>
+      <ul ref={cardsTag}>
         {c.map((card, i) => (
           <li key={i}>
             <h2>{card.title}</h2>
             <p>{card.description}</p>
+            <img src={card.image.src} alt={card.image.alt} />
           </li>
         ))}
-      </ul> */}
-      <div ref={personTag}>
-        <h2>{p.gender.pronouns}</h2>
-        <p>{p.gender.name}</p>
-      </div>
+      </ul>
     </main>
   );
 }

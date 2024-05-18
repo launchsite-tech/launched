@@ -10,24 +10,32 @@ const config: Config<Schema> = {
   tags: {
     title: "Launched Demo",
     description: "This is a demo of Launched.",
-    // cards: [
-    //   {
-    //     value: { title: "Card 1", description: "This is the first card." },
-    //   },
-    //   {
-    //     value: { title: "Card 2", description: "This is the second card." },
-    //   },
-    // ],
-    person: {
-      value: {
-        gender: {
-          value: {
-            name: "Launched",
-            pronouns: "they/them",
+    cards: [
+      {
+        value: {
+          title: "Card 1",
+          description: "This is the first card.",
+          image: {
+            value: {
+              src: "https://via.placeholder.com/150",
+              alt: "Placeholder",
+            },
           },
         },
       },
-    },
+      {
+        value: {
+          title: "Card 2",
+          description: "This is the second card.",
+          image: {
+            value: {
+              src: "https://via.placeholder.com/150",
+              alt: "Placeholder",
+            },
+          },
+        },
+      },
+    ],
   },
 };
 

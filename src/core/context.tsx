@@ -1,4 +1,5 @@
 import { useReducer, useContext, createRef, createContext } from "react";
+import { renderSingleTagUI } from "./render";
 import type {
   TagValue,
   PartialTagValue,
@@ -23,6 +24,7 @@ interface LaunchedContextValue<Schema extends TagSchema<Schema>> {
     FlatTagSchema<S>[typeof key],
     <T extends HTMLElement | null>(el: T) => void,
   ];
+  render(key?: keyof Schema): void;
 }
 
 function flattenNestedValues(obj: any): any {
@@ -46,6 +48,8 @@ function useTagData<Schema extends TagSchema<Schema>>(config: Config<Schema>) {
     throw new Error("Tags not provided.");
   }
 
+  const tags = cleanTags();
+
   function reducer(
     state: Record<keyof Schema, TagValue>,
     action: {
@@ -59,51 +63,56 @@ function useTagData<Schema extends TagSchema<Schema>>(config: Config<Schema>) {
     };
   }
 
-  const [, updateData] = useReducer(
-    reducer,
-    {} as Record<keyof Schema, TagValue>
-  );
+  const [, dispatch] = useReducer(reducer, tags);
+
+  function cleanTags(): Record<keyof Schema, TagValue> {
+    return Object.fromEntries(
+      Object.entries(config.tags).map(([key, value]) => {
+        let dataValue: TagValue;
+
+        if (Array.isArray(value)) {
+          dataValue = {
+            type: "text",
+            value: value.map((v: Partial<TagValue>) => ({
+              type: "text",
+              value: v.value,
+              locked: config.locked ?? false,
+              ...v,
+            })),
+            locked: config.locked ?? false,
+          };
+        } else {
+          const options: Partial<TagValue> =
+            typeof value === "object" ? value! : {};
+
+          dataValue = {
+            type: "text",
+            value: (typeof value === "object" ? options.value : value) as
+              | PartialTagValue
+              | Record<string, PartialTagValue>,
+            locked: config.locked ?? false,
+            ...options,
+          };
+        }
+
+        return [key, dataValue];
+      })
+    ) as Record<keyof Schema, TagValue>;
+  }
 
   return Object.fromEntries(
-    Object.entries(config.tags).map(([key, value]) => {
-      const updateDataFunc = (value: TagValue) =>
-        updateData({ key: key as keyof Schema, value });
+    Object.entries(tags).map(([key, value]) => {
+      const updateDataFunc = (value: TagValue) => {
+        dispatch({ key: key as keyof Schema, value });
+      };
 
-      let dataValue: TagValue;
-
-      if (Array.isArray(value)) {
-        dataValue = {
-          type: "text",
-          value: value.map((v: Partial<TagValue>) => ({
-            type: "text",
-            value: v.value,
-            locked: config.locked ?? false,
-            ...v,
-          })),
-          locked: config.locked ?? false,
-        };
-      } else {
-        const options: Partial<TagValue> =
-          typeof value === "object" ? value! : {};
-
-        dataValue = {
-          type: "text",
-          value: (typeof value === "object" ? options.value : value) as
-            | PartialTagValue
-            | Record<string, PartialTagValue>,
-          locked: config.locked ?? false,
-          ...options,
-        };
-      }
-
-      updateDataFunc(dataValue);
       const el = createRef<HTMLElement | null>();
 
       return [
         key,
         {
-          data: dataValue,
-          setData: updateDataFunc,
+          data: value,
+          setData: (value: TagValue) => updateDataFunc(value),
           el,
         },
       ];
@@ -112,26 +121,31 @@ function useTagData<Schema extends TagSchema<Schema>>(config: Config<Schema>) {
 }
 
 export default class Launched<Schema extends TagSchema<Schema>> {
-  private tags;
-  private config;
+  private readonly config: Required<Config<Schema>>;
+  private tags: Record<keyof Schema, Tag>;
 
-  public Provider;
-  public context;
+  public Provider: React.FC<{ children: React.ReactNode }>;
+  public context: React.Context<LaunchedContextValue<Schema> | null>;
 
   public static instance: Launched<any> | null;
-  public static useLaunched: () => LaunchedContextValue<any>;
 
   constructor(
     config: Omit<Config<Schema>, "tags">,
     tags: Record<keyof Schema, Tag>
   ) {
+    if (Launched.instance) {
+      throw new Error("There can only be one instance of Launched.");
+    }
+
     this.context = createContext<LaunchedContextValue<Schema> | null>(null);
     this.config = { ...defaults, ...config } as Required<Config<Schema>>;
     this.tags = tags;
 
     this.Provider = ({ children }: { children: React.ReactNode }) => {
       return (
-        <this.context.Provider value={{ tags: this.tags, useTag: this.useTag }}>
+        <this.context.Provider
+          value={{ tags: this.tags, useTag: this.useTag, render: this.render }}
+        >
           {children}
         </this.context.Provider>
       );
@@ -143,7 +157,7 @@ export default class Launched<Schema extends TagSchema<Schema>> {
     Launched.instance = this;
   }
 
-  useTag<S extends Schema = Schema>(key: keyof S) {
+  private useTag<S extends Schema = Schema>(key: keyof S) {
     const i = this ?? Launched.instance!;
 
     const tag = i.tags[key];
@@ -153,8 +167,6 @@ export default class Launched<Schema extends TagSchema<Schema>> {
     const v = Array.isArray(tag.data.value)
       ? tag.data.value.map(flattenNestedValues)
       : flattenNestedValues(tag.data.value);
-
-    console.log(tag.data.value, v);
 
     return [
       v as FlatTagSchema<S>[typeof key],
@@ -168,6 +180,15 @@ export default class Launched<Schema extends TagSchema<Schema>> {
         (i.tags[key].el.current as T) = el;
       },
     ] as const;
+  }
+
+  private render<S extends Schema = Schema>(key?: keyof S) {
+    if (key) renderSingleTagUI(this.tags[key]);
+    else {
+      Object.values(this.tags).forEach((tag) => {
+        renderSingleTagUI(tag as Tag);
+      });
+    }
   }
 }
 
@@ -186,14 +207,14 @@ export function LaunchedProvider<Schema extends TagSchema<Schema>>({
   config: Config<Schema>;
   children: React.ReactNode;
 }) {
+  const tags = useTagData(config);
+
   if (Launched.instance) {
-    console.warn("Launched instance already exists. Ignoring new instance.");
     return <Launched.instance.Provider>{children}</Launched.instance.Provider>;
   }
 
-  const tags = useTagData(config);
-  new Launched(config, tags);
-  const Provider = Launched.instance!.Provider;
+  const l = new Launched(config, tags);
+  const Provider = l.Provider;
 
   return <Provider>{children}</Provider>;
 }
