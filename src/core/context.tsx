@@ -25,15 +25,20 @@ interface LaunchedContextValue<Schema extends TagSchema<Schema>> {
   ];
 }
 
-function flattenTagValue(value: TagValue | PartialTagValue): PartialTagValue {
-  if (typeof value === "object" && "value" in value) {
-    return {
-      ...value,
-      value: flattenTagValue(value.value!),
-    };
+function flattenNestedValues(obj: any): any {
+  if (typeof obj !== "object" || !obj) return obj;
+
+  if (Array.isArray(obj)) {
+    return obj.map(flattenNestedValues);
   }
 
-  return value;
+  if ("value" in obj) {
+    return flattenNestedValues(obj.value);
+  }
+
+  return Object.fromEntries(
+    Object.entries(obj).map(([key, value]) => [key, flattenNestedValues(value)])
+  );
 }
 
 function useTagData<Schema extends TagSchema<Schema>>(config: Config<Schema>) {
@@ -146,8 +151,10 @@ export default class Launched<Schema extends TagSchema<Schema>> {
     if (!tag) throw new Error(`Tag "${String(key)}" not found.`);
 
     const v = Array.isArray(tag.data.value)
-      ? tag.data.value.map(flattenTagValue)
-      : flattenTagValue(tag.data.value);
+      ? tag.data.value.map(flattenNestedValues)
+      : flattenNestedValues(tag.data.value);
+
+    console.log(tag.data.value, v);
 
     return [
       v as FlatTagSchema<S>[typeof key],
