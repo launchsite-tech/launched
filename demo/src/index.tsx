@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 
-import Launched, { LaunchedProvider } from "./dist/core/context";
+import { LaunchedProvider } from "./dist/core/context";
 import type { Config } from "./dist";
 import type { Schema } from "./siteSchema";
 
@@ -23,11 +23,9 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
-new Launched(config);
-
 root.render(
   <React.StrictMode>
-    <LaunchedProvider>
+    <LaunchedProvider config={config}>
       <App />
     </LaunchedProvider>
   </React.StrictMode>

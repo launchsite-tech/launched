@@ -15,7 +15,12 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img ref={imageTag} src={i.value.src} className="App-logo" alt={i.value.alt} />
+        <img
+          ref={imageTag}
+          src={i.value.src}
+          className="App-logo"
+          alt={i.value.alt}
+        />
         <p ref={descriptionTag}>{d}</p>
         <a
           className="App-link"
