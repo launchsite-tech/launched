@@ -1,6 +1,11 @@
-import { useReducer, useContext, createContext } from "react";
-import type { TagValue, PartialTagValue, Tag, TagSchema } from "../types/tag";
-
+import { useReducer, useContext, createRef, createContext } from "react";
+import type {
+  TagValue,
+  PartialTagValue,
+  Tag,
+  TagSchema,
+  FlatTagSchema,
+} from "../types/tag";
 export interface Config<Schema extends TagSchema<Schema>> {
   tags: Schema;
   locked?: boolean;
@@ -14,7 +19,10 @@ interface LaunchedContextValue<Schema extends TagSchema<Schema>> {
   tags: Record<keyof Schema, Tag>;
   useTag<S extends Schema>(
     key: keyof S
-  ): readonly [S[typeof key], <T extends HTMLElement | null>(el: T) => void];
+  ): readonly [
+    FlatTagSchema<S>[typeof key],
+    <T extends HTMLElement | null>(el: T) => void,
+  ];
 }
 
 function useTagData<Schema extends TagSchema<Schema>>(config: Config<Schema>) {
@@ -48,25 +56,25 @@ function useTagData<Schema extends TagSchema<Schema>>(config: Config<Schema>) {
       const updateDataFunc = (value: TagValue) =>
         updateData({ key: key as keyof Schema, value });
 
-      const dataValue = (typeof value === "object" ? options.value : value) as
-        | PartialTagValue
-        | Record<string, PartialTagValue>;
-
-      updateDataFunc({
+      const dataValue: TagValue = {
         type: "text",
-        value: dataValue,
-        locked: config.locked,
+        value: (typeof value === "object" ? options.value : value) as
+          | PartialTagValue
+          | Record<string, PartialTagValue>,
+        locked: config.locked ?? false,
         ...options,
-      } as TagValue);
-      // const el = useRef<HTMLElement | null>(null);
+      };
+
+      updateDataFunc(dataValue);
+      const el = createRef<HTMLElement | null>();
 
       return [
         key,
         {
           data: dataValue,
           setData: updateDataFunc,
-          el: null as any,
-        } as Tag,
+          el,
+        },
       ];
     })
   ) as Record<keyof Schema, Tag>;
@@ -99,17 +107,20 @@ export default class Launched<Schema extends TagSchema<Schema>> {
     };
 
     console.log(this.config);
+    console.log(this.tags);
 
     Launched.instance = this;
   }
 
   useTag<S extends Schema = Schema>(key: keyof S) {
-    const tag = this.tags[key];
+    const i = this ?? Launched.instance!;
+
+    const tag = i.tags[key];
 
     if (!tag) throw new Error(`Tag "${String(key)}" not found.`);
 
     return [
-      tag.data.value as S[typeof key],
+      tag.data.value as FlatTagSchema<S>[typeof key],
       <T extends HTMLElement | null>(el: T) => {
         if (!el) throw new Error("Element is null.");
 
@@ -117,7 +128,7 @@ export default class Launched<Schema extends TagSchema<Schema>> {
           throw new Error(`Tag "${String(key)}" already bound to an element.`);
         }
 
-        (this.tags[key].el.current as T) = el;
+        (i.tags[key].el.current as T) = el;
       },
     ] as const;
   }
@@ -140,7 +151,7 @@ export function LaunchedProvider<Schema extends TagSchema<Schema>>({
 }) {
   if (Launched.instance) {
     console.warn("Launched instance already exists. Ignoring new instance.");
-    return null;
+    return <Launched.instance.Provider>{children}</Launched.instance.Provider>;
   }
 
   const tags = useTagData(config);

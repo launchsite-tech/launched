@@ -18,6 +18,8 @@
   "plugins": ["react", "react-hooks"],
   "ignorePatterns": ["node_modules/", "src/dist/"],
   "rules": {
-    "no-unused-vars": "warn"
+    "no-unused-vars": "warn",
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-uses-react": "off"
   }
 }

@@ -16,10 +16,25 @@ type TagSchema<T extends Record<string, PartialTagValue>> = {
   [K in keyof T]: T[K];
 };
 
+type FlatTagSchema<T> = {
+  [K in keyof T]: T[K] extends { value: infer V }
+    ? FlatTagSchema<V>
+    : T[K] extends object
+      ? FlatTagSchema<T[K]>
+      : T[K];
+};
+
 type Tag = {
   data: TagValue;
   setData: (value: TagValue) => void;
   el: React.RefObject<HTMLElement>;
 };
 
-export { TagInputType, TagValue, PartialTagValue, Tag, TagSchema };
+export {
+  TagInputType,
+  TagValue,
+  PartialTagValue,
+  Tag,
+  TagSchema,
+  FlatTagSchema,
+};
