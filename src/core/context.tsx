@@ -102,17 +102,15 @@ function useTagData<Schema extends TagSchema<Schema>>(config: Config<Schema>) {
 
   return Object.fromEntries(
     Object.entries(tags).map(([key, value]) => {
-      const updateDataFunc = (value: TagValue) => {
-        dispatch({ key: key as keyof Schema, value });
-      };
-
       const el = createRef<HTMLElement | null>();
 
       return [
         key,
         {
           data: value,
-          setData: (value: TagValue) => updateDataFunc(value),
+          setData: (value: TagValue) => {
+            dispatch({ key: key as keyof Schema, value });
+          },
           el,
         },
       ];
@@ -178,6 +176,7 @@ export default class Launched<Schema extends TagSchema<Schema>> {
         }
 
         (i.tags[key].el.current as T) = el;
+        renderSingleTagUI(i.tags[key]);
       },
     ] as const;
   }
