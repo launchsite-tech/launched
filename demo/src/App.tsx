@@ -1,5 +1,3 @@
-import "./App.css";
-
 import { useLaunched } from "./dist/core/context";
 import { Schema } from "./siteSchema";
 import type { FlatTagSchema } from "./dist/types/tag";
@@ -7,27 +5,33 @@ import type { FlatTagSchema } from "./dist/types/tag";
 function App() {
   const { useTag } = useLaunched();
 
+  const [title, titleTag] = useTag<Schema>("title");
   const [description, descriptionTag] = useTag<Schema>("description");
-  const [image, imageTag] = useTag<Schema>("image");
+  // const [cards, cardsTag] = useTag<Schema>("cards");
+  const [person, personTag] = useTag<Schema>("person");
 
-  const i = image as FlatTagSchema<Schema>["image"];
+  const t = title as FlatTagSchema<Schema>["title"];
   const d = description as FlatTagSchema<Schema>["description"];
+  // const c = cards as FlatTagSchema<Schema>["cards"];
+  const p = person as FlatTagSchema<FlatTagSchema<Schema>>["person"];
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img ref={imageTag} src={i.src} className="App-logo" alt={i.alt} />
-        <p ref={descriptionTag}>{d}</p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <main>
+      <h1 ref={titleTag}>{t}</h1>
+      <p ref={descriptionTag}>{d}</p>
+      {/* <ul ref={cardsTag}>
+        {c.map((card, i) => (
+          <li key={i}>
+            <h2>{card.title}</h2>
+            <p>{card.description}</p>
+          </li>
+        ))}
+      </ul> */}
+      <div ref={personTag}>
+        <h2>{p.gender.pronouns}</h2>
+        <p>{p.gender.name}</p>
+      </div>
+    </main>
   );
 }
 

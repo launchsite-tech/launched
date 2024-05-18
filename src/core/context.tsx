@@ -25,6 +25,17 @@ interface LaunchedContextValue<Schema extends TagSchema<Schema>> {
   ];
 }
 
+function flattenTagValue(value: TagValue | PartialTagValue): PartialTagValue {
+  if (typeof value === "object" && "value" in value) {
+    return {
+      ...value,
+      value: flattenTagValue(value.value!),
+    };
+  }
+
+  return value;
+}
+
 function useTagData<Schema extends TagSchema<Schema>>(config: Config<Schema>) {
   if (!config.tags) {
     throw new Error("Tags not provided.");
@@ -50,20 +61,35 @@ function useTagData<Schema extends TagSchema<Schema>>(config: Config<Schema>) {
 
   return Object.fromEntries(
     Object.entries(config.tags).map(([key, value]) => {
-      const options: Partial<TagValue> =
-        typeof value === "object" ? value! : {};
-
       const updateDataFunc = (value: TagValue) =>
         updateData({ key: key as keyof Schema, value });
 
-      const dataValue: TagValue = {
-        type: "text",
-        value: (typeof value === "object" ? options.value : value) as
-          | PartialTagValue
-          | Record<string, PartialTagValue>,
-        locked: config.locked ?? false,
-        ...options,
-      };
+      let dataValue: TagValue;
+
+      if (Array.isArray(value)) {
+        dataValue = {
+          type: "text",
+          value: value.map((v: Partial<TagValue>) => ({
+            type: "text",
+            value: v.value,
+            locked: config.locked ?? false,
+            ...v,
+          })),
+          locked: config.locked ?? false,
+        };
+      } else {
+        const options: Partial<TagValue> =
+          typeof value === "object" ? value! : {};
+
+        dataValue = {
+          type: "text",
+          value: (typeof value === "object" ? options.value : value) as
+            | PartialTagValue
+            | Record<string, PartialTagValue>,
+          locked: config.locked ?? false,
+          ...options,
+        };
+      }
 
       updateDataFunc(dataValue);
       const el = createRef<HTMLElement | null>();
@@ -119,8 +145,12 @@ export default class Launched<Schema extends TagSchema<Schema>> {
 
     if (!tag) throw new Error(`Tag "${String(key)}" not found.`);
 
+    const v = Array.isArray(tag.data.value)
+      ? tag.data.value.map(flattenTagValue)
+      : flattenTagValue(tag.data.value);
+
     return [
-      tag.data.value as FlatTagSchema<S>[typeof key],
+      v as FlatTagSchema<S>[typeof key],
       <T extends HTMLElement | null>(el: T) => {
         if (!el) throw new Error("Element is null.");
 

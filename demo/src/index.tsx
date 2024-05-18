@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
 import App from "./App";
 
 import { LaunchedProvider } from "./dist/core/context";
@@ -9,11 +8,24 @@ import type { Schema } from "./siteSchema";
 
 const config: Config<Schema> = {
   tags: {
-    description: "hello there.",
-    image: {
+    title: "Launched Demo",
+    description: "This is a demo of Launched.",
+    // cards: [
+    //   {
+    //     value: { title: "Card 1", description: "This is the first card." },
+    //   },
+    //   {
+    //     value: { title: "Card 2", description: "This is the second card." },
+    //   },
+    // ],
+    person: {
       value: {
-        alt: "React logo",
-        src: "https://reactjs.org/logo-og.png",
+        gender: {
+          value: {
+            name: "Launched",
+            pronouns: "they/them",
+          },
+        },
       },
     },
   },

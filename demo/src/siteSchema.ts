@@ -1,11 +1,22 @@
 import type { TagSchema } from "./dist/types/tag";
 
 export type Schema = TagSchema<{
+  title: string;
   description: string;
-  image: {
+  // cards: {
+  //   value: {
+  //     title: string;
+  //     description: string;
+  //   };
+  // }[];
+  person: {
     value: {
-      alt: string;
-      src: string;
+      gender: {
+        value: {
+          name: string;
+          pronouns: string;
+        };
+      };
     };
   };
 }>;

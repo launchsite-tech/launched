@@ -18,7 +18,9 @@ type TagSchema<T extends Record<string, PartialTagValue>> = {
 
 type FlatTagSchema<T> = {
   [K in keyof T]: T[K] extends { value: infer V }
-    ? FlatTagSchema<V>
+    ? V extends object
+      ? FlatTagSchema<V>
+      : V
     : T[K] extends object
       ? FlatTagSchema<T[K]>
       : T[K];
