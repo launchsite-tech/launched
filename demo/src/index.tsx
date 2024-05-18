@@ -9,12 +9,12 @@ import type { Schema } from "./siteSchema";
 const config: Config<Schema> = {
   tags: {
     title: "Launched Demo",
-    description: "This is a demo of Launched.",
+    description: { value: "This is a demo of Launched.", type: "paragraph" },
     cards: [
       {
         value: {
           title: "Card 1",
-          description: "This is the first card.",
+          description: { value: "This is the first card.", type: "paragraph" },
           image: {
             value: {
               src: "https://via.placeholder.com/150",
@@ -26,7 +26,7 @@ const config: Config<Schema> = {
       {
         value: {
           title: "Card 2",
-          description: "This is the second card.",
+          description: { value: "This is the second card.", type: "paragraph" },
           image: {
             value: {
               src: "https://via.placeholder.com/150",

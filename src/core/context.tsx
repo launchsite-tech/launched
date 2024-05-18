@@ -1,12 +1,8 @@
-import { useReducer, useContext, createRef, createContext } from "react";
+import flattenNestedValues from "./util/flatten";
+import { useTagData } from "./hooks";
+import { createContext } from "react";
 import { renderSingleTagUI } from "./render";
-import type {
-  TagValue,
-  PartialTagValue,
-  Tag,
-  TagSchema,
-  FlatTagSchema,
-} from "../types/tag";
+import type { Tag, TagSchema, FlatTagSchema } from "../types/tag";
 export interface Config<Schema extends TagSchema<Schema>> {
   tags: Schema;
   locked?: boolean;
@@ -16,7 +12,7 @@ const defaults = {
   locked: false,
 };
 
-interface LaunchedContextValue<Schema extends TagSchema<Schema>> {
+export interface LaunchedContextValue<Schema extends TagSchema<Schema>> {
   tags: Record<keyof Schema, Tag>;
   useTag<S extends Schema>(
     key: keyof S
@@ -25,97 +21,6 @@ interface LaunchedContextValue<Schema extends TagSchema<Schema>> {
     <T extends HTMLElement | null>(el: T) => void,
   ];
   render(key?: keyof Schema): void;
-}
-
-function flattenNestedValues(obj: any): any {
-  if (typeof obj !== "object" || !obj) return obj;
-
-  if (Array.isArray(obj)) {
-    return obj.map(flattenNestedValues);
-  }
-
-  if ("value" in obj) {
-    return flattenNestedValues(obj.value);
-  }
-
-  return Object.fromEntries(
-    Object.entries(obj).map(([key, value]) => [key, flattenNestedValues(value)])
-  );
-}
-
-function useTagData<Schema extends TagSchema<Schema>>(config: Config<Schema>) {
-  if (!config.tags) {
-    throw new Error("Tags not provided.");
-  }
-
-  const tags = cleanTags();
-
-  function reducer(
-    state: Record<keyof Schema, TagValue>,
-    action: {
-      key: keyof Schema;
-      value: TagValue;
-    }
-  ) {
-    return {
-      ...state,
-      [action.key]: action.value,
-    };
-  }
-
-  const [, dispatch] = useReducer(reducer, tags);
-
-  function cleanTags(): Record<keyof Schema, TagValue> {
-    return Object.fromEntries(
-      Object.entries(config.tags).map(([key, value]) => {
-        let dataValue: TagValue;
-
-        if (Array.isArray(value)) {
-          dataValue = {
-            type: "text",
-            value: value.map((v: Partial<TagValue>) => ({
-              type: "text",
-              value: v.value,
-              locked: config.locked ?? false,
-              ...v,
-            })),
-            locked: config.locked ?? false,
-          };
-        } else {
-          const options: Partial<TagValue> =
-            typeof value === "object" ? value! : {};
-
-          dataValue = {
-            type: "text",
-            value: (typeof value === "object" ? options.value : value) as
-              | PartialTagValue
-              | Record<string, PartialTagValue>,
-            locked: config.locked ?? false,
-            ...options,
-          };
-        }
-
-        return [key, dataValue];
-      })
-    ) as Record<keyof Schema, TagValue>;
-  }
-
-  return Object.fromEntries(
-    Object.entries(tags).map(([key, value]) => {
-      const el = createRef<HTMLElement | null>();
-
-      return [
-        key,
-        {
-          data: value,
-          setData: (value: TagValue) => {
-            dispatch({ key: key as keyof Schema, value });
-          },
-          el,
-        },
-      ];
-    })
-  ) as Record<keyof Schema, Tag>;
 }
 
 export default class Launched<Schema extends TagSchema<Schema>> {
@@ -176,7 +81,8 @@ export default class Launched<Schema extends TagSchema<Schema>> {
         }
 
         (i.tags[key].el.current as T) = el;
-        renderSingleTagUI(i.tags[key]);
+        // ! TEMPORARY
+        renderSingleTagUI(tag);
       },
     ] as const;
   }
@@ -189,14 +95,6 @@ export default class Launched<Schema extends TagSchema<Schema>> {
       });
     }
   }
-}
-
-export function useLaunched() {
-  if (!Launched.instance) {
-    throw new Error("Launched instance not found.");
-  }
-
-  return useContext(Launched.instance.context)!;
 }
 
 export function LaunchedProvider<Schema extends TagSchema<Schema>>({

@@ -23,9 +23,15 @@ export function renderSingleTagUI(tag: Tag) {
       const reactLink = document.createElement("div");
       tag.el.current.appendChild(reactLink);
 
-      createRoot(reactLink).render(<div>hi</div>);
+      createRoot(reactLink).render(<TagUI tag={tag} />);
     }
   }
 
   renderTag(tag);
+}
+
+function TagUI({ tag }: { tag: Tag }) {
+  console.log(tag);
+
+  return <div>hi</div>;
 }

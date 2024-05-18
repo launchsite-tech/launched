@@ -1,4 +1,4 @@
-import { useLaunched } from "./dist/core/context";
+import { useLaunched } from "./dist/index";
 import { Schema } from "./siteSchema";
 import type { FlatTagSchema } from "./dist/types/tag";
 
