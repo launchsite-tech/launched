@@ -6,6 +6,8 @@ import Launched from "./context";
 export function useTagData<Schema extends TagSchema<Schema>>(
   config: Config<Schema>
 ) {
+  console.log("useTagData");
+
   if (!config.tags) {
     throw new Error("Tags not provided.");
   }
@@ -19,13 +21,15 @@ export function useTagData<Schema extends TagSchema<Schema>>(
       value: TagValue;
     }
   ) {
+    console.log(`Updating ${String(action.key)}`);
+
     return {
       ...state,
       [action.key]: action.value,
     };
   }
 
-  const [, dispatch] = useReducer(reducer, tags);
+  const [values, dispatch] = useReducer(reducer, tags);
 
   function cleanTags(): Record<keyof Schema, TagValue> {
     return Object.fromEntries(
@@ -63,13 +67,13 @@ export function useTagData<Schema extends TagSchema<Schema>>(
   }
 
   return Object.fromEntries(
-    Object.entries(tags).map(([key, value]) => {
+    Object.keys(tags).map((key) => {
       const el = createRef<HTMLElement | null>();
 
       return [
         key,
         {
-          data: value,
+          data: values[key],
           setData: (value: TagValue) => {
             dispatch({ key: key as keyof Schema, value });
           },

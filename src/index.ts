@@ -1,3 +1,4 @@
+import "./ui/globals.css";
 import Launched from "./core/context";
 import { LaunchedProvider } from "./core/context";
 import { useLaunched } from "./core/hooks";

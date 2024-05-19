@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 
@@ -44,9 +44,9 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <React.StrictMode>
-    <LaunchedProvider config={config}>
-      <App />
-    </LaunchedProvider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <LaunchedProvider config={config}>
+    <App />
+  </LaunchedProvider>
+  // </React.StrictMode>
 );

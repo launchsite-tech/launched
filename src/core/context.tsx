@@ -108,10 +108,9 @@ export function LaunchedProvider<Schema extends TagSchema<Schema>>({
 
   if (Launched.instance) {
     return <Launched.instance.Provider>{children}</Launched.instance.Provider>;
+  } else {
+    const L = new Launched(config, tags);
+
+    return <L.Provider>{children}</L.Provider>;
   }
-
-  const l = new Launched(config, tags);
-  const Provider = l.Provider;
-
-  return <Provider>{children}</Provider>;
 }
