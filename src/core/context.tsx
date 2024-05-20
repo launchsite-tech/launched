@@ -1,9 +1,10 @@
+import EventEmitter from "./events";
 import flattenNestedValues from "./util/flatten";
 import { useTagData } from "./hooks";
 import { createContext } from "react";
 import { renderSingleTagUI } from "./render";
 import type { Tag, TagSchema, FlatTagSchema } from "../types/tag";
-export interface Config<Schema extends TagSchema<Schema>> {
+export interface Config<Schema extends TagSchema<any>> {
   tags: Schema;
   locked?: boolean;
 }
@@ -12,7 +13,7 @@ const defaults = {
   locked: false,
 };
 
-export interface LaunchedContextValue<Schema extends TagSchema<Schema>> {
+export interface LaunchedContextValue<Schema extends TagSchema<any>> {
   tags: Record<keyof Schema, Tag>;
   useTag<S extends Schema>(
     key: keyof S
@@ -23,7 +24,7 @@ export interface LaunchedContextValue<Schema extends TagSchema<Schema>> {
   render(key?: keyof Schema): void;
 }
 
-export default class Launched<Schema extends TagSchema<Schema>> {
+export default class Launched<Schema extends TagSchema<any>> {
   private readonly config: Required<Config<Schema>>;
   private tags: Record<keyof Schema, Tag>;
 
@@ -31,6 +32,7 @@ export default class Launched<Schema extends TagSchema<Schema>> {
   public context: React.Context<LaunchedContextValue<Schema> | null>;
 
   public static instance: Launched<any> | null;
+  public static events = new EventEmitter();
 
   constructor(
     config: Omit<Config<Schema>, "tags">,
@@ -97,7 +99,7 @@ export default class Launched<Schema extends TagSchema<Schema>> {
   }
 }
 
-export function LaunchedProvider<Schema extends TagSchema<Schema>>({
+export function LaunchedProvider<Schema extends TagSchema<any>>({
   config,
   children,
 }: {

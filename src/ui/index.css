@@ -1,12 +1,12 @@
 .Launched__tag-container {
+  cursor: pointer;
   position: absolute;
   inset: 0;
   width: 100%;
   height: min-content;
   min-height: 100%;
-  border-radius: 2px;
-  outline: 2px solid;
-  outline-color: color-mix(in srgb, rgba(255, 255, 0, 0.1) 80%, var(--accent));
+  outline: 1px solid;
+  outline-color: color-mix(in srgb, rgba(255, 0, 255, 0.1) 70%, var(--accent));
   outline-offset: 2px;
   display: flex;
   align-items: flex-end;
@@ -19,28 +19,7 @@
   outline-color: var(--accent);
 }
 
-.Launched__tag-editButton {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  opacity: 0;
-  padding: 6px 12px;
-  margin: 2px;
-  background-color: var(--accent);
-  color: white;
-  border-radius: 6px;
-  transition: opacity 200ms ease-out;
-  z-index: 10;
-}
-
-.Launched__tag-container:hover .Launched__tag-editButton,
-.Launched__tag-container:focus .Launched__tag-editButton {
-  opacity: 1;
-}
-
-.Launched__icon {
-  height: 1em;
-  color: inherit;
-  fill: transparent;
-  stroke: currentColor;
+.Launched__tag-container.active {
+  outline-width: 2px;
+  outline-color: var(--accent);
 }
