@@ -63,6 +63,8 @@ export default class Launched<Schema extends TagSchema<any>> {
                 ...p,
                 [key]: { ...p[key], data: value },
               }));
+
+              Launched.events.emit("tag:change", key, value);
             },
           },
         ])

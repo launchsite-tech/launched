@@ -60,20 +60,22 @@ function TagUI({ tag }: { tag: Tag }) {
     };
   }, []);
 
+  useEffect(() => {
+    console.log(selected);
+
+    if (selected && typeof tag.data.value !== "object") {
+      containerRef.current?.querySelector("input")?.focus();
+    }
+  }, [tag]);
+
   if (!tag.el.current) return null;
 
   return (
     <button
       ref={containerRef}
-      onClick={(e) => {
-        if (e.target !== containerRef.current) return;
-
-        setSelected((p) => {
-          if (!p) Launched.events.emit("tag:select", tag);
-          else Launched.events.emit("tag:deselect", tag);
-
-          return !p;
-        });
+      onClick={() => {
+        setSelected(true);
+        Launched.events.emit("tag:select", tag);
       }}
       className={`Launched__tag-container ${selected && "active"}`}
     >
