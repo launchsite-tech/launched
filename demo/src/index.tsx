@@ -17,7 +17,7 @@ const config: Config<Schema> = {
           description: { value: "This is the first card.", type: "paragraph" },
           image: {
             value: {
-              src: "https://via.placeholder.com/150",
+              src: "/logo192.png",
               alt: "Placeholder",
             },
           },
@@ -29,7 +29,7 @@ const config: Config<Schema> = {
           description: { value: "This is the second card.", type: "paragraph" },
           image: {
             value: {
-              src: "https://via.placeholder.com/150",
+              src: "/logo192.png",
               alt: "Placeholder",
             },
           },

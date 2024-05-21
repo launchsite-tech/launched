@@ -3,7 +3,7 @@ import "../ui/index.css";
 import Launched from "./context";
 import { createRoot } from "react-dom/client";
 import type { PartialTagValue, Tag } from "../types/tag";
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 
 export function renderSingleTagUI(tag: Tag) {
   if (!tag || !tag.el.current) return;
@@ -34,6 +34,8 @@ export function renderSingleTagUI(tag: Tag) {
 }
 
 function TagUI({ tag }: { tag: Tag }) {
+  const containerRef = useRef<HTMLButtonElement>(null);
+
   // const fields = flattenNestedValues(tag.data.value);
   const [selected, setSelected] = useState(false);
 
@@ -61,12 +63,34 @@ function TagUI({ tag }: { tag: Tag }) {
   if (!tag.el.current) return null;
 
   return (
-    <div
-      onClick={() => {
-        setSelected((p) => !p);
-        Launched.events.emit("tag:select", tag);
+    <button
+      ref={containerRef}
+      onClick={(e) => {
+        if (e.target !== containerRef.current) return;
+
+        setSelected((p) => {
+          if (!p) Launched.events.emit("tag:select", tag);
+          else Launched.events.emit("tag:deselect", tag);
+
+          return !p;
+        });
       }}
       className={`Launched__tag-container ${selected && "active"}`}
-    ></div>
+    >
+      {typeof tag.data.value === "object" ? (
+        <dialog>cool drawer</dialog>
+      ) : (
+        <input
+          className="Launched__tag-inlineEditor"
+          defaultValue={tag.data.value as string}
+          onChange={(e) => {
+            tag.setData({
+              ...tag.data,
+              value: e.target.value,
+            });
+          }}
+        />
+      )}
+    </button>
   );
 }
