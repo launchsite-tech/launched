@@ -16,7 +16,14 @@ function App() {
 
   return (
     <main>
-      <h1 ref={titleTag}>{t}</h1>
+      <h1
+        style={{
+          maxWidth: "200px",
+        }}
+        ref={titleTag}
+      >
+        {t}
+      </h1>
       <p ref={descriptionTag}>{d}</p>
       <ul ref={cardsTag}>
         {c.map((card, i) => (

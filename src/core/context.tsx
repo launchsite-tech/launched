@@ -1,6 +1,6 @@
 import EventEmitter from "./events";
 import flattenNestedValues from "./util/flatten";
-import { useState, createRef, createContext } from "react";
+import { useState, useEffect, createRef, createContext } from "react";
 import { renderSingleTagUI } from "./render";
 import type {
   Tag,
@@ -21,7 +21,6 @@ const defaults = {
 };
 
 export interface LaunchedContextValue<Schema extends TagSchema<any>> {
-  tags: Record<keyof Schema, Tag>;
   useTag<S extends Schema>(
     key: keyof S
   ): readonly [
@@ -34,6 +33,7 @@ export interface LaunchedContextValue<Schema extends TagSchema<any>> {
 export default class Launched<Schema extends TagSchema<any>> {
   private readonly config: Required<Config<Schema>>;
 
+  public tags: Record<keyof Schema, Tag> = {} as Record<keyof Schema, Tag>;
   public Provider: React.FC<{ children: React.ReactNode }>;
   public context: React.Context<LaunchedContextValue<Schema> | null>;
 
@@ -53,7 +53,7 @@ export default class Launched<Schema extends TagSchema<any>> {
         this.makeTagsFromTagValues(this.cleanTags())
       );
 
-      const t = Object.fromEntries(
+      this.tags = Object.fromEntries(
         Object.entries(tags).map(([key, data]) => [
           key,
           {
@@ -70,12 +70,15 @@ export default class Launched<Schema extends TagSchema<any>> {
         ])
       ) as Record<keyof Schema, Tag>;
 
+      useEffect(() => {
+        Launched.events.emit("data:update", this.tags);
+      }, [tags]);
+
       return (
         <this.context.Provider
           value={{
-            tags: t,
-            useTag: (key: keyof Schema) => this.useTag(t, key),
-            render: (key?: keyof Schema) => this.render(t, key),
+            useTag: this.useTag,
+            render: this.render,
           }}
         >
           {children}
@@ -89,6 +92,7 @@ export default class Launched<Schema extends TagSchema<any>> {
       // @ts-ignore
       tag.el.current = null;
     });
+
     Launched.events.on("tag:ready", (tag: Tag) => {
       renderSingleTagUI(tag);
     });
@@ -145,11 +149,10 @@ export default class Launched<Schema extends TagSchema<any>> {
     ) as Record<keyof Schema, TagValue>;
   }
 
-  private useTag<S extends Schema = Schema>(
-    tags: Record<keyof S, Tag>,
-    key: keyof S
-  ) {
-    const tag = tags[key];
+  private useTag<S extends Schema = Schema>(key: keyof S) {
+    const t = this ?? Launched.instance;
+
+    const tag = t.tags[key];
 
     if (!tag) throw new Error(`Tag "${String(key)}" not found.`);
 
@@ -162,20 +165,17 @@ export default class Launched<Schema extends TagSchema<any>> {
       <T extends HTMLElement | null>(el: T) => {
         if (!el) return;
 
-        (tags[key].el.current as T) = el;
+        (t.tags[key].el.current as T) = el;
 
-        Launched.events.emit("tag:ready", tags[key]);
+        Launched.events.emit("tag:ready", t.tags[key]);
       },
     ] as const;
   }
 
-  private render<S extends Schema = Schema>(
-    tags: Record<keyof S, Tag>,
-    key?: keyof S
-  ) {
-    if (key) renderSingleTagUI(tags[key]);
+  private render<S extends Schema = Schema>(key?: keyof S) {
+    if (key) renderSingleTagUI(this.tags[key]);
     else {
-      Object.values(tags).forEach((tag) => {
+      Object.values(this.tags).forEach((tag) => {
         renderSingleTagUI(tag as Tag);
       });
     }

@@ -40,8 +40,10 @@ function TagUI({ tag }: { tag: Tag }) {
   const [selected, setSelected] = useState(false);
 
   function onTagSelect(t: Tag) {
-    if (t === tag) return;
+    if (t === tag || !t.el.current) return;
+
     setSelected(false);
+    tag.el.current!.style.removeProperty("color");
   }
 
   useEffect(() => {
@@ -60,14 +62,6 @@ function TagUI({ tag }: { tag: Tag }) {
     };
   }, []);
 
-  useEffect(() => {
-    console.log(selected);
-
-    if (selected && typeof tag.data.value !== "object") {
-      containerRef.current?.querySelector("input")?.focus();
-    }
-  }, [tag]);
-
   if (!tag.el.current) return null;
 
   return (
@@ -75,6 +69,8 @@ function TagUI({ tag }: { tag: Tag }) {
       ref={containerRef}
       onClick={() => {
         setSelected(true);
+        tag.el.current!.style.setProperty("color", "transparent");
+
         Launched.events.emit("tag:select", tag);
       }}
       className={`Launched__tag-container ${selected && "active"}`}
@@ -82,14 +78,17 @@ function TagUI({ tag }: { tag: Tag }) {
       {typeof tag.data.value === "object" ? (
         <dialog>cool drawer</dialog>
       ) : (
-        <input
+        <textarea
           className="Launched__tag-inlineEditor"
           defaultValue={tag.data.value as string}
           onChange={(e) => {
-            tag.setData({
-              ...tag.data,
-              value: e.target.value,
-            });
+            containerRef.current!.dataset["value"] = e.target.value;
+
+            // TODO: Only update on blur || enter
+            // tag.setData({
+            //   ...tag.data,
+            //   value: e.target.value,
+            // });
           }}
         />
       )}
