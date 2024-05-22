@@ -22,6 +22,10 @@
     outline-color: var(--accent);
     border-radius: 1px;
   }
+
+  .tagged:has(div > &.active) {
+    color: transparent;
+  }
 }
 
 .Launched__tag-container:has(.Launched__tag-inlineEditor) {

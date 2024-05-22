@@ -42,12 +42,33 @@ function TagUI({ tag }: { tag: Tag }) {
   function onTagSelect(t: Tag) {
     if (t === tag || !t.el.current) return;
 
+    if (selected) closeTag(true);
+    else closeTag();
+  }
+
+  function updateTagData() {
+    if (!containerRef.current || !selected) return;
+
+    const value = containerRef.current.dataset["value"];
+
+    if (value) {
+      tag.setData({
+        ...tag.data,
+        value,
+      });
+    }
+  }
+
+  function closeTag(update: boolean = false) {
+    if (update) updateTagData();
+
     setSelected(false);
-    tag.el.current!.style.removeProperty("color");
   }
 
   useEffect(() => {
     if (!tag.el.current) throw new Error("Element is null.");
+
+    tag.el.current.classList.add("tagged");
 
     if (getComputedStyle(tag.el.current).position === "static") {
       tag.el.current.style.position = "relative";
@@ -69,7 +90,6 @@ function TagUI({ tag }: { tag: Tag }) {
       ref={containerRef}
       onClick={() => {
         setSelected(true);
-        tag.el.current!.style.setProperty("color", "transparent");
 
         Launched.events.emit("tag:select", tag);
       }}
@@ -83,12 +103,15 @@ function TagUI({ tag }: { tag: Tag }) {
           defaultValue={tag.data.value as string}
           onChange={(e) => {
             containerRef.current!.dataset["value"] = e.target.value;
-
-            // TODO: Only update on blur || enter
-            // tag.setData({
-            //   ...tag.data,
-            //   value: e.target.value,
-            // });
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              if (tag.data.type === "text") closeTag(true);
+              else if (tag.data.type === "paragraph" && e.shiftKey) {
+                e.preventDefault();
+                closeTag(true);
+              }
+            } else if (e.key === "Escape") closeTag();
           }}
         />
       )}
