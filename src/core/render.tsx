@@ -101,13 +101,16 @@ function TagUI({ tag }: { tag: Tag }) {
         <textarea
           className="Launched__tag-inlineEditor"
           defaultValue={tag.data.value as string}
+          spellCheck={selected}
           onChange={(e) => {
             containerRef.current!.dataset["value"] = e.target.value;
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              if (tag.data.type === "text") closeTag(true);
-              else if (tag.data.type === "paragraph" && e.shiftKey) {
+              if (tag.data.type === "text") {
+                e.preventDefault();
+                closeTag(true);
+              } else if (tag.data.type === "paragraph" && e.shiftKey) {
                 e.preventDefault();
                 closeTag(true);
               }
