@@ -8,7 +8,6 @@
   height: 100%;
   outline: 1px solid;
   outline-color: color-mix(in srgb, rgba(255, 0, 255, 0.1) 70%, var(--accent));
-  outline-offset: 2px;
   transition:
     outline-color 200ms ease-out,
     border-radius 200ms ease-out;
