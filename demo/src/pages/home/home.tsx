@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { useLaunched } from "./dist/index";
-import { Schema } from "./siteSchema";
-import type { FlatTagSchema } from "./dist/types/tag";
+import { useLaunched } from "../../dist/index";
+import { Schema } from "../../siteSchema";
+import type { FlatTagSchema } from "../../dist/types/tag";
 
 function App() {
   const { useTag } = useLaunched();
@@ -16,14 +16,7 @@ function App() {
 
   return (
     <main>
-      <h1
-        style={{
-          maxWidth: "200px",
-        }}
-        ref={titleTag}
-      >
-        {t}
-      </h1>
+      <h1 ref={titleTag}>{t}</h1>
       <p ref={descriptionTag}>{d}</p>
       <ul ref={cardsTag}>
         {c.map((card, i) => (

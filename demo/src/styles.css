@@ -1,0 +1,134 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Gilda+Display&family=Kaushan+Script&family=Open+Sans:wght@400;500;600;700&family=Roboto:wght@300;400;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --amatic-sc: "Amatic SC", cursive;
+  --caveat: "Caveat", cursive;
+  --comfortaa: "Comfortaa", cursive;
+  --happy-monkey: "Happy Monkey", cursive;
+  --lobster: "Lobster", cursive;
+
+  --courier-prime: "Courier Prime", monospace;
+  --dm-mono: "DM Mono", monospace;
+  --roboto-mono: "Roboto Mono", monospace;
+
+  --eb-garamond: "EB Garamond", serif;
+  --gilda-display: "Gilda Display", serif;
+  --merriweather: "Merriweather", serif;
+  --playfair-display: "Playfair Display", serif;
+
+  --arial: Arial, sans-serif;
+  --helvetica: Helvetica, sans-serif;
+  --inter: "Inter", sans-serif;
+  --montserrat: "Montserrat", sans-serif;
+  --open-sans: "Open Sans", sans-serif;
+  --poppins: "Poppins", sans-serif;
+  --quicksand: "Quicksand", sans-serif;
+  --roboto: "Roboto", sans-serif;
+}
+
+@layer base {
+  #HOME h1,
+  #HOME h2,
+  #HOME h3 {
+    font-family: theme("fontFamily.display");
+  }
+
+  #HOME h1 {
+    font-size: theme("fontSize.h1");
+    line-height: theme("lineHeight.h1");
+  }
+
+  #HOME h2 {
+    font-size: theme("fontSize.h2");
+    line-height: theme("lineHeight.h2");
+  }
+
+  #HOME h3 {
+    font-size: theme("fontSize.h3");
+    line-height: theme("lineHeight.h3");
+  }
+}
+
+@layer components {
+  .cta-mask {
+    mask: url("/utils/cta-mask.png");
+    -webkit-mask: url("/utils/cta-mask.png");
+    mask-size: 3000% 100%;
+    -webkit-mask-size: 3000% 100%;
+  }
+
+  .decorated {
+    position: relative;
+    z-index: -1;
+  }
+
+  *:has(.decorated) {
+    z-index: 0;
+  }
+
+  .decorated::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: 2.25em;
+    translate: 0.25em -0.5em;
+    aspect-ratio: 1;
+    border-radius: 100%;
+    right: 0;
+    top: 0;
+    background-color: theme("accentColor.salmon-lgt");
+  }
+}
+
+@layer utilities {
+  li {
+    list-style: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  ::-webkit-scrollbar {
+    height: 12px;
+    overflow: visible;
+    width: 12px;
+  }
+
+  ::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+
+  body::-webkit-scrollbar-corner {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 50vw;
+    background-clip: padding-box;
+    padding: 2px;
+    border: 2px solid transparent;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  body:has(#HOME)::-webkit-scrollbar-track {
+    background-color: theme("accentColor.salmon") !important;
+  }
+}

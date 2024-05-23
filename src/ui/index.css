@@ -3,8 +3,9 @@
   position: absolute;
   inset: 0;
   width: 100%;
-  min-height: 100%;
-  height: min-content;
+  /* min-height: 100%;
+  height: min-content; */
+  height: 100%;
   outline: 1px solid;
   outline-color: color-mix(in srgb, rgba(255, 0, 255, 0.1) 70%, var(--accent));
   outline-offset: 2px;
