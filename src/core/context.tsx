@@ -1,7 +1,7 @@
 import EventEmitter from "./events";
 import flattenNestedValues from "./util/flatten";
 import { useState, useEffect, createRef, createContext } from "react";
-import { renderSingleTagUI } from "./render";
+import { renderSingleTagUI } from "./renderer";
 import type {
   Tag,
   TagValue,
@@ -40,7 +40,7 @@ export default class Launched<Schema extends TagSchema<any>> {
 
   public static instance: Launched<any> | null;
   public static events = new EventEmitter();
-  public static formats = new Map<string, Renderer<any, any>>();
+  public static formats = new Map<string, Renderer<any>>();
 
   constructor(config: Omit<Config<Schema>, "tags">) {
     if (Launched.instance) {
@@ -183,10 +183,10 @@ export default class Launched<Schema extends TagSchema<any>> {
     }
   }
 
-  public static registerTagFormat<
-    V extends PartialTagValue,
-    A extends Record<string, Partial<TagValue>> = {},
-  >(name: string, renderer: Renderer<V, A>) {
+  public static registerTagFormat<V extends PartialTagValue>(
+    name: string,
+    renderer: Renderer<V>
+  ) {
     Launched.formats.set(name, renderer);
   }
 }

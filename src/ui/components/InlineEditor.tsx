@@ -13,10 +13,6 @@ function InlineTagUI({
   updateData: (data: string) => void;
   close: () => void;
 }) {
-  if (getComputedStyle(element).position === "static") {
-    element.style.position = "relative";
-  }
-
   return (
     <textarea
       className="Launched__tag-inlineEditor"
@@ -38,13 +34,6 @@ function InlineTagUI({
 }
 
 export const InlineTagRenderer: Renderer<string> = {
-  format: (value: string) => {
-    return {
-      type: "text",
-      value,
-      locked: false,
-    };
-  },
   render: (element: HTMLElement, value: string, options) => {
     return (
       <InlineTagUI

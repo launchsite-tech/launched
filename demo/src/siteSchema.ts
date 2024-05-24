@@ -10,7 +10,7 @@ export type Schema = TagSchema<{
     type: "paragraph";
   };
   "Feature cards": {
-    type: "card";
+    type: "object";
     value: {
       value: {
         icon: {
@@ -39,7 +39,7 @@ export const tags: Schema = {
     type: "paragraph",
   },
   "Feature cards": {
-    type: "card",
+    type: "object",
     value: [
       {
         value: {

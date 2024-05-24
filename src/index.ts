@@ -9,9 +9,11 @@ import type { TagValue, PartialTagValue } from "./types/tag";
 import type { Renderer } from "./types/render";
 
 import { InlineTagRenderer } from "./ui/components/InlineEditor";
+import { MultifieldTagRenderer } from "./ui/components/ObjectEditor";
 
 Launched.registerTagFormat("text", InlineTagRenderer);
 Launched.registerTagFormat("paragraph", InlineTagRenderer);
+Launched.registerTagFormat("object", MultifieldTagRenderer);
 
 export default Launched;
 export { useLaunched, LaunchedProvider };

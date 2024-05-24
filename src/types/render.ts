@@ -1,10 +1,6 @@
-import type { TagValue, PartialTagValue } from "./tag";
+import type { PartialTagValue } from "./tag";
 
-export type Renderer<
-  V extends PartialTagValue,
-  A extends Record<string, Partial<TagValue>> = {},
-> = {
-  format: (value: V, args: A) => TagValue;
+export type Renderer<V extends PartialTagValue> = {
   render: (
     element: HTMLElement,
     value: V,
@@ -14,9 +10,7 @@ export type Renderer<
       close: () => void;
     }>
   ) => JSX.Element;
-  options?: Partial<{
-    onClose: () => void;
-    onSelect: () => void;
-    onDataUpdate: (data: V) => void;
-  }>;
+  onClose?: () => void;
+  onSelect?: () => void;
+  onDataUpdate?: (data: V) => void;
 };
