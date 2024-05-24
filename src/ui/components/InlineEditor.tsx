@@ -34,15 +34,7 @@ function InlineTagUI({
 }
 
 export const InlineTagRenderer: Renderer<string> = {
-  render: (element: HTMLElement, value: string, options) => {
-    return (
-      <InlineTagUI
-        element={element}
-        value={value}
-        selected={options?.selected ?? false}
-        updateData={options?.updateData ?? (() => {})}
-        close={options?.close ?? (() => {})}
-      />
-    );
+  component: (props) => {
+    return <InlineTagUI {...props} />;
   },
 };

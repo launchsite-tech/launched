@@ -4,18 +4,32 @@
 
 - [ ] `useLaunched` hook
   - [ ] Unsubscribing from data changes
+  - [ ] Automatically inferring tag type from tag name
+- [ ] More customizability
+  - [ ] "Editing" toggle
+  - [ ] `async` initial values
 - [ ] Custom tag types
-  - [ ] Registering custom tag types
+  - [x] Registering custom tag types
   - [ ] Default addon tag types
+    - [x] Text
+    - [x] Paragraph
+    - [ ] Object
+    - [ ] Number
+    - [ ] Date
+    - [ ] Time
   - [ ] Custom tag type validation
-- [ ] Automatically inferring tag type from tag name
-- [ ] async initial values
 
 ### ux
 
 - [ ] Tag rendering
   - [ ] Object view
-  - [ ] Custom views
+    - [ ] Nested properties
+  - [ ] Primitive components
+    - [ ] Text input
+    - [ ] Paragraph input
+    - [ ] Number input
+    - [ ] Date input
+    - [ ] Time input
 
 ## Bugs
 
@@ -23,3 +37,7 @@
 
 - [ ] Improper height resizing
 - [ ] Whitespace copying
+
+### Object editor
+
+- [ ] Popup not closing

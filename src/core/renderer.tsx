@@ -62,6 +62,7 @@ function TagUI({ tag, renderer }: { tag: Tag; renderer: Renderer<any> }) {
   function close() {
     setSelected(false);
     renderer?.onClose?.();
+    Launched.events.emit("tag:deselect", tag);
   }
 
   function updateData(data: any) {
@@ -107,11 +108,13 @@ function TagUI({ tag, renderer }: { tag: Tag; renderer: Renderer<any> }) {
       }}
       className={`Launched__tag-container ${selected && "active"}`}
     >
-      {renderer.render(tag.el.current, tag.data.value, {
-        selected,
-        updateData,
-        close,
-      })}
+      <renderer.component
+        element={tag.el.current}
+        value={tag.data.value}
+        selected={selected}
+        updateData={updateData}
+        close={close}
+      />
     </div>
   );
 }

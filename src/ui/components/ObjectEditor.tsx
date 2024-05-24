@@ -1,13 +1,14 @@
+import { useMediaQuery } from "../../core/hooks";
+import { createPortal } from "react-dom";
 import type { Renderer } from "../../types/render";
 import type { PartialTagValue } from "../../types/tag";
-
 import flattenTagValues from "../../core/util/flatten";
 
 function MultifieldTagUI({
   // element,
   selected,
   value,
-  updateData,
+  // updateData,
   close,
 }: {
   element: HTMLElement;
@@ -16,9 +17,19 @@ function MultifieldTagUI({
   updateData: (data: Record<string, PartialTagValue>) => void;
   close: () => void;
 }) {
+  const isDesktop = useMediaQuery("(min-width: 768px)");
   const values = flattenTagValues(value) as Record<string, string | number>;
 
-  return (
+  console.log(isDesktop);
+
+  let container = document.querySelector(".Launched__popoutContainer");
+  if (!container) {
+    container = document.createElement("div");
+    container.classList.add("Launched__popoutContainer");
+    document.body.appendChild(container);
+  }
+
+  return createPortal(
     <div className={`Launched__tag-popoutEditor ${selected && "active"}`}>
       <button onClick={close}>Close</button>
       <ul>
@@ -32,35 +43,21 @@ function MultifieldTagUI({
                 // TODO: Complex types
                 type={typeof value === "number" ? "number" : "text"}
                 onChange={(e) => {
-                  updateData({
-                    ...value,
-                    [k]: e.target.value,
-                  });
+                  console.log(k, e.target.value);
                 }}
               />
             </li>
           );
         })}
       </ul>
-    </div>
+    </div>,
+    container
   );
 }
 
 export const MultifieldTagRenderer: Renderer<Record<string, PartialTagValue>> =
   {
-    render: (
-      element: HTMLElement,
-      value: Record<string, PartialTagValue>,
-      options
-    ) => {
-      return (
-        <MultifieldTagUI
-          element={element}
-          value={value}
-          selected={options?.selected ?? false}
-          updateData={options?.updateData ?? (() => {})}
-          close={options?.close ?? (() => {})}
-        />
-      );
+    component: (props) => {
+      return <MultifieldTagUI {...props} />;
     },
   };

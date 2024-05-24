@@ -73,3 +73,27 @@
   color: currentColor;
   caret-color: currentColor;
 }
+
+.Launched__popoutContainer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  place-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  display: grid;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease-out;
+  will-change: opacity;
+
+  &:has(> .active) {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.Launched__popoutContainer > *:not(.active) {
+  display: none;
+}
