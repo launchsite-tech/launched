@@ -1,4 +1,12 @@
-type TagInputType = "text" | "paragraph" | "number" | "date";
+type TagInputType =
+  | "text"
+  | "paragraph"
+  | "number"
+  | "date"
+  | "time"
+  | "color"
+  | "image"
+  | "option";
 
 type PartialTagValue =
   | string
@@ -10,6 +18,7 @@ type TagValue = {
   type: TagInputType;
   value: PartialTagValue | Record<string, PartialTagValue>;
   locked: boolean;
+  options?: string[];
 };
 
 type TagSchema<T extends Record<string, PartialTagValue>> = {

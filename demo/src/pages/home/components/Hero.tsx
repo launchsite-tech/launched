@@ -1,6 +1,16 @@
+import { useLaunched } from "../../../dist";
+
 import GetStartedButton from "./GetStartedButton";
 
+import type { Schema } from "../../../siteSchema";
+import type { FlatTagSchema } from "../../../dist/types/tag";
+
 export default function Hero() {
+  const { useTag } = useLaunched();
+
+  const [description, descriptionTag] = useTag<Schema>("Hero description");
+  const d = description as FlatTagSchema<Schema>["Hero description"];
+
   return (
     <main className="grid w-full max-w-[1500px] grid-cols-2">
       <div className="text-home flex min-w-[700px] flex-col justify-center pl-28">
@@ -9,10 +19,9 @@ export default function Hero() {
           <span className="decorated font-script text-brand">poetry&nbsp;</span>{" "}
           with the power of AI
         </h1>
-        <h3 className="mt-4 max-w-xl">
-          Quilli provides you with the AI-driven tools necessary to craft
-          exceptional lyrics, poetry, and more- all in one place.
-        </h3>
+        <p ref={descriptionTag} className="mt-4 max-w-xl">
+          {d}
+        </p>
         <div className="mt-8 flex">
           <GetStartedButton />
           <button

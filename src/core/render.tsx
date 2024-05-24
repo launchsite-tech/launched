@@ -107,13 +107,11 @@ function TagUI({ tag }: { tag: Tag }) {
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              if (tag.data.type === "text") {
-                e.preventDefault();
+              // TODO: See if there's a cleaner way to do this. There needs to be a way to detect text wrapping on parent element.
+              e.preventDefault();
+
+              if (tag.data.type === "text" || tag.data.type === "paragraph")
                 closeTag(true);
-              } else if (tag.data.type === "paragraph" && e.shiftKey) {
-                e.preventDefault();
-                closeTag(true);
-              }
             } else if (e.key === "Escape") closeTag();
           }}
         />

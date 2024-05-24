@@ -1,4 +1,14 @@
+import { useLaunched } from "../../../dist";
+
+import type { Schema } from "../../../siteSchema";
+import type { FlatTagSchema } from "../../../dist/types/tag";
+
 export default function About() {
+  const { useTag } = useLaunched();
+
+  const [description, descriptionTag] = useTag<Schema>("About description");
+  const d = description as FlatTagSchema<Schema>["About description"];
+
   return (
     <section
       id="ABOUT"
@@ -10,9 +20,8 @@ export default function About() {
           Spend less time switching tabs and more time{" "}
           <span className="decorated text-brand">writing</span>.
         </h2>
-        <h3 className="z-0 mt-4 max-w-[34rem]">
-          Tired of flipping back and forth between dictionaries, rhyme lists,
-          spell checkers, and more? Quilli has you covered, free of charge.
+        <h3 ref={descriptionTag} className="z-0 mt-4 max-w-[34rem]">
+          {d}
         </h3>
       </div>
     </section>

@@ -30,7 +30,11 @@
 }
 
 .Launched__tag-container:has(.Launched__tag-inlineEditor) {
-  font: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  font-style: inherit;
+  font-variant: inherit;
   line-height: inherit;
   letter-spacing: inherit;
 
@@ -50,7 +54,7 @@
   &::after {
     content: attr(data-value) " ";
     visibility: hidden;
-    white-space: pre-wrap;
+    white-space: inherit;
   }
 
   &.active {
