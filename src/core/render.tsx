@@ -3,10 +3,19 @@ import "../ui/index.css";
 import Launched from "./context";
 import { createRoot } from "react-dom/client";
 import type { PartialTagValue, Tag } from "../types/tag";
+import type { Renderer } from "../types/render";
 import { useRef, useState, useEffect } from "react";
 
 export function renderSingleTagUI(tag: Tag) {
   if (!tag || !tag.el.current) return;
+
+  console.log(tag.data);
+  const renderer = Launched.formats.get(tag.data.type);
+
+  if (!renderer) {
+    console.error(`No renderer found for tag type: ${tag.data.type}`);
+    return;
+  }
 
   function renderTag(tag: Tag) {
     if (!tag.el.current) return;
@@ -26,53 +35,39 @@ export function renderSingleTagUI(tag: Tag) {
       const reactLink = document.createElement("div");
       tag.el.current.appendChild(reactLink);
 
-      createRoot(reactLink).render(<TagUI tag={tag} />);
+      createRoot(reactLink).render(<TagUI tag={tag} renderer={renderer!} />);
     }
   }
 
   renderTag(tag);
 }
 
-function TagUI({ tag }: { tag: Tag }) {
+function TagUI({ tag, renderer }: { tag: Tag; renderer: Renderer<any> }) {
   const containerRef = useRef<HTMLButtonElement>(null);
 
-  // const fields = flattenNestedValues(tag.data.value);
   const [selected, setSelected] = useState(false);
 
-  function onTagSelect(t: Tag) {
-    if (t === tag || !t.el.current) return;
-
-    if (selected) closeTag(true);
-    else closeTag();
-  }
-
-  function updateTagData() {
-    if (!containerRef.current || !selected) return;
-
-    const value = containerRef.current.dataset["value"];
-
-    if (value) {
-      tag.setData({
-        ...tag.data,
-        value,
-      });
-    }
-  }
-
-  function closeTag(update: boolean = false) {
-    if (update) updateTagData();
-
+  function close() {
     setSelected(false);
+    renderer.options?.onClose?.();
+  }
+
+  function updateData(data: any) {
+    tag.setData({
+      ...tag.data,
+      value: data,
+    });
+    renderer.options?.onDataUpdate?.(data);
+  }
+
+  function onTagSelect(selectedTag: Tag) {
+    if (selectedTag !== tag) setSelected(false);
   }
 
   useEffect(() => {
     if (!tag.el.current) throw new Error("Element is null.");
 
     tag.el.current.classList.add("tagged");
-
-    if (getComputedStyle(tag.el.current).position === "static") {
-      tag.el.current.style.position = "relative";
-    }
 
     Launched.events.emit("tag:mount", tag);
     Launched.events.on("tag:select", onTagSelect);
@@ -95,27 +90,11 @@ function TagUI({ tag }: { tag: Tag }) {
       }}
       className={`Launched__tag-container ${selected && "active"}`}
     >
-      {typeof tag.data.value === "object" ? (
-        <dialog>cool drawer</dialog>
-      ) : (
-        <textarea
-          className="Launched__tag-inlineEditor"
-          defaultValue={tag.data.value as string}
-          spellCheck={selected}
-          onChange={(e) => {
-            containerRef.current!.dataset["value"] = e.target.value;
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              // TODO: See if there's a cleaner way to do this. There needs to be a way to detect text wrapping on parent element.
-              e.preventDefault();
-
-              if (tag.data.type === "text" || tag.data.type === "paragraph")
-                closeTag(true);
-            } else if (e.key === "Escape") closeTag();
-          }}
-        />
-      )}
+      {renderer.render(tag.el.current, tag.data.value, {
+        selected,
+        updateData,
+        close,
+      })}
     </button>
   );
 }

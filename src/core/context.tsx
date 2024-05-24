@@ -9,6 +9,7 @@ import type {
   TagSchema,
   FlatTagSchema,
 } from "../types/tag";
+import type { Renderer } from "../types/render";
 export interface Config<Schema extends TagSchema<any>> {
   tags: Schema;
   locked?: boolean;
@@ -39,6 +40,7 @@ export default class Launched<Schema extends TagSchema<any>> {
 
   public static instance: Launched<any> | null;
   public static events = new EventEmitter();
+  public static formats = new Map<string, Renderer<any, any>>();
 
   constructor(config: Omit<Config<Schema>, "tags">) {
     if (Launched.instance) {
@@ -179,6 +181,13 @@ export default class Launched<Schema extends TagSchema<any>> {
         renderSingleTagUI(tag as Tag);
       });
     }
+  }
+
+  public static registerTagFormat<
+    V extends PartialTagValue,
+    A extends Record<string, Partial<TagValue>> = {},
+  >(name: string, renderer: Renderer<V, A>) {
+    Launched.formats.set(name, renderer);
   }
 }
 

@@ -1,13 +1,3 @@
-type TagInputType =
-  | "text"
-  | "paragraph"
-  | "number"
-  | "date"
-  | "time"
-  | "color"
-  | "image"
-  | "option";
-
 type PartialTagValue =
   | string
   | number
@@ -15,7 +5,7 @@ type PartialTagValue =
   | Partial<TagValue>[];
 
 type TagValue = {
-  type: TagInputType;
+  type: string;
   value: PartialTagValue | Record<string, PartialTagValue>;
   locked: boolean;
   options?: string[];
@@ -41,11 +31,4 @@ type Tag = {
   el: React.RefObject<HTMLElement>;
 };
 
-export {
-  TagInputType,
-  TagValue,
-  PartialTagValue,
-  Tag,
-  TagSchema,
-  FlatTagSchema,
-};
+export { TagValue, PartialTagValue, Tag, TagSchema, FlatTagSchema };
