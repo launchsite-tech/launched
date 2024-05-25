@@ -28,7 +28,6 @@ export interface LaunchedContextValue<Schema extends TagSchema<any>> {
     FlatTagSchema<S>[typeof key],
     <T extends HTMLElement | null>(el: T) => void,
   ];
-  render(key?: keyof Schema): void;
 }
 
 export default class Launched<Schema extends TagSchema<any>> {
@@ -80,7 +79,6 @@ export default class Launched<Schema extends TagSchema<any>> {
         <this.context.Provider
           value={{
             useTag: this.useTag,
-            render: this.render,
           }}
         >
           {children}
@@ -95,8 +93,8 @@ export default class Launched<Schema extends TagSchema<any>> {
       tag.el.current = null;
     });
 
-    Launched.events.on("tag:ready", (tag: Tag) => {
-      renderSingleTagUI(tag);
+    Launched.events.on("tag:ready", (tag: Tag, key: string) => {
+      renderSingleTagUI(tag, key);
     });
   }
 
@@ -169,18 +167,9 @@ export default class Launched<Schema extends TagSchema<any>> {
 
         (t.tags[key].el.current as T) = el;
 
-        Launched.events.emit("tag:ready", t.tags[key]);
+        Launched.events.emit("tag:ready", t.tags[key], key);
       },
     ] as const;
-  }
-
-  private render<S extends Schema = Schema>(key?: keyof S) {
-    if (key) renderSingleTagUI(this.tags[key]);
-    else {
-      Object.values(this.tags).forEach((tag) => {
-        renderSingleTagUI(tag as Tag);
-      });
-    }
   }
 
   public static registerTagFormat<V extends PartialTagValue>(

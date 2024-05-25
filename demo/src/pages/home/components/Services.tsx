@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useLaunched } from "../../../dist";
 
 import { Music, Activity, Search, Hash, Check } from "react-feather";
@@ -18,12 +19,12 @@ export default function Services() {
     <section id="SERVICES" className="mt-20 w-full max-w-7xl">
       <ul
         ref={cardsTag}
-        className="shadow-secondary grid w-full grid-cols-5 gap-[2vw] rounded-3xl bg-white p-14"
+        className="grid w-full grid-cols-5 gap-[2vw] rounded-3xl bg-white p-14 shadow-secondary"
       >
         {c.map((item, i) => {
           return (
             <li
-              className="border-gray-border text-home flex h-64 max-w-48 flex-col items-center justify-center gap-6 rounded-2xl border px-6 text-center font-sans text-sm/[19.6px]"
+              className="flex h-64 max-w-48 flex-col items-center justify-center gap-6 rounded-2xl border border-gray-border px-6 text-center font-sans text-sm/[19.6px] text-home"
               key={i}
             >
               <span>{icons[item.icon]}</span>

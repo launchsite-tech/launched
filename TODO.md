@@ -40,4 +40,6 @@
 
 ### Object editor
 
-- [ ] Popup not closing
+- [x] Popup not closing
+- [x] Unwanted root instances
+- [ ] Object fields inconsistently updating

@@ -25,6 +25,10 @@ export type Schema = TagSchema<{
       };
     }[];
   };
+  "Footer links": {
+    type: "text";
+    value: string[];
+  };
 }>;
 
 export const tags: Schema = {
@@ -112,5 +116,9 @@ export const tags: Schema = {
         },
       },
     ],
+  },
+  "Footer links": {
+    type: "text",
+    value: ["About", "Privacy", "Terms"],
   },
 };

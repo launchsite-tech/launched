@@ -1,24 +1,27 @@
 import { useMediaQuery } from "../../core/hooks";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import type { Renderer } from "../../types/render";
 import type { PartialTagValue } from "../../types/tag";
 import flattenTagValues from "../../core/util/flatten";
+import Launched from "../../core/context";
 
 function MultifieldTagUI({
-  // element,
   selected,
   value,
-  // updateData,
+  updateData,
   close,
 }: {
-  element: HTMLElement;
   selected: boolean;
   value: Record<string, any>;
   updateData: (data: Record<string, PartialTagValue>) => void;
   close: () => void;
 }) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const values = flattenTagValues(value) as Record<string, string | number>;
+
+  const [values, setValues] = useState<Record<string, string | number>>(
+    flattenTagValues(value) as Record<string, string | number>
+  );
 
   console.log(isDesktop);
 
@@ -29,30 +32,72 @@ function MultifieldTagUI({
     document.body.appendChild(container);
   }
 
-  return createPortal(
-    <div className={`Launched__tag-popoutEditor ${selected && "active"}`}>
-      <button onClick={close}>Close</button>
-      <ul>
-        {Object.entries(values).map(([k, v]) => {
-          return (
-            <li key={k}>
-              <label htmlFor={k}>{k}</label>
-              <input
-                id={k}
-                value={v}
-                // TODO: Complex types
-                type={typeof value === "number" ? "number" : "text"}
-                onChange={(e) => {
-                  console.log(k, e.target.value);
-                }}
-              />
-            </li>
-          );
-        })}
-      </ul>
-    </div>,
-    container
-  );
+  function onClickOutside(e: Event) {
+    if (e.target === container) close();
+  }
+
+  function onDataUpdate(tag: string, data: PartialTagValue) {
+    console.log(tag, data);
+  }
+
+  useEffect(() => {
+    if (selected) container?.addEventListener("click", onClickOutside);
+    else container?.removeEventListener("click", onClickOutside);
+
+    Launched.events.on("tag:change", onDataUpdate);
+
+    return () => {
+      container?.removeEventListener("click", onClickOutside);
+      Launched.events.off("tag:change", onDataUpdate);
+    };
+  }, []);
+
+  return !selected
+    ? null
+    : createPortal(
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className={`Launched__tag-popoutEditor ${selected && "active"}`}
+          aria-hidden={!selected}
+        >
+          <button onClick={close}>Close</button>
+          <ul>
+            {Object.keys(values).map((k) => {
+              return (
+                <li key={k}>
+                  <label htmlFor={k}>{k}</label>
+                  <input
+                    id={k}
+                    value={values[k]}
+                    // TODO: Complex types
+                    type={typeof values[k] === "number" ? "number" : "text"}
+                    onChange={(e) => {
+                      const v =
+                        typeof values[k] === "string"
+                          ? e.target.value
+                          : parseInt(e.target.value) || 0;
+
+                      updateData({
+                        ...value,
+                        value: {
+                          ...value["value"],
+                          [k]: v,
+                        },
+                      });
+
+                      setValues({
+                        ...values,
+                        [k]: v,
+                      });
+                    }}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </div>,
+        container
+      );
 }
 
 export const MultifieldTagRenderer: Renderer<Record<string, PartialTagValue>> =

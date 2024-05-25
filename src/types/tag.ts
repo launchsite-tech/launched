@@ -1,6 +1,8 @@
 type PartialTagValue =
   | string
   | number
+  | string[]
+  | number[]
   | Partial<TagValue>
   | Partial<TagValue>[];
 
