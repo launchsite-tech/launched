@@ -4,7 +4,6 @@ import { createPortal } from "react-dom";
 import type { Renderer } from "../../types/render";
 import type { PartialTagValue } from "../../types/tag";
 import flattenTagValues from "../../core/util/flatten";
-import Launched from "../../core/context";
 
 function MultifieldTagUI({
   selected,
@@ -36,19 +35,12 @@ function MultifieldTagUI({
     if (e.target === container) close();
   }
 
-  function onDataUpdate(tag: string, data: PartialTagValue) {
-    console.log(tag, data);
-  }
-
   useEffect(() => {
     if (selected) container?.addEventListener("click", onClickOutside);
     else container?.removeEventListener("click", onClickOutside);
 
-    Launched.events.on("tag:change", onDataUpdate);
-
     return () => {
       container?.removeEventListener("click", onClickOutside);
-      Launched.events.off("tag:change", onDataUpdate);
     };
   }, []);
 

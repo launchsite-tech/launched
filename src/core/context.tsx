@@ -10,6 +10,7 @@ import type {
   FlatTagSchema,
 } from "../types/tag";
 import type { Renderer } from "../types/render";
+import type { Root } from "react-dom/client";
 export interface Config<Schema extends TagSchema<any>> {
   tags: Schema;
   locked?: boolean;
@@ -40,6 +41,7 @@ export default class Launched<Schema extends TagSchema<any>> {
   public static instance: Launched<any> | null;
   public static events = new EventEmitter();
   public static formats = new Map<string, Renderer<any>>();
+  public static roots = new Map<string, Root>();
 
   constructor(config: Omit<Config<Schema>, "tags">) {
     if (Launched.instance) {

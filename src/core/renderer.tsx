@@ -54,14 +54,14 @@ export function renderSingleTagUI(parentTag: Tag, id: string) {
       const nodeId = `Lroot-${id.split(" ").join("-")}`;
 
       let root: Root;
-      if (tag.el.current.querySelector(`#${nodeId}`)) {
-        const node = tag.el.current.querySelector(`#${nodeId}`);
-        root = createRoot(node!);
+      if (Launched.roots.has(nodeId)) {
+        root = Launched.roots.get(nodeId)!;
       } else {
         const reactLink = document.createElement("div");
         reactLink.id = nodeId;
         tag.el.current.appendChild(reactLink);
         root = createRoot(reactLink);
+        Launched.roots.set(nodeId, root);
       }
 
       if (tag.data.type !== parentTag.data.type) {
