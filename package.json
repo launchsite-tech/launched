@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rimraf ./demo/src/dist",
     "copy": "copyfiles -u 1 src/**/*.css ./demo/src/dist",
-    "build": "npm run clean && tsc && npm run copy",
+    "build": "npm run clean && tsc & npm run copy",
     "test": "jest"
   },
   "keywords": [],

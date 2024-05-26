@@ -1,14 +1,8 @@
 import type { TagSchema } from "./dist/types/tag";
 
 export type Schema = TagSchema<{
-  "Hero description": {
-    value: string;
-    type: "paragraph";
-  };
-  "About description": {
-    value: string;
-    type: "paragraph";
-  };
+  "Hero description": string;
+  "About description": string;
   "Feature cards": {
     type: "object";
     value: {
@@ -32,16 +26,10 @@ export type Schema = TagSchema<{
 }>;
 
 export const tags: Schema = {
-  "Hero description": {
-    value:
-      "Quilli provides you with the AI-driven tools necessary to craft exceptional lyrics, poetry, and more- all in one place.",
-    type: "paragraph",
-  },
-  "About description": {
-    value:
-      "Tired of flipping back and forth between dictionaries, rhyme lists, spell checkers, and more? Quilli has you covered, free of charge.",
-    type: "paragraph",
-  },
+  "Hero description":
+    "Quilli provides you with the AI-driven tools necessary to craft exceptional lyrics, poetry, and more- all in one place.",
+  "About description":
+    "Tired of flipping back and forth between dictionaries, rhyme lists, spell checkers, and more? Quilli has you covered, free of charge.",
   "Feature cards": {
     type: "object",
     value: [

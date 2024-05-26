@@ -1,10 +1,8 @@
 // import flattenNestedValues from "./util/flatten";
 import "../ui/index.css";
 import Launched from "./context";
-import { createRoot } from "react-dom/client";
 import type { TagValue, PartialTagValue, Tag } from "../types/tag";
 import type { Renderer } from "../types/render";
-import type { Root } from "react-dom/client";
 import { useRef, useState, useEffect } from "react";
 
 export function renderSingleTagUI(parentTag: Tag, id: string) {
@@ -26,7 +24,7 @@ export function renderSingleTagUI(parentTag: Tag, id: string) {
   if (!renderer) return;
 
   function renderTag(parentTag: Tag, tag: Tag, id: string) {
-    if (!tag.el.current) return;
+    if (!tag.el.current) return null;
 
     if (Array.isArray(tag.data.value)) {
       Array.from(tag.el.current.children).forEach((child, i) => {
@@ -51,25 +49,11 @@ export function renderSingleTagUI(parentTag: Tag, id: string) {
         );
       });
     } else {
-      const nodeId = `Lroot-${id.split(" ").join("-")}`;
-
-      let root: Root;
-      if (Launched.roots.has(nodeId)) {
-        root = Launched.roots.get(nodeId)!;
-      } else {
-        const reactLink = document.createElement("div");
-        reactLink.id = nodeId;
-        tag.el.current.appendChild(reactLink);
-        root = createRoot(reactLink);
-        Launched.roots.set(nodeId, root);
-      }
-
       if (tag.data.type !== parentTag.data.type) {
         const renderer = getRendererForFormat(tag.data.type);
 
-        if (renderer)
-          root.render(<TagUI tag={tag} renderer={renderer} id={id} />);
-      } else root.render(<TagUI tag={tag} renderer={renderer!} id={id} />);
+        if (renderer) return <TagUI tag={tag} renderer={renderer} id={id} />;
+      } else return <TagUI tag={tag} renderer={renderer!} id={id} />;
     }
   }
 
