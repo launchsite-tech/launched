@@ -2,7 +2,6 @@ import { useMediaQuery } from "../../core/hooks";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import type { Renderer } from "../../types/render";
-import type { PartialTagValue } from "../../types/tag";
 import flattenTagValues from "../../core/util/flatten";
 
 function MultifieldTagUI({
@@ -13,7 +12,7 @@ function MultifieldTagUI({
 }: {
   selected: boolean;
   value: Record<string, any>;
-  updateData: (data: Record<string, PartialTagValue>) => void;
+  updateData: (data: Record<string, any>) => void;
   close: () => void;
 }) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -92,9 +91,8 @@ function MultifieldTagUI({
       );
 }
 
-export const MultifieldTagRenderer: Renderer<Record<string, PartialTagValue>> =
-  {
-    component: (props) => {
-      return <MultifieldTagUI {...props} />;
-    },
-  };
+export const MultifieldTagRenderer: Renderer<Record<string, any>> = {
+  component: (props) => {
+    return <MultifieldTagUI {...props} />;
+  },
+};

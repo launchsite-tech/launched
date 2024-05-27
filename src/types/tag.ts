@@ -1,19 +1,9 @@
-type PartialTagValue =
-  | string
-  | number
-  | string[]
-  | number[]
-  | Partial<TagValue>
-  | Partial<TagValue>[];
-
 type TagValue = {
-  type: string;
-  value: PartialTagValue | Record<string, PartialTagValue>;
-  locked: boolean;
-  options?: string[];
+  readonly type: string;
+  readonly value: any;
 };
 
-type TagSchema<T extends Record<string, PartialTagValue>> = {
+type TagSchema<T extends Record<string, any>> = {
   [K in keyof T]: T[K];
 };
 
@@ -29,8 +19,8 @@ type FlatTagSchema<T> = {
 
 type Tag = {
   data: TagValue;
-  setData: (value: TagValue) => void;
+  setData: (value: TagValue["value"]) => void;
   el: React.RefObject<HTMLElement>;
 };
 
-export { TagValue, PartialTagValue, Tag, TagSchema, FlatTagSchema };
+export { TagValue, Tag, TagSchema, FlatTagSchema };

@@ -2,8 +2,9 @@ import EventEmitter from "./events";
 import { useState, useEffect, createRef } from "react";
 import { createRoot } from "react-dom/client";
 import { renderSingleTagUI } from "./renderer";
-import type { Tag, TagValue, PartialTagValue, TagSchema } from "../types/tag";
+import type { Tag, TagValue, TagSchema } from "../types/tag";
 import type { Renderer } from "../types/render";
+
 export interface Config<Schema extends TagSchema<any>> {
   tags: Schema;
   locked?: boolean;
@@ -36,8 +37,8 @@ export default class Launched<Schema extends TagSchema<any>> {
 
     this.Provider = () => {
       const [, renderCount] = useState(0);
-      const [tags, setTags] = useState(
-        this.makeTagsFromTagValues(this.cleanTags())
+      const [tags, setTags] = useState(() =>
+        this.makeTagsFromSchema(this.config.tags)
       );
 
       useEffect(() => {
@@ -50,10 +51,18 @@ export default class Launched<Schema extends TagSchema<any>> {
             key,
             {
               ...data,
-              setData: (value: TagValue) => {
+              setData: (value: TagValue["value"]) => {
+                if (!tags[key]) return;
+
                 setTags((p) => ({
                   ...p,
-                  [key]: { ...p[key], data: value },
+                  [key]: {
+                    ...p[key],
+                    data: {
+                      type: p[key]!.data.type,
+                      value,
+                    },
+                  },
                 }));
 
                 Launched.events.emit("tag:change", key, value);
@@ -84,63 +93,81 @@ export default class Launched<Schema extends TagSchema<any>> {
     return createRoot(root);
   }
 
-  private makeTagsFromTagValues(tags: Record<keyof Schema, TagValue>) {
+  private makeTagsFromSchema(
+    tags: Schema
+  ): Record<keyof Schema, Omit<Tag, "setData">> {
     return Object.fromEntries(
-      Object.keys(tags).map((key: keyof Schema) => {
-        const el = createRef<HTMLElement | null>();
+      Object.entries(tags).map(([key, data]) => {
+        const el = createRef<HTMLElement>();
+
+        let type: string, value: any;
+
+        if (typeof data === "object" && !Array.isArray(data)) {
+          if (data.type && typeof data.type !== "string")
+            throw new Error("Type must be a string.");
+
+          type =
+            "type" in data
+              ? data.type
+              : typeof data.value !== "object"
+                ? typeof data.value
+                : Array.isArray(data.value)
+                  ? "objectArray"
+                  : "object";
+
+          value = "type" in data ? data.value : data;
+        } else if (Array.isArray(data)) {
+          if (!data.length)
+            throw new Error("Array must have at least one item.");
+
+          type = typeof data[0];
+
+          if (type === "object" || data.some((v) => typeof v !== type))
+            throw new Error(
+              "Array must have consistent types. For variable types, pass an object with a custom 'type'."
+            );
+
+          type = `${type}Array`;
+          value = data;
+        } else {
+          type = typeof data;
+          value = data;
+        }
+
+        console.log(key, type);
 
         return [
           key,
           {
-            data: tags[key],
             el,
+            data: { type, value },
           },
         ];
       })
     ) as Record<keyof Schema, Omit<Tag, "setData">>;
   }
 
-  private cleanTags(): Record<keyof Schema, TagValue> {
-    return Object.fromEntries(
-      Object.entries(this.config.tags).map(([key, value]) => {
-        let dataValue: TagValue;
-
-        if (Array.isArray(value)) {
-          dataValue = {
-            type: "text",
-            value: value.map((v: Partial<TagValue>) => ({
-              type: "text",
-              value: v.value,
-              locked: this.config.locked ?? false,
-              ...v,
-            })),
-            locked: this.config.locked ?? false,
-          };
-        } else {
-          const options: Partial<TagValue> =
-            typeof value === "object" ? value! : {};
-
-          dataValue = {
-            type: "text",
-            value: (typeof value === "object" ? options.value : value) as
-              | PartialTagValue
-              | Record<string, PartialTagValue>,
-            locked: this.config.locked ?? false,
-            ...options,
-          };
-        }
-
-        return [key, dataValue];
-      })
-    ) as Record<keyof Schema, TagValue>;
-  }
-
-  public useTag<S extends Schema = Schema>(key: keyof S) {
+  public useTag<S extends Schema = Schema>(
+    key: keyof S,
+    renderer?: Renderer<any> | string
+  ): (el: HTMLElement) => void {
     const t = this ?? Launched.instance;
 
     const tag = t.tags[key];
 
     if (!tag) throw new Error(`Tag "${String(key)}" not found.`);
+
+    if (renderer) {
+      if (typeof renderer === "string") {
+        if (!Launched.formats.has(renderer))
+          throw new Error(`No renderer found for tag type: ${renderer}`);
+
+        // TODO: Use when schema isn't specified
+        // tag.data.type = renderer;
+      } else {
+        Launched.formats.set(tag.data.type, renderer);
+      }
+    }
 
     return <T extends HTMLElement | null>(el: T) => {
       if (!el) return;
@@ -154,23 +181,32 @@ export default class Launched<Schema extends TagSchema<any>> {
   }
 
   private render(tags: Record<keyof Schema, Tag>) {
-    console.log("rendering");
-
     return Object.entries(tags).map(([key, tag]) =>
       renderSingleTagUI(tag, key)
     );
   }
 
-  public static registerTagFormat<V extends PartialTagValue>(
-    name: string,
-    renderer: Renderer<V>
-  ) {
+  public static registerTagFormat<V>(name: string, renderer: Renderer<V>) {
     Launched.formats.set(name, renderer);
   }
 }
 
-export function useTag<S extends TagSchema<S>>(key: keyof S) {
+export function useTag<S extends TagSchema<S>>(
+  key: keyof S
+): (el: HTMLElement | null) => void;
+export function useTag<S extends TagSchema<S>>(
+  key: keyof S,
+  type: string
+): (el: HTMLElement | null) => void;
+export function useTag<S extends TagSchema<S>>(
+  key: keyof S,
+  renderer: Renderer<any>
+): (el: HTMLElement | null) => void;
+export function useTag<S extends TagSchema<S>>(
+  key: keyof S,
+  typeOrRenderer?: Renderer<any> | string
+) {
   if (!Launched.instance) throw new Error("Launched not initialized.");
 
-  return Launched.instance.useTag<S>(key);
+  return Launched.instance.useTag<S>(key, typeOrRenderer);
 }

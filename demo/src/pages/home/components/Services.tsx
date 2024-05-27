@@ -2,14 +2,11 @@ import { useTag } from "../../../dist";
 
 import { Music, Activity, Search, Hash, Check } from "react-feather";
 
-import type { Schema } from "../../../siteSchema";
-import type { FlatTagSchema } from "../../../dist/types/tag";
-
 // eslint-disable-next-line react/jsx-key
 const icons = [<Music />, <Activity />, <Search />, <Hash />, <Check />];
 
 export default function Services() {
-  const cardsTag = useTag<Schema>("Feature cards");
+  const cardsTag = useTag("Feature cards");
 
   return (
     <section id="SERVICES" className="mt-20 w-full max-w-7xl">

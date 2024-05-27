@@ -2,7 +2,7 @@
 import "../ui/index.css";
 import Launched from "./context";
 import { createPortal } from "react-dom";
-import type { TagValue, PartialTagValue, Tag } from "../types/tag";
+import type { Tag } from "../types/tag";
 import type { Renderer } from "../types/render";
 import { useRef, useState, useEffect } from "react";
 
@@ -35,15 +35,14 @@ export function renderSingleTagUI(parentTag: Tag, id: string): React.ReactNode {
             el: { current: child as HTMLElement },
             data: {
               ...tag.data,
-              value: (tag.data.value as PartialTagValue[])[i]!,
+              value: (tag.data.value as any[])[i]!,
             },
             setData: (data) => {
-              tag.setData({
-                ...tag.data,
-                value: (tag.data.value as Partial<TagValue>[]).map(
-                  (v, index) => (index === i ? data : v)
-                ),
-              });
+              tag.setData(
+                (tag.data.value as (string | number)[]).map((v, index) =>
+                  index === i ? data : v
+                )
+              );
             },
           },
           `${id}-${i}`
@@ -88,10 +87,7 @@ function TagUI({
   }
 
   function updateData(data: any) {
-    tag.setData({
-      ...tag.data,
-      value: data,
-    });
+    tag.setData(data);
     renderer?.onDataUpdate?.({
       element: tag.el.current ?? undefined,
       data,

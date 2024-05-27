@@ -1,10 +1,8 @@
-import type { PartialTagValue } from "./tag";
-
 type RendererFunctionState = {
   element?: HTMLElement;
 };
 
-export type Renderer<V extends PartialTagValue> = {
+export type Renderer<V> = {
   component: (props: {
     id: string;
     element: HTMLElement;
