@@ -1,12 +1,13 @@
 // import flattenNestedValues from "./util/flatten";
 import "../ui/index.css";
 import Launched from "./context";
+import { createPortal } from "react-dom";
 import type { TagValue, PartialTagValue, Tag } from "../types/tag";
 import type { Renderer } from "../types/render";
 import { useRef, useState, useEffect } from "react";
 
-export function renderSingleTagUI(parentTag: Tag, id: string) {
-  if (!parentTag || !parentTag.el.current) return;
+export function renderSingleTagUI(parentTag: Tag, id: string): React.ReactNode {
+  if (!parentTag || !parentTag.el.current) return null;
 
   function getRendererForFormat(format: string) {
     const renderer = Launched.formats.get(format);
@@ -21,9 +22,9 @@ export function renderSingleTagUI(parentTag: Tag, id: string) {
 
   const renderer = getRendererForFormat(parentTag.data.type);
 
-  if (!renderer) return;
+  if (!renderer) return null;
 
-  function renderTag(parentTag: Tag, tag: Tag, id: string) {
+  function renderTag(parentTag: Tag, tag: Tag, id: string): React.ReactNode {
     if (!tag.el.current) return null;
 
     if (Array.isArray(tag.data.value)) {
@@ -48,16 +49,21 @@ export function renderSingleTagUI(parentTag: Tag, id: string) {
           `${id}-${i}`
         );
       });
-    } else {
-      if (tag.data.type !== parentTag.data.type) {
-        const renderer = getRendererForFormat(tag.data.type);
 
-        if (renderer) return <TagUI tag={tag} renderer={renderer} id={id} />;
-      } else return <TagUI tag={tag} renderer={renderer!} id={id} />;
+      return null;
+    } else {
+      const childRenderer =
+        tag.data.type === parentTag.data.type
+          ? renderer
+          : getRendererForFormat(tag.data.type);
+
+      if (!childRenderer) return null;
+
+      return <TagUI key={id} tag={tag} renderer={childRenderer} id={id} />;
     }
   }
 
-  renderTag(parentTag, parentTag, id);
+  return renderTag(parentTag, parentTag, id);
 }
 
 function TagUI({
@@ -116,7 +122,7 @@ function TagUI({
 
   if (!tag.el.current) return null;
 
-  return (
+  return createPortal(
     <div
       ref={containerRef}
       tabIndex={0}
@@ -136,6 +142,7 @@ function TagUI({
         close={close}
         id={id}
       />
-    </div>
+    </div>,
+    tag.el.current
   );
 }

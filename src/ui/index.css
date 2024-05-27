@@ -3,9 +3,9 @@
   position: absolute;
   inset: 0;
   width: 100%;
-  /* min-height: 100%;
-  height: min-content; */
-  height: 100%;
+  /* height: 100%; */
+  min-height: 100%;
+  height: min-content;
   outline: 1px solid;
   outline-color: color-mix(in srgb, rgba(255, 0, 255, 0.1) 70%, var(--accent));
   transition:
@@ -23,25 +23,21 @@
     outline-color: var(--accent);
     border-radius: 1px;
   }
-
-  .tagged:has(div > &.active .Launched__tag-inlineEditor) {
-    color: transparent;
-  }
 }
 
 .Launched__tag-container:has(.Launched__tag-inlineEditor) {
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  font-style: inherit;
-  font-variant: inherit;
-  line-height: inherit;
+  font: inherit;
+  white-space: inherit;
   letter-spacing: inherit;
+  color: inherit;
+  caret-color: inherit;
 
+  /* min-height: 100%;
+  height: min-content; */
   display: inline-grid;
   vertical-align: top;
   align-items: stretch;
-  color: transparent;
+  position: relative;
 
   &::after,
   textarea {
@@ -54,11 +50,7 @@
   &::after {
     content: attr(data-value) " ";
     visibility: hidden;
-    white-space: inherit;
-  }
-
-  &.active {
-    color: var(--accent);
+    white-space: pre-wrap;
   }
 }
 

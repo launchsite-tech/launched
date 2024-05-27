@@ -1,8 +1,7 @@
 import "./ui/globals.css";
 
 import Launched from "./core/context";
-import { LaunchedProvider } from "./core/context";
-import { useLaunched } from "./core/hooks";
+import { useTag } from "./core/context";
 
 import type { Config } from "./core/context";
 import type { TagValue, PartialTagValue } from "./types/tag";
@@ -15,6 +14,6 @@ Launched.registerTagFormat("text", InlineTagRenderer);
 Launched.registerTagFormat("object", MultifieldTagRenderer);
 
 export default Launched;
-export { useLaunched, LaunchedProvider };
+export { useTag };
 
 export type { Config, TagValue, PartialTagValue, Renderer };

@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import type { Renderer } from "../../types/render";
 
 function InlineTagUI({
@@ -13,13 +14,25 @@ function InlineTagUI({
   updateData: (data: string) => void;
   close: () => void;
 }) {
+  const editorRef = useRef<HTMLTextAreaElement>(null);
+
+  function getContainer() {
+    return element.querySelector(".Launched__tag-container") as HTMLElement;
+  }
+
+  useEffect(() => {
+    getContainer().dataset["value"] = value;
+  }, []);
+
   return (
     <textarea
       className="Launched__tag-inlineEditor"
       defaultValue={value}
       spellCheck={selected}
+      rows={1}
+      ref={editorRef}
       onChange={(e) => {
-        element.dataset["value"] = e.target.value;
+        getContainer().dataset["value"] = e.target.value;
       }}
       onKeyDown={(e) => {
         if (e.key === "Enter") {
@@ -27,6 +40,8 @@ function InlineTagUI({
           e.preventDefault();
 
           updateData(element.dataset["value"] ?? value);
+          close();
+          editorRef.current?.blur();
         } else if (e.key === "Escape") close();
       }}
     />

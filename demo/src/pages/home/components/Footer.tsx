@@ -1,14 +1,9 @@
-import { useLaunched } from "../../../dist/";
+import { useTag } from "../../../dist/";
 
 import { Instagram, Youtube, GitHub } from "react-feather";
 
-import type { Schema } from "../../../siteSchema";
-
 export default function Footer() {
-  const { useTag } = useLaunched();
-
-  const [footerLinks, footerLinksTag] = useTag<Schema>("Footer links");
-  const fl = footerLinks as string[];
+  const footerLinksTag = useTag("Footer links");
 
   return (
     <footer className="flex w-full justify-center bg-salmon-lgt p-8">
@@ -32,9 +27,9 @@ export default function Footer() {
           <path d="M9.5096 17.6157C9.46088 17.6157 9.41281 17.6162 9.36442 17.6157C10.1387 17.6803 10.8969 17.8738 11.639 18.1965C12.381 18.5352 13.1312 18.9466 13.8893 19.4306C14.6637 19.9145 15.4541 20.4146 16.2607 20.9308C17.0673 21.4631 17.9222 21.9552 18.8256 22.4068C20.2613 23.1328 21.6164 23.6006 22.8908 23.8103C24.1652 24.0361 25.3267 24.0603 26.3752 23.8829C27.4399 23.7216 28.3594 23.407 29.1337 22.9392C29.9081 22.4714 30.513 21.9068 30.9485 21.2454C31.3841 20.584 31.6261 19.8742 31.6745 19.116L31.5293 19.0192C30.8679 19.5677 30.1178 19.9871 29.2789 20.2775C28.4401 20.5678 27.5367 20.7372 26.5688 20.7856C25.6009 20.834 24.5846 20.7614 23.5199 20.5678C22.4714 20.3743 21.4067 20.0678 20.3259 19.6483C19.3257 19.2612 18.4304 18.9143 17.6399 18.6078C16.8495 18.3175 16.1074 18.0594 15.4138 17.8335C14.7201 17.6238 14.0345 17.4383 13.357 17.277C13.2034 17.2441 13.0476 17.2124 12.8899 17.1819C11.8617 17.4711 10.7349 17.6157 9.5096 17.6157Z" />
         </svg>
         <nav ref={footerLinksTag} className="mr-auto flex items-center gap-8">
-          {fl.map((link, i) => (
+          {/* {fl.map((link, i) => (
             <span key={i}>{link}</span>
-          ))}
+          ))} */}
         </nav>
         <nav className="flex items-center gap-8">
           <a href="https://instagram.com">
