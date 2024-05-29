@@ -65,7 +65,6 @@ function TagUI({
   renderer: Renderer<any>;
   id: string;
 }) {
-  // console.log("rendering", id);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [selected, setSelected] = useState(false);
@@ -89,8 +88,8 @@ function TagUI({
     });
   }
 
-  function onTagSelect(selectedTag: Tag) {
-    if (selectedTag !== tag) setSelected(false);
+  function onTagSelect(selectedId: string) {
+    if (selectedId !== id) setSelected(false);
   }
 
   useEffect(() => {
@@ -121,7 +120,7 @@ function TagUI({
         setSelected(true);
         renderer?.onSelect?.({ element: tag.el.current! });
 
-        Launched.events.emit("tag:select", tag);
+        Launched.events.emit("tag:select", id, tag);
       }}
       className={`Launched__tag-container ${selected && "active"}`}
     >
@@ -129,8 +128,8 @@ function TagUI({
         element={tag.el.current}
         value={tag.data.value}
         selected={selected}
-        updateData={updateData}
-        close={close}
+        updateData={(v) => updateData(v)}
+        close={() => close()}
         id={id}
       />
     </div>,

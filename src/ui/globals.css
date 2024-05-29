@@ -11,10 +11,6 @@
 }
 
 *[class^="Launched__"] {
-  font-family: "Inter", sans-serif;
-  font-size: 16px;
-  color: var(--text);
-
   appearance: none;
   border: none;
   background: none;

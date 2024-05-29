@@ -4,7 +4,6 @@ export type Schema = TagSchema<{
   "Hero description": string;
   "About description": string;
   "Feature cards": {
-    type: "featureCard";
     value: {
       icon: number;
       description: string;
@@ -25,7 +24,6 @@ export const tags: Schema = {
   "About description":
     "Tired of flipping back and forth between dictionaries, rhyme lists, spell checkers, and more? Quilli has you covered, free of charge.",
   "Feature cards": {
-    type: "featureCard",
     value: [
       {
         icon: 0,

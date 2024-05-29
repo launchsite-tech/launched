@@ -111,7 +111,7 @@ export default class Launched<Schema extends TagSchema<any>> {
               ? data.type
               : typeof data.value !== "object"
                 ? typeof data.value
-                : "object";
+                : key;
 
           value = "value" in data ? data.value : data;
         } else if (Array.isArray(data)) {

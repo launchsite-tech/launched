@@ -32,7 +32,6 @@
 ### Inline editor
 
 - [x] Improper height resizing
-- [ ] Whitespace copying
 
 ### Object editor
 

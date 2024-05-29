@@ -7,11 +7,11 @@ import type { RendererProps } from "../../../dist";
 // eslint-disable-next-line react/jsx-key
 const icons = [<Music />, <Activity />, <Search />, <Hash />, <Check />];
 
-function Card(props: RendererProps<{ icon: number; description: string }>) {
+function Card({ value }: RendererProps<{ icon: number; description: string }>) {
   return (
     <li className="flex h-64 max-w-48 flex-col items-center justify-center gap-6 rounded-2xl border border-gray-border px-6 text-center font-sans text-sm/[19.6px] text-home">
-      <span>{icons[props.value.icon]}</span>
-      <p>{props.value.description}</p>
+      <span>{icons[value.icon]}</span>
+      <p>{value.description}</p>
     </li>
   );
 }

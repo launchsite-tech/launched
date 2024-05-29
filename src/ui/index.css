@@ -1,7 +1,9 @@
 .Launched__tag-container {
   position: relative;
   width: max-content;
+  max-width: 100%;
   height: max-content;
+  max-height: 100%;
   cursor: pointer;
   outline: 1px solid;
   outline-color: color-mix(in srgb, rgba(255, 0, 255, 0.1) 70%, var(--accent));
