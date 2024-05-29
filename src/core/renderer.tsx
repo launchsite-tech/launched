@@ -13,7 +13,7 @@ export function renderSingleTagUI(parentTag: Tag, id: string): React.ReactNode {
     const renderer = Launched.formats.get(format);
 
     if (!renderer) {
-      console.error(`No renderer found for tag type: ${format}`);
+      console.warn(`No renderer found for tag type: ${format}`);
       return;
     }
 
@@ -28,14 +28,14 @@ export function renderSingleTagUI(parentTag: Tag, id: string): React.ReactNode {
     if (!tag.el.current) return null;
 
     if (Array.isArray(tag.data.value)) {
-      Array.from(tag.el.current.children).forEach((child, i) => {
-        renderTag(
+      return tag.data.value.map((t, i) => {
+        return renderTag(
           parentTag,
           {
-            el: { current: child as HTMLElement },
+            el: { current: tag.el.current },
             data: {
-              ...tag.data,
-              value: (tag.data.value as any[])[i]!,
+              type: tag.data.type,
+              value: t,
             },
             setData: (data) => {
               tag.setData(
@@ -48,17 +48,8 @@ export function renderSingleTagUI(parentTag: Tag, id: string): React.ReactNode {
           `${id}-${i}`
         );
       });
-
-      return null;
     } else {
-      const childRenderer =
-        tag.data.type === parentTag.data.type
-          ? renderer
-          : getRendererForFormat(tag.data.type);
-
-      if (!childRenderer) return null;
-
-      return <TagUI key={id} tag={tag} renderer={childRenderer} id={id} />;
+      return <TagUI key={id} tag={tag} renderer={renderer!} id={id} />;
     }
   }
 
@@ -74,15 +65,19 @@ function TagUI({
   renderer: Renderer<any>;
   id: string;
 }) {
+  // console.log("rendering", id);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [selected, setSelected] = useState(false);
 
   function close() {
     setSelected(false);
+    (document.activeElement as HTMLElement).blur();
+
     renderer?.onClose?.({
       element: tag.el.current ?? undefined,
     });
+
     Launched.events.emit("tag:deselect", tag);
   }
 

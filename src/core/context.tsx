@@ -103,7 +103,7 @@ export default class Launched<Schema extends TagSchema<any>> {
         let type: string, value: any;
 
         if (typeof data === "object" && !Array.isArray(data)) {
-          if (data.type && typeof data.type !== "string")
+          if ("type" in data && typeof data.type !== "string")
             throw new Error("Type must be a string.");
 
           type =
@@ -111,30 +111,27 @@ export default class Launched<Schema extends TagSchema<any>> {
               ? data.type
               : typeof data.value !== "object"
                 ? typeof data.value
-                : Array.isArray(data.value)
-                  ? "objectArray"
-                  : "object";
+                : "object";
 
-          value = "type" in data ? data.value : data;
+          value = "value" in data ? data.value : data;
         } else if (Array.isArray(data)) {
           if (!data.length)
             throw new Error("Array must have at least one item.");
 
           type = typeof data[0];
 
-          if (type === "object" || data.some((v) => typeof v !== type))
+          if (type === "object")
             throw new Error(
-              "Array must have consistent types. For variable types, pass an object with a custom 'type'."
+              "Please create a custom type to use object arrays."
             );
+          else if (data.some((v) => typeof v !== type))
+            throw new Error("Array must have consistent types.");
 
-          type = `${type}Array`;
           value = data;
         } else {
           type = typeof data;
           value = data;
         }
-
-        console.log(key, type);
 
         return [
           key,

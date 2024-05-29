@@ -31,6 +31,7 @@ function InlineTagUI({
       spellCheck={selected}
       rows={1}
       ref={editorRef}
+      onBlur={close}
       onChange={(e) => {
         getContainer().dataset["value"] = e.target.value;
       }}
@@ -41,7 +42,6 @@ function InlineTagUI({
 
           updateData(element.dataset["value"] ?? value);
           close();
-          editorRef.current?.blur();
         } else if (e.key === "Escape") close();
       }}
     />

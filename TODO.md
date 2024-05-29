@@ -9,8 +9,7 @@
   - [x] Registering custom tag types
   - [ ] Default addon tag types
     - [x] Text
-    - [x] Paragraph
-    - [ ] Object
+    - [ ] Link
     - [ ] Number
     - [ ] Date
     - [ ] Time
