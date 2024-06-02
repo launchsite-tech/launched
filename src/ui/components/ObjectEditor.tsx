@@ -2,7 +2,6 @@ import { useMediaQuery } from "../../core/hooks";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import type { Renderer } from "../../types/render";
-import flattenTagValues from "../../core/util/flatten";
 
 function MultifieldTagUI({
   selected,
@@ -17,9 +16,7 @@ function MultifieldTagUI({
 }) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  const [values, setValues] = useState<Record<string, string | number>>(
-    flattenTagValues(value) as Record<string, string | number>
-  );
+  const [values, setValues] = useState<Record<string, string | number>>(value);
 
   console.log(isDesktop);
 

@@ -1,13 +1,9 @@
-// import flattenNestedValues from "./util/flatten";
 import "../ui/index.css";
 import Launched from "./context";
 import type { Tag } from "../types/tag";
 import type { Renderer } from "../types/render";
 import { useRef, useState, useEffect } from "react";
-// import { createPortal } from "react-dom";
-import React from "react";
 import { createRoot } from "react-dom/client";
-// import type { Root } from "react-dom/client";
 
 export function renderSingleTagUI(parentTag: Tag, id: string): void {
   if (!parentTag || !parentTag.el.current)
@@ -55,28 +51,20 @@ export function renderSingleTagUI(parentTag: Tag, id: string): void {
     } else {
       if (!tag.el.current) return;
 
-      // let root: Root;
-      // const nodeId = `Lroot-${childId.split(" ").join("-")}`;
+      setTimeout(() => {
+        if (Launched.roots.get(childId)) {
+          Launched.roots.get(childId)!.unmount();
+          Launched.roots.delete(childId);
+        }
 
-      // if (Launched.roots.get(childId)) {
-      //   root = Launched.roots.get(childId)!;
-      // } else {
-      //   const rootContainer = document.createElement("div");
-      //   rootContainer.id = nodeId;
-      //   tag.el.current.appendChild(rootContainer);
+        const rootNode = document.createElement("div");
+        tag.el.current!.appendChild(rootNode);
+        const root = createRoot(rootNode);
 
-      //   root = createRoot(rootContainer);
-      //   Launched.roots.set(childId, root);
-      // }
-      const rootNode = document.createElement("div");
-      tag.el.current.appendChild(rootNode);
-      const root = createRoot(rootNode);
+        Launched.roots.set(childId, root);
 
-      root.render(
-        <React.StrictMode>
-          <TagUI tag={tag} renderer={renderer!} id={childId} />
-        </React.StrictMode>
-      );
+        root.render(<TagUI tag={tag} renderer={renderer!} id={childId} />);
+      }, 0);
     }
   }
 
@@ -108,7 +96,6 @@ function TagUI({
   }
 
   function updateData(data: any) {
-    console.log(data);
     tag.setData(data);
 
     renderer?.onDataUpdate?.({
