@@ -1,17 +1,30 @@
 {
-  "name": "launched",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "@michaelbeck/launched",
+  "version": "0.0.1",
+  "description": "Make website content editable by clients, no codebase access required.",
+  "keywords": [
+    "launched",
+    "cms",
+    "content management",
+    "editable",
+    "react",
+    "freelance"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "clean": "rimraf ./demo/src/dist",
-    "copy": "copyfiles -u 1 src/**/*.css ./demo/src/dist",
-    "build": "npm run clean && tsc & npm run copy",
+    "build": "cmd /c scripts\\build.cmd",
     "test": "jest"
   },
-  "keywords": [],
-  "author": "",
+  "author": "Michael Beck <beck.jacob.michael@gmail.com>",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MMMJB/launched.git"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/react": "^18.3.2",

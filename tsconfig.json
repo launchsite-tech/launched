@@ -7,7 +7,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "declaration": true,
-    "outDir": "./demo/src/dist",
+    "outDir": "./dist",
     "noEmit": false,
     "strict": true,
     "noImplicitAny": true,
