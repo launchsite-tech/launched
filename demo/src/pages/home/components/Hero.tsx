@@ -1,9 +1,10 @@
 import { useTag } from "../../../dist";
 
 import GetStartedButton from "./GetStartedButton";
+import type { Schema } from "../../../siteSchema";
 
 export default function Hero() {
-  const descriptionTag = useTag("Hero description");
+  const [description, descriptionTag] = useTag<Schema>("Hero description");
 
   return (
     <main className="grid w-full max-w-[1500px] grid-cols-2">
@@ -13,7 +14,9 @@ export default function Hero() {
           <span className="decorated font-script text-brand">poetry&nbsp;</span>{" "}
           with the power of AI
         </h1>
-        <p ref={descriptionTag} className="mt-4 max-w-xl"></p>
+        <p ref={descriptionTag} className="mt-4 max-w-xl">
+          {description}
+        </p>
         <div className="mt-8 flex">
           <GetStartedButton />
           <button

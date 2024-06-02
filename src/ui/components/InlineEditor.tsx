@@ -40,7 +40,7 @@ function InlineTagUI({
           // TODO: See if there's a cleaner way to do this. There needs to be a way to detect text wrapping on parent element.
           e.preventDefault();
 
-          updateData(element.dataset["value"] ?? value);
+          updateData(getContainer().dataset["value"] ?? value);
           close();
         } else if (e.key === "Escape") close();
       }}
@@ -51,5 +51,20 @@ function InlineTagUI({
 export const InlineTagRenderer: Renderer<string> = {
   component: (props) => {
     return <InlineTagUI {...props} />;
+  },
+  onSelect: (state) => {
+    if (state.element) {
+      state.element.style.setProperty("color", "transparent");
+    }
+  },
+  onClose: (state) => {
+    if (state.element) {
+      state.element.style.removeProperty("color");
+    }
+  },
+  onDataUpdate: (state) => {
+    if (state.element) {
+      state.element.style.removeProperty("color");
+    }
   },
 };

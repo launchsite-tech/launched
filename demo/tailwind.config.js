@@ -38,12 +38,20 @@ export default {
           from: { opacity: "0" },
           to: { opacity: "1" },
         },
+        // popout: {
+        //   "0%": { boxShadow: "0 0 0 0 rgba(0, 0, 0, 0)" },
+        //   "100%": {
+        //     boxShadow:
+        //       "0 8px 16px -8px rgba(0, 0, 0, .3), 0 13px 27px -5px rgba(0, 0, 0, .25)",
+        //   },
+        // },
       },
       animation: {
         cta: "cta 700ms steps(29) forwards",
         "cta-rev": "cta-rev 700ms steps(29) forwards",
         "scroll-left": "scroll-left 500ms linear infinite",
         "fade-in": "fade-in 500ms ease-out forwards",
+        popout: "popout 2s ease-out alternate infinite",
       },
       boxShadow: {
         default: "0px 2px 4px 2px rgba(60, 64, 67, .149)",

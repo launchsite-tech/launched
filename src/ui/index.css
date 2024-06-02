@@ -1,9 +1,8 @@
 .Launched__tag-container {
-  position: relative;
-  width: max-content;
-  max-width: 100%;
-  height: max-content;
-  max-height: 100%;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
   cursor: pointer;
   outline: 1px solid;
   outline-color: color-mix(in srgb, rgba(255, 0, 255, 0.1) 70%, var(--accent));
@@ -28,8 +27,6 @@
   font: inherit;
   white-space: inherit;
   letter-spacing: inherit;
-  color: inherit;
-  caret-color: inherit;
 
   /* min-height: 100%;
   height: min-content; */
@@ -56,14 +53,18 @@
 }
 
 .Launched__tag-inlineEditor {
+  letter-spacing: inherit;
+  font: inherit;
+
   display: block;
   width: 100%;
   height: 100%;
   outline: none;
-  font: inherit;
-  letter-spacing: inherit;
-  color: currentColor;
-  caret-color: currentColor;
+  color: transparent;
+
+  &:focus {
+    color: var(--accent);
+  }
 }
 
 .Launched__popoutContainer {

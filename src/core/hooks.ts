@@ -1,4 +1,18 @@
-import { useState, useLayoutEffect } from "react";
+import { useState, useLayoutEffect, useContext } from "react";
+import Launched from "./context";
+import type { TagSchema } from "../types/tag";
+import type { Renderer } from "../types/render";
+
+export function useTag<S extends TagSchema<S>>(
+  key: keyof S,
+  typeOrRenderer?: Renderer<any> | string
+) {
+  if (!Launched.instance) throw new Error("Launched not initialized.");
+
+  const { useTag } = useContext(Launched.instance.context);
+
+  return useTag(key, typeOrRenderer);
+}
 
 export function useMediaQuery(query: string) {
   function getMatches() {

@@ -1,7 +1,8 @@
 import "./ui/globals.css";
 
 import Launched from "./core/context";
-import { useTag } from "./core/context";
+import { LaunchedProvider } from "./core/context";
+import { useTag } from "./core/hooks";
 
 import type { Config } from "./core/context";
 import type { TagValue } from "./types/tag";
@@ -13,6 +14,5 @@ import { MultifieldTagRenderer } from "./ui/components/ObjectEditor";
 Launched.registerTagFormat("string", InlineTagRenderer);
 
 export default Launched;
-export { useTag, MultifieldTagRenderer };
-
+export { useTag, MultifieldTagRenderer, LaunchedProvider };
 export type { Config, TagValue, Renderer, RendererProps };

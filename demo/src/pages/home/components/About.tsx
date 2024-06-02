@@ -1,7 +1,7 @@
 import { useTag } from "../../../dist";
 
 export default function About() {
-  const descriptionTag = useTag("About description");
+  const [description, descriptionTag] = useTag("About description");
 
   return (
     <section
@@ -14,7 +14,9 @@ export default function About() {
           Spend less time switching tabs and more time{" "}
           <span className="decorated text-brand">writing</span>.
         </h2>
-        <h3 ref={descriptionTag} className="z-0 mt-4 max-w-[34rem]"></h3>
+        <h3 ref={descriptionTag} className="z-0 mt-4 max-w-[34rem]">
+          {description}
+        </h3>
       </div>
     </section>
   );

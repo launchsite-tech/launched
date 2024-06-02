@@ -1,13 +1,17 @@
 // import flattenNestedValues from "./util/flatten";
 import "../ui/index.css";
 import Launched from "./context";
-import { createPortal } from "react-dom";
 import type { Tag } from "../types/tag";
 import type { Renderer } from "../types/render";
 import { useRef, useState, useEffect } from "react";
+// import { createPortal } from "react-dom";
+import React from "react";
+import { createRoot } from "react-dom/client";
+// import type { Root } from "react-dom/client";
 
-export function renderSingleTagUI(parentTag: Tag, id: string): React.ReactNode {
-  if (!parentTag || !parentTag.el.current) return null;
+export function renderSingleTagUI(parentTag: Tag, id: string): void {
+  if (!parentTag || !parentTag.el.current)
+    return console.warn(`Tag "${id}" was never bound to an element.`);
 
   function getRendererForFormat(format: string) {
     const renderer = Launched.formats.get(format);
@@ -22,14 +26,14 @@ export function renderSingleTagUI(parentTag: Tag, id: string): React.ReactNode {
 
   const renderer = getRendererForFormat(parentTag.data.type);
 
-  if (!renderer) return null;
+  if (!renderer) return;
 
-  function renderTag(parentTag: Tag, tag: Tag, id: string): React.ReactNode {
-    if (!tag.el.current) return null;
+  function renderTag(parentTag: Tag, tag: Tag, childId: string): void {
+    if (!tag.el.current) return;
 
     if (Array.isArray(tag.data.value)) {
-      return tag.data.value.map((t, i) => {
-        return renderTag(
+      tag.data.value.forEach((t, i) => {
+        renderTag(
           parentTag,
           {
             el: { current: tag.el.current },
@@ -49,11 +53,34 @@ export function renderSingleTagUI(parentTag: Tag, id: string): React.ReactNode {
         );
       });
     } else {
-      return <TagUI key={id} tag={tag} renderer={renderer!} id={id} />;
+      if (!tag.el.current) return;
+
+      // let root: Root;
+      // const nodeId = `Lroot-${childId.split(" ").join("-")}`;
+
+      // if (Launched.roots.get(childId)) {
+      //   root = Launched.roots.get(childId)!;
+      // } else {
+      //   const rootContainer = document.createElement("div");
+      //   rootContainer.id = nodeId;
+      //   tag.el.current.appendChild(rootContainer);
+
+      //   root = createRoot(rootContainer);
+      //   Launched.roots.set(childId, root);
+      // }
+      const rootNode = document.createElement("div");
+      tag.el.current.appendChild(rootNode);
+      const root = createRoot(rootNode);
+
+      root.render(
+        <React.StrictMode>
+          <TagUI tag={tag} renderer={renderer!} id={childId} />
+        </React.StrictMode>
+      );
     }
   }
 
-  return renderTag(parentTag, parentTag, id);
+  renderTag(parentTag, parentTag, id);
 }
 
 function TagUI({
@@ -81,11 +108,16 @@ function TagUI({
   }
 
   function updateData(data: any) {
+    console.log(data);
     tag.setData(data);
+
     renderer?.onDataUpdate?.({
       element: tag.el.current ?? undefined,
       data,
     });
+
+    // @ts-expect-error
+    tag.el.current = null;
   }
 
   function onTagSelect(selectedId: string) {
@@ -112,11 +144,13 @@ function TagUI({
 
   if (!tag.el.current) return null;
 
-  return createPortal(
+  return (
     <div
       ref={containerRef}
       tabIndex={0}
-      onClick={() => {
+      onMouseDown={() => {
+        if (selected) return;
+
         setSelected(true);
         renderer?.onSelect?.({ element: tag.el.current! });
 
@@ -132,7 +166,6 @@ function TagUI({
         close={() => close()}
         id={id}
       />
-    </div>,
-    tag.el.current
+    </div>
   );
 }

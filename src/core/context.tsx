@@ -1,9 +1,10 @@
+import React from "react";
 import EventEmitter from "./events";
-import { useState, useEffect, createRef } from "react";
-import { createRoot } from "react-dom/client";
+import { useState, useEffect, createRef, createContext } from "react";
 import { renderSingleTagUI } from "./renderer";
 import type { Tag, TagValue, TagSchema } from "../types/tag";
 import type { Renderer } from "../types/render";
+import type { Root } from "react-dom/client";
 
 export interface Config<Schema extends TagSchema<any>> {
   tags: Schema;
@@ -16,16 +17,29 @@ const defaults = {
   inlineEditable: true,
 };
 
+interface LaunchedContextValue<Schema extends TagSchema<any>> {
+  useTag<S extends Schema>(
+    key: keyof S,
+    renderer?: Renderer<any> | string
+  ): readonly [
+    TagValue["value"],
+    <T extends HTMLElement | null>(el: T) => void,
+  ];
+}
+
 export default class Launched<Schema extends TagSchema<any>> {
   private readonly config: Required<Config<Schema>>;
-  private forceUpdate: () => void = () => {};
 
   public tags: Record<keyof Schema, Tag> = {} as Record<keyof Schema, Tag>;
-  public Provider: React.FC<{}>;
+  public Provider: React.FC<{ children: React.ReactNode }>;
+  public context = createContext<LaunchedContextValue<Schema>>(
+    {} as LaunchedContextValue<Schema>
+  );
 
   public static instance: Launched<any> | null;
   public static events = new EventEmitter();
   public static formats = new Map<string, Renderer<any>>();
+  public static roots = new Map<string, Root>();
 
   constructor(config: Omit<Config<Schema>, "tags">) {
     if (Launched.instance) {
@@ -35,62 +49,54 @@ export default class Launched<Schema extends TagSchema<any>> {
 
     this.config = { ...defaults, ...config } as Required<Config<Schema>>;
 
-    this.Provider = () => {
-      const [, renderCount] = useState(0);
+    this.Provider = ({ children }: { children: React.ReactNode }) => {
       const [tags, setTags] = useState(() =>
         this.makeTagsFromSchema(this.config.tags)
       );
 
-      useEffect(() => {
-        this.forceUpdate = () => renderCount((c) => c + 1);
-      }, []);
+      this.tags = Object.fromEntries(
+        Object.entries(tags).map(([key, data]) => [
+          key,
+          {
+            ...data,
+            setData: (value: TagValue["value"]) => {
+              if (!tags[key]) return;
 
-      useEffect(() => {
-        this.tags = Object.fromEntries(
-          Object.entries(tags).map(([key, data]) => [
-            key,
-            {
-              ...data,
-              setData: (value: TagValue["value"]) => {
-                if (!tags[key]) return;
-
-                setTags((p) => ({
-                  ...p,
-                  [key]: {
-                    ...p[key],
-                    data: {
-                      type: p[key]!.data.type,
-                      value,
-                    },
+              setTags((p) => ({
+                ...p,
+                [key]: {
+                  ...p[key],
+                  data: {
+                    type: p[key]!.data.type,
+                    value,
                   },
-                }));
+                },
+              }));
 
-                Launched.events.emit("tag:change", key, value);
-              },
+              Launched.events.emit("tag:change", key, value);
             },
-          ])
-        ) as Record<keyof Schema, Tag>;
+          },
+        ])
+      ) as Record<keyof Schema, Tag>;
 
+      useEffect(() => {
         Launched.events.emit("data:update", this.tags);
       }, [tags]);
 
-      return this.render(this.tags);
+      return (
+        <this.context.Provider
+          value={{
+            useTag: this.useTag.bind(this),
+          }}
+        >
+          {children}
+        </this.context.Provider>
+      );
     };
 
-    this.createRoot().render(<this.Provider />);
-
-    Launched.events.on("tag:unmount", (tag: Tag) => {
-      // @ts-ignore
-      tag.el.current = null;
+    Launched.events.on("tag:ready", (key: keyof Schema) => {
+      this.render(key);
     });
-  }
-
-  private createRoot() {
-    const root = document.createElement("div");
-    root.setAttribute("id", "launched-root");
-    document.body.appendChild(root);
-
-    return createRoot(root);
   }
 
   private makeTagsFromSchema(
@@ -144,10 +150,10 @@ export default class Launched<Schema extends TagSchema<any>> {
     ) as Record<keyof Schema, Omit<Tag, "setData">>;
   }
 
-  public useTag<S extends Schema = Schema>(
+  private useTag<S extends Schema = Schema>(
     key: keyof S,
     renderer?: Renderer<any> | string
-  ): (el: HTMLElement) => void {
+  ): [TagValue["value"], <T extends HTMLElement | null>(el: T) => void] {
     const t = this ?? Launched.instance;
 
     const tag = t.tags[key];
@@ -166,21 +172,24 @@ export default class Launched<Schema extends TagSchema<any>> {
       }
     }
 
-    return <T extends HTMLElement | null>(el: T) => {
-      if (!el) return;
+    return [
+      tag.data.value,
+      <T extends HTMLElement | null>(el: T) => {
+        if (!el) return;
 
-      (t.tags[key].el.current as T) = el;
+        (t.tags[key].el.current as T) = el;
 
-      Launched.events.emit("tag:ready", t.tags[key], key);
-
-      this.forceUpdate();
-    };
+        Launched.events.emit("tag:ready", key, t.tags[key]);
+      },
+    ] as const;
   }
 
-  private render(tags: Record<keyof Schema, Tag>) {
-    return Object.entries(tags).map(([key, tag]) =>
-      renderSingleTagUI(tag, key)
-    );
+  private render(tag?: keyof Schema) {
+    if (tag) renderSingleTagUI(this.tags[tag], String(tag));
+    else
+      Object.entries(this.tags).map(([key, tag]) =>
+        tag.el.current ? renderSingleTagUI(tag, key) : null
+      );
   }
 
   public static registerTagFormat<V>(name: string, renderer: Renderer<V>) {
@@ -188,22 +197,14 @@ export default class Launched<Schema extends TagSchema<any>> {
   }
 }
 
-export function useTag<S extends TagSchema<S>>(
-  key: keyof S
-): (el: HTMLElement | null) => void;
-export function useTag<S extends TagSchema<S>>(
-  key: keyof S,
-  type: string
-): (el: HTMLElement | null) => void;
-export function useTag<S extends TagSchema<S>>(
-  key: keyof S,
-  renderer: Renderer<any>
-): (el: HTMLElement | null) => void;
-export function useTag<S extends TagSchema<S>>(
-  key: keyof S,
-  typeOrRenderer?: Renderer<any> | string
-) {
-  if (!Launched.instance) throw new Error("Launched not initialized.");
+export function LaunchedProvider<Schema extends TagSchema<any>>({
+  config,
+  children,
+}: {
+  config: Config<Schema>;
+  children: React.ReactNode;
+}) {
+  const L = Launched.instance ?? new Launched(config);
 
-  return Launched.instance.useTag<S>(key, typeOrRenderer);
+  return <L.Provider>{children}</L.Provider>;
 }
