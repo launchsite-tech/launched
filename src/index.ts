@@ -12,7 +12,8 @@ import { InlineTagRenderer } from "./ui/components/InlineEditor";
 import { MultifieldTagRenderer } from "./ui/components/ObjectEditor";
 
 Launched.registerTagFormat("string", InlineTagRenderer);
+Launched.registerTagFormat("object", MultifieldTagRenderer);
 
 export default Launched;
-export { useTag, MultifieldTagRenderer, LaunchedProvider };
+export { useTag, LaunchedProvider };
 export type { Config, TagValue, Renderer, RendererProps };

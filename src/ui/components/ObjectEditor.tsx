@@ -67,10 +67,7 @@ function MultifieldTagUI({
 
                       updateData({
                         ...value,
-                        value: {
-                          ...value["value"],
-                          [k]: v,
-                        },
+                        [k]: v,
                       });
 
                       setValues({

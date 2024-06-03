@@ -9,18 +9,7 @@ export function renderSingleTagUI(parentTag: Tag, id: string): void {
   if (!parentTag || !parentTag.el.current)
     return console.warn(`Tag "${id}" was never bound to an element.`);
 
-  function getRendererForFormat(format: string) {
-    const renderer = Launched.formats.get(format);
-
-    if (!renderer) {
-      console.warn(`No renderer found for tag type: ${format}`);
-      return;
-    }
-
-    return renderer;
-  }
-
-  const renderer = getRendererForFormat(parentTag.data.type);
+  const renderer = Launched.formats.get(parentTag.data.type);
 
   if (!renderer) return;
 
@@ -29,10 +18,14 @@ export function renderSingleTagUI(parentTag: Tag, id: string): void {
 
     if (Array.isArray(tag.data.value)) {
       tag.data.value.forEach((t, i) => {
+        // TODO: Make configurable
+        const childEl =
+          (tag.el.current!.children[i] as HTMLElement) ?? tag.el.current;
+
         renderTag(
           parentTag,
           {
-            el: { current: tag.el.current },
+            el: { current: childEl },
             data: {
               type: tag.data.type,
               value: t,
@@ -51,13 +44,19 @@ export function renderSingleTagUI(parentTag: Tag, id: string): void {
     } else {
       if (!tag.el.current) return;
 
+      const id = `Lt-${childId.split(" ").join("-")}`;
+
       setTimeout(() => {
         if (Launched.roots.get(childId)) {
           Launched.roots.get(childId)!.unmount();
           Launched.roots.delete(childId);
         }
 
+        const existingNode = document.getElementById(id);
+        if (existingNode) existingNode.remove();
+
         const rootNode = document.createElement("div");
+        rootNode.id = id;
         tag.el.current!.appendChild(rootNode);
         const root = createRoot(rootNode);
 

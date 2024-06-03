@@ -5,13 +5,13 @@ import type { Renderer } from "../types/render";
 
 export function useTag<S extends TagSchema<S>>(
   key: keyof S,
-  typeOrRenderer?: Renderer<any> | string
+  renderer?: Renderer<any>
 ) {
   if (!Launched.instance) throw new Error("Launched not initialized.");
 
   const { useTag } = useContext(Launched.instance.context);
 
-  return useTag(key, typeOrRenderer);
+  return useTag(key, renderer);
 }
 
 export function useMediaQuery(query: string) {

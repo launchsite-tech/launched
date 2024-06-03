@@ -117,7 +117,7 @@ export default class Launched<Schema extends TagSchema<any>> {
               ? data.type
               : typeof data.value !== "object"
                 ? typeof data.value
-                : key;
+                : "object";
 
           value = "value" in data ? data.value : data;
         } else if (Array.isArray(data)) {
@@ -152,7 +152,7 @@ export default class Launched<Schema extends TagSchema<any>> {
 
   private useTag<S extends Schema = Schema>(
     key: keyof S,
-    renderer?: Renderer<any> | string
+    renderer?: Renderer<any>
   ): [TagValue["value"], <T extends HTMLElement | null>(el: T) => void] {
     const t = this ?? Launched.instance;
 
@@ -161,15 +161,7 @@ export default class Launched<Schema extends TagSchema<any>> {
     if (!tag) throw new Error(`Tag "${String(key)}" not found.`);
 
     if (renderer) {
-      if (typeof renderer === "string") {
-        if (!Launched.formats.has(renderer))
-          throw new Error(`No renderer found for tag type: ${renderer}`);
-
-        // TODO: Use when schema isn't specified
-        // tag.data.type = renderer;
-      } else {
-        Launched.formats.set(tag.data.type, renderer);
-      }
+      Launched.formats.set(tag.data.type, renderer);
     }
 
     return [
