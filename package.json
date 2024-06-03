@@ -15,7 +15,7 @@
   "scripts": {
     "build": "rimraf dist && cmd /c scripts\\build.cmd dist",
     "build:demo": "rimraf demo/src/dist && cmd /c scripts\\build.cmd demo/src/dist",
-    "watch": "nodemon --exec \"npm run build:demo\" --watch src --ext ts --ext tsx",
+    "watch": "nodemon --exec \"npm run build:demo\"",
     "test": "jest"
   },
   "author": "Michael Beck <beck.jacob.michael@gmail.com>",

@@ -65,11 +65,6 @@ function MultifieldTagUI({
                           ? e.target.value
                           : parseInt(e.target.value) || 0;
 
-                      updateData({
-                        ...value,
-                        [k]: v,
-                      });
-
                       setValues({
                         ...values,
                         [k]: v,
@@ -80,6 +75,14 @@ function MultifieldTagUI({
               );
             })}
           </ul>
+          <button
+            onClick={() => {
+              updateData(values);
+              close();
+            }}
+          >
+            Submit
+          </button>
         </div>,
         container
       );

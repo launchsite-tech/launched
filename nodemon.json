@@ -1,3 +1,5 @@
 {
-  "ignore": ["**/*.test.*", "node_modules", "dist"]
+  "ignore": ["**/*.test.*", "node_modules", "dist"],
+  "watch": ["src"],
+  "ext": "ts, tsx, css"
 }
