@@ -13,7 +13,8 @@
     - [ ] Number
     - [ ] Date
     - [ ] Time
-  - [ ] Custom tag type validation
+- [ ] Schema optional
+  - [ ] Register type/value/renderer inline
 
 ### ux
 
@@ -26,15 +27,3 @@
     - [ ] Number input
     - [ ] Date input
     - [ ] Time input
-
-## Bugs
-
-### Inline editor
-
-- [x] Improper height resizing
-
-### Object editor
-
-- [x] Popup not closing
-- [x] Unwanted root instances
-- [ ] Object fields inconsistently updating

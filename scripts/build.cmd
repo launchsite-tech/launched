@@ -1,9 +1,17 @@
 @echo off
 SETLOCAL EnableDelayedExpansion
 
-SET DIST=%~dp0..\dist
+IF "%~1"=="" (
+    echo No output directory specified.
+    exit /b 1
+)
 
-if exist %DIST% npx rimraf %DIST%
+SET DIST=%~1
+
+if exist %DIST% (
+    echo Output directory already exists.
+    exit /b 1
+)
 mkdir %DIST%
 
 echo Copying files...
@@ -11,7 +19,7 @@ echo Copying files...
 FOR /R src %%G IN (*.css) DO (
     SET "source=%%G"
     SET "relative=%%~dpG"
-    SET "relative=!relative:src\=dist\!"
+    SET "relative=!relative:src\=%DIST%\!"
     SET "destination=!relative!%%~nxG"
     IF NOT EXIST "!relative!" (
         mkdir "!relative!"
@@ -25,4 +33,4 @@ copy LICENSE %DIST%
 
 echo Building project...
 
-npx tsc || echo Build failed && exit /b 1
+npx tsc --outDir %DIST% || echo Build failed && exit /b 1
