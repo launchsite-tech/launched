@@ -46,14 +46,14 @@ export function renderSingleTagUI(parentTag: Tag, id: string): void {
 
       const id = `Lt-${childId.split(" ").join("-")}`;
 
+      const existingNode = document.getElementById(id);
+      if (existingNode) existingNode.remove();
+
       setTimeout(() => {
         if (Launched.roots.get(childId)) {
           Launched.roots.get(childId)!.unmount();
           Launched.roots.delete(childId);
         }
-
-        const existingNode = document.getElementById(id);
-        if (existingNode) existingNode.remove();
 
         const rootNode = document.createElement("div");
         rootNode.id = id;
