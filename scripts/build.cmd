@@ -27,10 +27,6 @@ FOR /R src %%G IN (*.css) DO (
     COPY "!source!" "!destination!"
 )
 
-copy package.json %DIST%
-copy README.md %DIST%
-copy LICENSE %DIST%
-
 echo Building project...
 
 npx tsc --outDir %DIST% || echo Build failed && exit /b 1
