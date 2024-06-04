@@ -1,10 +1,9 @@
 import { useTag } from "../../../dist";
 
 import GetStartedButton from "./GetStartedButton";
-import type { Schema } from "../../../siteSchema";
 
 export default function Hero() {
-  const [description, descriptionTag] = useTag<Schema>("Hero description");
+  const [description, descriptionTag] = useTag("Hero description");
 
   return (
     <main className="grid w-full max-w-[1500px] grid-cols-2">

@@ -1,24 +1,4 @@
-import type { TagSchema } from "./dist/types/tag";
-
-export type Schema = TagSchema<{
-  "Hero description": string;
-  "About description": string;
-  "Feature cards": {
-    value: {
-      icon: number;
-      description: string;
-    }[];
-  };
-  "Footer links": {
-    type: "link";
-    value: {
-      text: string;
-      href: string;
-    }[];
-  };
-}>;
-
-export const tags: Schema = {
+export const tags = {
   "Hero description":
     "Quilli provides you with the AI-driven tools necessary to craft exceptional lyrics, poetry, and more- all in one place.",
   "About description":

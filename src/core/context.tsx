@@ -9,12 +9,10 @@ import type { Root } from "react-dom/client";
 export interface Config<Schema extends TagSchema<any>> {
   tags: Schema;
   locked?: boolean;
-  inlineEditable?: boolean;
 }
 
 const defaults = {
   locked: false,
-  inlineEditable: true,
 };
 
 interface LaunchedContextValue<Schema extends TagSchema<any>> {
@@ -55,28 +53,31 @@ export default class Launched<Schema extends TagSchema<any>> {
       );
 
       this.tags = Object.fromEntries(
-        Object.entries(tags).map(([key, data]) => [
-          key,
-          {
-            ...data,
-            setData: (value: TagValue["value"]) => {
-              if (!tags[key]) return;
+        Object.entries(tags).map(([key, data]) => {
+          const setData = (value: TagValue["value"]) => {
+            if (!tags[key]) return;
 
-              setTags((p) => ({
+            setTags((p) => {
+              const pKey = p[key];
+              if (!pKey) return p;
+
+              return {
                 ...p,
                 [key]: {
-                  ...p[key],
+                  ...pKey,
                   data: {
-                    type: p[key]!.data.type,
+                    type: pKey.data.type,
                     value,
                   },
                 },
-              }));
+              };
+            });
 
-              Launched.events.emit("tag:change", key, value);
-            },
-          },
-        ])
+            Launched.events.emit("tag:change", key, value);
+          };
+
+          return [key, { ...data, setData }];
+        })
       ) as Record<keyof Schema, Tag>;
 
       useEffect(() => {
