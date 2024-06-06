@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img width="24" height="24" src="/demo/public/favicon.svg" />
+  <img width="24" height="24" src="./demo/public/favicon.svg" />
   Launched
 </h1>
 <p align="center">
@@ -26,6 +26,26 @@ To get started, check out [https://launched.tech](https://launched.tech) for doc
 > [!NOTE]
 > Your site needs to be made with react for Launched to work. Learn react [here](https://react.dev).
 
+## How it works
+
+Launched uses a system of tagging to bind elements to their data. Once an element is "tagged", it will be editable by clients.
+
+To define editable content, you must first specify a site schema. A site schema defines elements' names, types, and initial values like so:
+
+```ts
+const siteSchema = {
+  // Type defaults to "text"
+  "Main heading": "This is my website."
+  // Explicit type
+  "Hero image": {
+    type: "image",
+    value: "https://example.com/image.png"
+  }
+}
+```
+
+For more information on site schemas, check out the guide [here](https://launched.tech/docs/schema).
+
 ## Download
 
 ```shell
@@ -44,25 +64,52 @@ npm install launched
 Check out [https://launched.tech](https://launched.tech) for full guides.
 
 ```jsx
-// src/index.tsx
+// src/index.jsx
 
-// Import the Launched provider:
+/* Import the Launched provider */
 import { LaunchedProvider } from "launched"; 
 
-// Define a site schema:
-const tags = {
+/* Define a site schema */
+const schema = {
   "title": "Demo site",
   "description": "Here's a neat little demo for the Launched library."
 }
 
+const config = {
+  tags: schema
+}
+
 ...
 
-// Add the provider to your app:
+/* Add the provider to your app */
 root.render(
   <LaunchedProvider config={config}>
     <App />
   </LaunchedProvider>
 );
+```
+
+```jsx
+// src/app.jsx
+
+/* Import the useTag hook */
+import { useTag } from "launched";
+
+...
+
+export default function App() {
+  /* Access tag data defined in the site schema */
+  const [title, titleTag] = useTag("title");
+  const [description, descriptionTag] = useTag("description");
+
+  /* Bind tag data to elements */
+  return (
+    <div>
+      <h1 ref={titleTag}>{title}</h1>
+      <p ref={descriptionTag}>{description}</p>
+    </div>
+  )
+}
 ```
 
 ## Community
