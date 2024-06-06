@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useContext } from "react";
+import { useState, useEffect, useLayoutEffect, useContext } from "react";
 import Launched from "./context";
 import type { TagSchema } from "../types/tag";
 import type { Renderer } from "../types/render";
@@ -40,4 +40,26 @@ export function useMediaQuery(query: string) {
   }, [query]);
 
   return matches;
+}
+
+export function useScreen() {
+  const [dimensions, setDimensions] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  function onResize() {
+    setDimensions({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  }
+
+  useEffect(() => {
+    window.addEventListener("resize", onResize);
+
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  return dimensions;
 }

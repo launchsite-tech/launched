@@ -151,7 +151,10 @@ export default class Launched<Schema extends TagSchema<any>> {
   private useTag<S extends Schema = Schema>(
     key: keyof S,
     renderer?: Renderer<any>
-  ): [TagData["value"], <T extends HTMLElement | null>(el: T) => void] {
+  ): readonly [
+    TagData["value"],
+    <T extends HTMLElement | null>(el: T) => void,
+  ] {
     const t = this ?? Launched.instance;
 
     const tag = t.tags[key];
