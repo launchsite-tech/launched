@@ -15,6 +15,19 @@
     - [ ] Time
 - [ ] Schema optional
   - [ ] Register type/value/renderer inline
+- [ ] Generate schema from user input
+- [ ] Ditch object view; make every field editable independently
+- [x] Migrate to contenteditable
+  - [x] Sanitize input
+
+### cx
+
+- [ ] Only update site on save
+- [ ] Disable links in edit mode
+- [ ] Movable toolbar
+- [ ] Undo/redo
+- [ ] Auth
+- [ ] Rich text support
 
 ### ux
 

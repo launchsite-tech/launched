@@ -2,7 +2,7 @@ import React from "react";
 import EventEmitter from "./events";
 import { useState, useEffect, createRef, createContext } from "react";
 import { renderSingleTagUI } from "./renderer";
-import type { Tag, TagValue, TagSchema } from "../types/tag";
+import type { Tag, TagData, TagSchema } from "../types/tag";
 import type { Renderer } from "../types/render";
 import type { Root } from "react-dom/client";
 
@@ -19,10 +19,7 @@ interface LaunchedContextValue<Schema extends TagSchema<any>> {
   useTag<S extends Schema>(
     key: keyof S,
     renderer?: Renderer<any> | string
-  ): readonly [
-    TagValue["value"],
-    <T extends HTMLElement | null>(el: T) => void,
-  ];
+  ): readonly [TagData["value"], <T extends HTMLElement | null>(el: T) => void];
 }
 
 export default class Launched<Schema extends TagSchema<any>> {
@@ -54,7 +51,7 @@ export default class Launched<Schema extends TagSchema<any>> {
 
       this.tags = Object.fromEntries(
         Object.entries(tags).map(([key, data]) => {
-          const setData = (value: TagValue["value"]) => {
+          const setData = (value: TagData["value"]) => {
             if (!tags[key]) return;
 
             setTags((p) => {
@@ -96,7 +93,7 @@ export default class Launched<Schema extends TagSchema<any>> {
     };
 
     Launched.events.on("tag:ready", (key: keyof Schema) => {
-      this.render(key);
+      if (!this.config.locked) this.render(key);
     });
   }
 
@@ -154,7 +151,7 @@ export default class Launched<Schema extends TagSchema<any>> {
   private useTag<S extends Schema = Schema>(
     key: keyof S,
     renderer?: Renderer<any>
-  ): [TagValue["value"], <T extends HTMLElement | null>(el: T) => void] {
+  ): [TagData["value"], <T extends HTMLElement | null>(el: T) => void] {
     const t = this ?? Launched.instance;
 
     const tag = t.tags[key];

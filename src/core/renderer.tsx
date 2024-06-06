@@ -1,6 +1,6 @@
 import "../ui/index.css";
 import Launched from "./context";
-import type { Tag } from "../types/tag";
+import type { Tag, TagValue } from "../types/tag";
 import type { Renderer } from "../types/render";
 import { useRef, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
@@ -32,8 +32,8 @@ export function renderSingleTagUI(parentTag: Tag, id: string): void {
             },
             setData: (data) => {
               tag.setData(
-                (tag.data.value as (string | number)[]).map((v, index) =>
-                  index === i ? data : v
+                (tag.data.value as TagValue[]).map((v, index) =>
+                  index === i ? (data as TagValue) : v
                 )
               );
             },

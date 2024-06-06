@@ -1,26 +1,18 @@
-type TagValue = {
+type TagValue = string | number | Record<string, string | number>;
+
+type TagData = {
   readonly type: string;
-  readonly value: any;
+  readonly value: TagValue | TagValue[];
 };
 
-type TagSchema<T extends Record<string, any>> = {
+type TagSchema<T extends Record<string, TagData["value"]>> = {
   [K in keyof T]: T[K];
 };
 
-type FlatTagSchema<T> = {
-  [K in keyof T]: T[K] extends { value: infer V }
-    ? V extends object
-      ? FlatTagSchema<V>
-      : V
-    : T[K] extends object
-      ? FlatTagSchema<T[K]>
-      : T[K];
-};
-
 type Tag = {
-  data: TagValue;
-  setData: (value: TagValue["value"]) => void;
+  data: TagData;
+  setData: (value: TagData["value"]) => void;
   el: React.RefObject<HTMLElement>;
 };
 
-export { TagValue, Tag, TagSchema, FlatTagSchema };
+export { TagData, TagValue, Tag, TagSchema };

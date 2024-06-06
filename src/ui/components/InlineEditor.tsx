@@ -1,10 +1,10 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import type { Renderer } from "../../types/render";
 
 function InlineTagUI({
-  element,
+  // element,
   value,
-  selected,
+  // selected,
   updateData,
   close,
 }: {
@@ -14,65 +14,46 @@ function InlineTagUI({
   updateData: (data: string) => void;
   close: () => void;
 }) {
-  const editorRef = useRef<HTMLTextAreaElement>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
 
   const [text, setText] = useState(value);
 
-  function getContainer() {
-    return element.querySelector(".Launched__tag-container") as HTMLElement;
+  function getText(): string {
+    if (!editorRef.current) return "";
+
+    const firstTag = editorRef.current.firstChild?.nodeName;
+    const keyTag = new RegExp(
+      firstTag === "#text" ? "<br" : "</" + firstTag,
+      "i"
+    );
+
+    const tmp = document.createElement("p");
+    tmp.innerHTML = editorRef.current.innerHTML
+      .replace(/<[^>]+>/g, (m) => (keyTag.test(m) ? "{ß®}" : ""))
+      .replace(/{ß®}$/, "");
+
+    return tmp.innerText.replace(/{ß®}/g, "\n");
   }
 
-  useEffect(() => {
-    getContainer().dataset["value"] = value;
-  }, []);
+  function onClose() {
+    if (text !== value) updateData(text);
+    close();
+  }
 
   return (
-    <textarea
-      className="Launched__tag-inlineEditor"
-      value={text}
-      spellCheck={selected}
-      rows={1}
+    <div
       ref={editorRef}
-      onBlur={close}
-      onChange={(e) => {
-        getContainer().dataset["value"] = e.target.value;
-        setText(e.target.value);
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          // TODO: See if there's a cleaner way to do this. There needs to be a way to detect text wrapping on parent element.
-          e.preventDefault();
-
-          updateData(getContainer().dataset["value"] ?? value);
-          close();
-        } else if (e.key === "Escape") {
-          getContainer().dataset["value"] = value;
-          setText(value);
-
-          close();
-        }
-      }}
-    />
+      onInput={() => setText(getText())}
+      onBlur={onClose}
+      className="Launched__tag-inlineEditor"
+      contentEditable
+      dangerouslySetInnerHTML={{ __html: value }}
+    ></div>
   );
 }
 
 export const InlineTagRenderer: Renderer<string> = {
   component: (props) => {
     return <InlineTagUI {...props} />;
-  },
-  onSelect: (state) => {
-    if (state.element) {
-      state.element.style.setProperty("color", "transparent");
-    }
-  },
-  onClose: (state) => {
-    if (state.element) {
-      state.element.style.removeProperty("color");
-    }
-  },
-  onDataUpdate: (state) => {
-    if (state.element) {
-      state.element.style.removeProperty("color");
-    }
   },
 };
