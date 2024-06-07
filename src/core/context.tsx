@@ -25,6 +25,7 @@ interface LaunchedContextValue<Schema extends TagSchema<any>> {
 
 export default class Launched<Schema extends TagSchema<any>> {
   private readonly config: Required<Config<Schema>>;
+  private version = 0;
   private history: {
     key: keyof Schema;
     value: TagValue | TagValue[];
@@ -86,8 +87,8 @@ export default class Launched<Schema extends TagSchema<any>> {
             Launched.events.emit(
               "tag:change",
               key,
-              tags[key]?.data.value,
               value,
+              tags[key]?.data.value
             );
           };
 
@@ -117,11 +118,18 @@ export default class Launched<Schema extends TagSchema<any>> {
 
     Launched.events.on(
       "tag:change",
-      (
-        key: keyof Schema,
-        originalValue: TagValue | TagValue[]
-      ) => {
-        this.history.push({ key, value: originalValue });
+      (key: keyof Schema, value: TagValue | TagValue[]) => {
+        if (this.version === this.history.length - 1) {
+          this.history.push({ key, value });
+        } else {
+          this.history.splice(
+            this.version + 1,
+            this.history.length - this.version,
+            { key, value }
+          );
+        }
+
+        this.version++;
       }
     );
   }
@@ -246,6 +254,15 @@ export default class Launched<Schema extends TagSchema<any>> {
     if (!Launched.instance) throw new Error("Launched is not initialized.");
 
     Launched.instance.config.locked ? Launched.unlock() : Launched.lock();
+  }
+
+  public undo() {
+    if (this.version === 0) return;
+
+    const diff = this.history[this.version - 1]!;
+
+    this.tags[diff.key].setData(diff.value);
+    this.version--;
   }
 }
 
