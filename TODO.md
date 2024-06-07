@@ -32,11 +32,6 @@
 ### ux
 
 - [ ] Tag rendering
-  - [ ] Object view
-    - [ ] Nested properties
-  - [ ] Primitive components
-    - [ ] Text input
-    - [ ] Paragraph input
-    - [ ] Number input
-    - [ ] Date input
-    - [ ] Time input
+  - [ ] Images
+    - [ ] Image upload
+  - [ ] Links

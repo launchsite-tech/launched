@@ -34,9 +34,9 @@ To define editable content, you must first specify a site schema. A site schema 
 
 ```ts
 const siteSchema = {
-  // Type defaults to "text"
+  // Implicit "text" type
   "Main heading": "This is my website."
-  // Explicit type
+  // Explicit "image" type
   "Hero image": {
     type: "image",
     value: "https://example.com/image.png"
@@ -67,7 +67,7 @@ Check out [https://launched.tech](https://launched.tech) for full guides.
 // src/index.jsx
 
 /* Import the Launched provider */
-import { LaunchedProvider } from "launched"; 
+import { LaunchedProvider } from "launched";
 
 /* Define a site schema */
 const schema = {
