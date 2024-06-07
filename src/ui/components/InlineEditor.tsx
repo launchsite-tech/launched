@@ -1,10 +1,10 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import type { Renderer } from "../../types/render";
 
 function InlineTagUI({
   // element,
   value,
-  // selected,
+  selected,
   updateData,
   close,
 }: {
@@ -15,8 +15,7 @@ function InlineTagUI({
   close: () => void;
 }) {
   const editorRef = useRef<HTMLDivElement>(null);
-
-  const [text, setText] = useState(value);
+  const text = useRef(value);
 
   function getText(): string {
     if (!editorRef.current) return "";
@@ -36,18 +35,19 @@ function InlineTagUI({
   }
 
   function onClose() {
-    if (text !== value) updateData(text);
+    if (text.current !== value) updateData(text.current);
     close();
   }
 
   return (
     <div
       ref={editorRef}
-      onInput={() => setText(getText())}
+      onInput={() => (text.current = getText())}
       onBlur={onClose}
       className="Launched__tag-inlineEditor"
       contentEditable
       dangerouslySetInnerHTML={{ __html: value }}
+      spellCheck={selected}
     ></div>
   );
 }
