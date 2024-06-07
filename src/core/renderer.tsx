@@ -70,6 +70,19 @@ export function renderSingleTagUI(parentTag: Tag, id: string): void {
   renderTag(parentTag, parentTag, id);
 }
 
+export function unmountSingleTagUI(tagId: string): void {
+  const id = `Lt-${tagId.split(" ").join("-")}`;
+  const root = Launched.roots.get(tagId);
+
+  if (root) {
+    root.unmount();
+    Launched.roots.delete(tagId);
+  }
+
+  const node = document.getElementById(id);
+  if (node) node.remove();
+}
+
 function TagUI({
   tag,
   renderer,

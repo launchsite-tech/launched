@@ -1,7 +1,7 @@
 import React from "react";
 import EventEmitter from "./events";
 import { useState, useEffect, createRef, createContext } from "react";
-import { renderSingleTagUI } from "./renderer";
+import { renderSingleTagUI, unmountSingleTagUI } from "./renderer";
 import type { Tag, TagData, TagSchema } from "../types/tag";
 import type { Renderer } from "../types/render";
 import type { Root } from "react-dom/client";
@@ -187,6 +187,36 @@ export default class Launched<Schema extends TagSchema<any>> {
 
   public static registerTagFormat<V>(name: string, renderer: Renderer<V>) {
     Launched.formats.set(name, renderer);
+  }
+
+  public static lock() {
+    if (!Launched.instance) throw new Error("Launched is not initialized.");
+
+    Launched.instance.config.locked = true;
+
+    Object.entries(Launched.instance.tags).map(([key, tag]) => {
+      if (!Array.isArray(tag.data.value)) unmountSingleTagUI(key);
+      else
+        tag.data.value.forEach((_, i) => {
+          unmountSingleTagUI(`${key}-${i}`);
+        });
+    });
+  }
+
+  public static unlock() {
+    if (!Launched.instance) throw new Error("Launched is not initialized.");
+
+    Launched.instance.config.locked = false;
+
+    Object.entries(Launched.instance.tags).map(([key]) => {
+      Launched.instance!.render(key);
+    });
+  }
+
+  public static toggle() {
+    if (!Launched.instance) throw new Error("Launched is not initialized.");
+
+    Launched.instance.config.locked ? Launched.unlock() : Launched.lock();
   }
 }
 

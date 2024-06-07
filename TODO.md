@@ -3,7 +3,7 @@
 ### dx
 
 - [ ] More customizability
-  - [ ] "Editing" toggle
+  - [x] "Editing" toggle
   - [ ] `async` initial values
 - [ ] Custom tag types
   - [x] Registering custom tag types
