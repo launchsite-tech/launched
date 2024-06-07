@@ -2,6 +2,7 @@ import React from "react";
 import EventEmitter from "./events";
 import { useState, useEffect, createRef, createContext } from "react";
 import { renderSingleTagUI, unmountSingleTagUI } from "./renderer";
+import Toolbar from "../ui/components/Toolbar";
 import type { Tag, TagData, TagSchema } from "../types/tag";
 import type { Renderer } from "../types/render";
 import type { Root } from "react-dom/client";
@@ -88,6 +89,7 @@ export default class Launched<Schema extends TagSchema<any>> {
           }}
         >
           {children}
+          <Toolbar />
         </this.context.Provider>
       );
     };

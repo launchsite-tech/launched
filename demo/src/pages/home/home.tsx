@@ -1,3 +1,5 @@
+import Launched from "../../dist";
+
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import About from "./components/About";
@@ -8,6 +10,7 @@ import Footer from "./components/Footer";
 function App() {
   return (
     <main id="HOME" className="flex w-full flex-col items-center bg-salmon">
+      <button onClick={() => Launched.toggle()}>Switch lock state</button>
       <Navbar />
       <Hero />
       <About />
