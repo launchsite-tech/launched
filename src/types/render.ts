@@ -12,7 +12,7 @@ export type RendererProps<V> = {
 };
 
 export type Renderer<V> = {
-  component: (props: RendererProps<V>) => React.ReactNode;
+  component: (props: RendererProps<V>) => React.JSX.Element;
   onClose?: (state: RendererFunctionState) => void;
   onSelect?: (state: RendererFunctionState) => void;
   onDataUpdate?: (state: RendererFunctionState & { data: V }) => void;

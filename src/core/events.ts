@@ -25,3 +25,12 @@ export default class EventEmitter {
     this.events[event]!.forEach((listener) => listener(...args));
   }
 }
+
+// Events:
+// tag:change: a single tag is updated => key, originalValue, newValue
+// data:update: tag data changes => newTagData
+// tag:ready: a tag is bound to an element => id, tag
+// tag:deselect: tag UI loses focus => id, tag
+// tag:mount: tag UI component renders => id, tag
+// tag:unmount: tag UI component unmounts => id, tag
+// tag:select: tag UI gains focus => id, tag

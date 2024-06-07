@@ -104,7 +104,7 @@ function TagUI({
       element: tag.el.current ?? undefined,
     });
 
-    Launched.events.emit("tag:deselect", tag);
+    Launched.events.emit("tag:deselect", id, tag);
   }
 
   function updateData(data: any) {
@@ -132,11 +132,11 @@ function TagUI({
       tag.el.current.style.position = "relative";
     }
 
-    Launched.events.emit("tag:mount", tag);
+    Launched.events.emit("tag:mount", id, tag);
     Launched.events.on("tag:select", onTagSelect);
 
     return () => {
-      Launched.events.emit("tag:unmount", tag);
+      Launched.events.emit("tag:unmount", id, tag);
       Launched.events.off("tag:select", onTagSelect);
     };
   }, []);

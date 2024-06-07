@@ -3,7 +3,7 @@ import EventEmitter from "./events";
 import { useState, useEffect, createRef, createContext } from "react";
 import { renderSingleTagUI, unmountSingleTagUI } from "./renderer";
 import Toolbar from "../ui/components/Toolbar";
-import type { Tag, TagData, TagSchema } from "../types/tag";
+import type { Tag, TagValue, TagData, TagSchema } from "../types/tag";
 import type { Renderer } from "../types/render";
 import type { Root } from "react-dom/client";
 
@@ -25,6 +25,10 @@ interface LaunchedContextValue<Schema extends TagSchema<any>> {
 
 export default class Launched<Schema extends TagSchema<any>> {
   private readonly config: Required<Config<Schema>>;
+  private history: {
+    key: keyof Schema;
+    value: TagValue | TagValue[];
+  }[] = [];
 
   public tags: Record<keyof Schema, Tag> = {} as Record<keyof Schema, Tag>;
   public Provider: React.FC<{ children: React.ReactNode }>;
@@ -36,6 +40,14 @@ export default class Launched<Schema extends TagSchema<any>> {
   public static events = new EventEmitter();
   public static formats = new Map<string, Renderer<any>>();
   public static roots = new Map<string, Root>();
+
+  // { title: "hello" } => { title: "goodbye" }
+  // |--> history = [{ key: title, value: "hello" }], version = 1
+  // { title: "goodbye" } => { title: "goodb" }
+  // |--> history = [{ key: title, value: "hello" }, { key: title, value: "goodbye" }], version = 2
+  // undo => version = 1
+  // redo => version = 2
+  // reset => version = 0
 
   constructor(config: Omit<Config<Schema>, "tags">) {
     if (Launched.instance) {
@@ -71,7 +83,12 @@ export default class Launched<Schema extends TagSchema<any>> {
               };
             });
 
-            Launched.events.emit("tag:change", key, value);
+            Launched.events.emit(
+              "tag:change",
+              key,
+              tags[key]?.data.value,
+              value,
+            );
           };
 
           return [key, { ...data, setData }];
@@ -97,6 +114,16 @@ export default class Launched<Schema extends TagSchema<any>> {
     Launched.events.on("tag:ready", (key: keyof Schema) => {
       if (!this.config.locked) this.render(key);
     });
+
+    Launched.events.on(
+      "tag:change",
+      (
+        key: keyof Schema,
+        originalValue: TagValue | TagValue[]
+      ) => {
+        this.history.push({ key, value: originalValue });
+      }
+    );
   }
 
   private makeTagsFromSchema(
