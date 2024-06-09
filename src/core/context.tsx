@@ -56,7 +56,7 @@ export default class Launched<Schema extends TagSchema<any>> {
   // redo => version = 2
   // reset => version = 0
 
-  constructor(config: Omit<Config<Schema>, "tags">) {
+  constructor(config?: Omit<Config<Schema>, "tags">) {
     if (Launched.instance) {
       error("There can only be one instance of Launched.");
     }
@@ -183,13 +183,10 @@ export default class Launched<Schema extends TagSchema<any>> {
     ) as Record<keyof Schema, Omit<Tag, "setData">>;
   }
 
-  private useTag<V extends TagData["value"] = TagData["value"]>(
+  private useTag = (<V extends TagData["value"] = TagData["value"]>(
     key: string,
-    value?: V
-  ): readonly [
-    V extends string | number ? string | number : V,
-    <T extends HTMLElement | null>(el: T) => void,
-  ] {
+    value: V
+  ) => {
     const t = this ?? Launched.instance;
 
     let tag: Tag | Omit<Tag, "setData"> | undefined = t.tags[key];
@@ -215,7 +212,7 @@ export default class Launched<Schema extends TagSchema<any>> {
         Launched.events.emit("tag:ready", key, tag);
       },
     ] as const;
-  }
+  }) as LaunchedContextValue["useTag"];
 
   private render(tag?: keyof Schema) {
     if (tag && this.tags[tag]) renderSingleTagUI(this.tags[tag], String(tag));

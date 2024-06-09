@@ -26,26 +26,6 @@ To get started, check out [https://launched.tech](https://launched.tech) for doc
 > [!NOTE]
 > Your site needs to be made with react for Launched to work. Learn react [here](https://react.dev).
 
-## How it works
-
-Launched uses a system of tagging to bind elements to their data. Once an element is "tagged", it will be editable by clients.
-
-To define editable content, you must first specify a site schema. A site schema defines elements' names, types, and initial values like so:
-
-```ts
-const siteSchema = {
-  // Implicit "string" type
-  "Main heading": "This is my website."
-  // Explicit "image" type
-  "Hero image": {
-    type: "image",
-    value: "https://example.com/image.png"
-  }
-}
-```
-
-For more information on site schemas, check out the guide [here](https://launched.tech/docs/schema).
-
 ## Download
 
 ```shell
@@ -69,16 +49,6 @@ Check out [https://launched.tech](https://launched.tech) for full guides.
 /* Import the Launched provider */
 import { LaunchedProvider } from "launched";
 
-/* Define a site schema */
-const schema = {
-  "title": "Demo site",
-  "description": "Here's a neat little demo for the Launched library."
-}
-
-const config = {
-  tags: schema
-}
-
 ...
 
 /* Add the provider to your app */
@@ -98,9 +68,9 @@ import { useTag } from "launched";
 ...
 
 export default function App() {
-  /* Access tag data defined in the site schema */
-  const [title, titleTag] = useTag("title");
-  const [description, descriptionTag] = useTag("description");
+  /* Define and retrieve references to tags */
+  const [title, titleTag] = useTag("title", "Hello, world!");
+  const [description, descriptionTag] = useTag("description", "Welcome to my site.");
 
   /* Bind tag data to elements */
   return (

@@ -133,11 +133,7 @@
 
   &:hover,
   &.active {
-    background-color: color-mix(
-      in srgb,
-      rgba(0, 0, 0, 0.1) 30%,
-      var(--surface)
-    );
+    background-color: color-mix(in srgb, rgb(0, 0, 0) 5%, var(--surface));
   }
 }
 

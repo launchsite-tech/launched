@@ -13,9 +13,9 @@
     - [ ] Number
     - [ ] Date
     - [ ] Time
-- [ ] Schema optional
+- [x] Schema optional
   - [ ] Register type/value/renderer inline
-- [ ] Generate schema from user input
+- [x] Generate schema from user input
 - [ ] Ditch object view; make every field editable independently
 - [x] Migrate to contenteditable
   - [x] Sanitize input
@@ -24,7 +24,7 @@
 
 - [ ] Only update site on save
 - [ ] Disable links in edit mode
-- [ ] Movable toolbar
+- [x] Movable toolbar
 - [ ] Undo/redo
 - [ ] Auth
 - [ ] Rich text support
