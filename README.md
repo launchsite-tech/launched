@@ -34,7 +34,7 @@ To define editable content, you must first specify a site schema. A site schema 
 
 ```ts
 const siteSchema = {
-  // Implicit "text" type
+  // Implicit "string" type
   "Main heading": "This is my website."
   // Explicit "image" type
   "Hero image": {
