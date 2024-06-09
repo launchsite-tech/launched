@@ -12,7 +12,7 @@
   <a title="Interactive Demo" href="https://quilljs.com/playground/"><strong>Interactive Demo</strong></a>
 </p>
 <p align="center">
-  <a href="https://github.com/slab/quill/actions" title="Build Status"><img src="https://github.com/slab/quill/actions/workflows/main.yml/badge.svg" alt="Build Status"></a>
+  <a href="https://npmjs.com/package/quill" title="Package Size"><img src="https://img.shields.io/bundlephobia/minzip/quill" alt="Package Size"></a>
   <a href="https://npmjs.com/package/quill" title="Version"><img src="https://img.shields.io/npm/v/quill.svg" alt="Version"></a>
   <a href="https://npmjs.com/package/quill" title="Downloads"><img src="https://img.shields.io/npm/dm/quill.svg" alt="Downloads"></a>
 </p>

@@ -5,9 +5,10 @@ type TagData = {
   readonly value: TagValue | TagValue[];
 };
 
-type TagSchema<T extends Record<string, TagData["value"]>> = {
-  [K in keyof T]: T[K];
-};
+type TagSchema<T extends Record<string, TagData["value"] | Partial<TagData>>> =
+  {
+    [K in keyof T]: T[K];
+  };
 
 type Tag = {
   data: TagData;

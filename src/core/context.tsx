@@ -160,12 +160,14 @@ export default class Launched<Schema extends TagSchema<any>> {
               error("Objects must have the same keys.");
             if (keys.some((k) => k.some((k) => typeof k === "object")))
               error("Objects cannot have nested objects.");
+
+            if (data[0].type) type = data[0].type;
           }
 
           value = data;
         } else {
           type =
-            typeof data === "object" && "type" in data
+            typeof data.value === "object" && "type" in data
               ? data.type
               : typeof data;
           value =
@@ -185,7 +187,7 @@ export default class Launched<Schema extends TagSchema<any>> {
 
   private useTag = (<V extends TagData["value"] = TagData["value"]>(
     key: string,
-    value: V
+    value?: V
   ) => {
     const t = this ?? Launched.instance;
 

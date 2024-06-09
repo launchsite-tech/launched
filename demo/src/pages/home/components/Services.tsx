@@ -46,8 +46,8 @@ export default function Services() {
             key={index}
             className="flex h-64 max-w-48 flex-col items-center justify-center gap-6 rounded-2xl border border-gray-border px-6 text-center font-sans text-sm/[19.6px] text-home"
           >
-            <span>{icons[card.icon]}</span>
-            <p>{card.description}</p>
+            <span data-key="icon">{icons[card.icon]}</span>
+            <p data-key="description">{card.description}</p>
           </li>
         ))}
       </ul>

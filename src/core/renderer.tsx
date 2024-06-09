@@ -10,10 +10,6 @@ export function renderSingleTagUI(parentTag: Tag, id: string): void {
   if (!parentTag || !parentTag.el.current)
     return console.warn(`Tag "${id}" was never bound to an element.`);
 
-  const renderer = Launched.formats.get(parentTag.data.type);
-
-  if (!renderer) return;
-
   function renderTag(parentTag: Tag, tag: Tag, childId: string): void {
     if (!tag.el.current) return;
 
@@ -42,8 +38,48 @@ export function renderSingleTagUI(parentTag: Tag, id: string): void {
           `${id}-${i}`
         );
       });
+    } else if (
+      tag.data.type === "object" &&
+      typeof tag.data.value === "object"
+    ) {
+      for (const key in tag.data.value) {
+        const childEl = tag.el.current!.querySelector(
+          `[data-key="${key}"]`
+        ) as HTMLElement;
+
+        if (!childEl)
+          error(
+            `Child element with key "${key}" (under "${id}") not found. If you're using a custom renderer, make sure to add a data-key attribute to the targeted element.`
+          );
+
+        renderTag(
+          parentTag,
+          {
+            el: { current: childEl },
+            data: {
+              type: typeof tag.data.value[key],
+              value: tag.data.value[key]!,
+            },
+            setData: (data) => {
+              tag.setData({
+                ...(tag.data.value as Record<string, TagValue>),
+                [key]: data,
+              } as TagValue);
+            },
+          },
+          `${childId}-${key}`
+        );
+      }
     } else {
       if (!tag.el.current) return;
+
+      const renderer = Launched.formats.get(tag.data.type);
+
+      if (!renderer) {
+        return console.warn(
+          `No renderer found for tag type "${tag.data.type}".`
+        );
+      }
 
       const id = `Lt-${childId.split(" ").join("-")}`;
 

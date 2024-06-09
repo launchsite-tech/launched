@@ -16,7 +16,8 @@
 - [x] Schema optional
   - [ ] Register type/value/renderer inline
 - [x] Generate schema from user input
-- [ ] Ditch object view; make every field editable independently
+- [x] Ditch object view; make every field editable independently
+- [ ] Individual types for fields
 - [x] Migrate to contenteditable
   - [x] Sanitize input
 

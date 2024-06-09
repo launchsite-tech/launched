@@ -33,7 +33,7 @@ export const tags = {
   //   ],
   // },
   "Footer links": {
-    type: "object",
+    type: "link",
     value: [
       {
         text: "About",
