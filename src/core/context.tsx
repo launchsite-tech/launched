@@ -4,7 +4,7 @@ import { useState, useEffect, createRef, createContext } from "react";
 import { renderSingleTagUI, unmountSingleTagUI } from "./renderer";
 import Toolbar from "../ui/components/Toolbar";
 import error from "./utils/error";
-import type { Tag, TagData, TagSchema, TagValue } from "../types/tag";
+import type { Tag, TagData, TagSchema } from "../types/tag";
 import type { Renderer } from "../types/render";
 import type { Root } from "react-dom/client";
 
@@ -18,11 +18,11 @@ const defaults = {
   tags: {},
 };
 
-interface LaunchedContextValue<Schema extends TagSchema<any>> {
-  useTag<S extends Schema>(
-    key: keyof S,
-    value?: TagValue | TagValue[]
-  ): readonly [TagData["value"], <T extends HTMLElement | null>(el: T) => void];
+interface LaunchedContextValue {
+  useTag<V extends TagData["value"] = TagData["value"]>(
+    key: string,
+    value?: V
+  ): readonly [V, <T extends HTMLElement | null>(el: T) => void];
 }
 
 export default class Launched<Schema extends TagSchema<any>> {
@@ -36,8 +36,8 @@ export default class Launched<Schema extends TagSchema<any>> {
 
   public tags: Record<keyof Schema, Tag> = {} as Record<keyof Schema, Tag>;
   public Provider: React.FC<{ children: React.ReactNode }>;
-  public context = createContext<LaunchedContextValue<Schema>>(
-    {} as LaunchedContextValue<Schema>
+  public context = createContext<LaunchedContextValue>(
+    {} as LaunchedContextValue
   );
 
   public static instance: Launched<any> | null;
@@ -180,19 +180,16 @@ export default class Launched<Schema extends TagSchema<any>> {
     ) as Record<keyof Schema, Omit<Tag, "setData">>;
   }
 
-  private useTag<S extends Schema = Schema>(
-    key: keyof S,
-    value?: TagValue | TagValue[]
-  ): readonly [
-    TagData["value"],
-    <T extends HTMLElement | null>(el: T) => void,
-  ] {
+  private useTag<V extends TagData["value"] = TagData["value"]>(
+    key: string,
+    value?: V
+  ): readonly [V, <T extends HTMLElement | null>(el: T) => void] {
     const t = this ?? Launched.instance;
 
-    let tag: Tag | Omit<Tag, "setData"> = t.tags[key];
+    let tag: Tag | Omit<Tag, "setData"> | undefined = t.tags[key];
 
     if (!tag && value) {
-      const newTag = this.makeTagsFromSchema({ [key]: value } as Schema)[key];
+      const newTag = this.makeTagsFromSchema({ [key]: value } as Schema)[key]!;
 
       setTimeout(() => this.addTag(String(key), newTag), 0);
 
@@ -203,7 +200,7 @@ export default class Launched<Schema extends TagSchema<any>> {
       );
 
     return [
-      tag.data.value as TagData["value"],
+      tag.data.value as V,
       <T extends HTMLElement | null>(el: T) => {
         if (!el) return;
 

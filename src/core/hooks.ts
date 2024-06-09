@@ -1,11 +1,11 @@
 import { useState, useLayoutEffect, useContext } from "react";
 import Launched from "./context";
 import error from "./utils/error";
-import type { TagSchema, TagValue } from "../types/tag";
+import type { TagData } from "../types/tag";
 
-export function useTag<S extends TagSchema<S>>(
-  key: keyof S,
-  value?: TagValue | TagValue[]
+export function useTag<V extends TagData["value"] = TagData["value"]>(
+  key: string,
+  value?: V
 ) {
   if (!Launched.instance) error("Launched not initialized.");
 
