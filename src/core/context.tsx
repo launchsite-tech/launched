@@ -22,7 +22,10 @@ interface LaunchedContextValue {
   useTag<V extends TagData["value"] = TagData["value"]>(
     key: string,
     value?: V
-  ): readonly [V, <T extends HTMLElement | null>(el: T) => void];
+  ): readonly [
+    V extends string | number ? string | number : V,
+    <T extends HTMLElement | null>(el: T) => void,
+  ];
 }
 
 export default class Launched<Schema extends TagSchema<any>> {
@@ -183,7 +186,10 @@ export default class Launched<Schema extends TagSchema<any>> {
   private useTag<V extends TagData["value"] = TagData["value"]>(
     key: string,
     value?: V
-  ): readonly [V, <T extends HTMLElement | null>(el: T) => void] {
+  ): readonly [
+    V extends string | number ? string | number : V,
+    <T extends HTMLElement | null>(el: T) => void,
+  ] {
     const t = this ?? Launched.instance;
 
     let tag: Tag | Omit<Tag, "setData"> | undefined = t.tags[key];
@@ -200,7 +206,7 @@ export default class Launched<Schema extends TagSchema<any>> {
       );
 
     return [
-      tag.data.value as V,
+      tag.data.value as V extends string | number ? string | number : V,
       <T extends HTMLElement | null>(el: T) => {
         if (!el) return;
 
