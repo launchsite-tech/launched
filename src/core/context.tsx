@@ -3,33 +3,36 @@ import EventEmitter from "./events";
 import { useState, useEffect, createRef, createContext } from "react";
 import { renderSingleTagUI, unmountSingleTagUI } from "./renderer";
 import Toolbar from "../ui/components/Toolbar";
-import type { Tag, TagValue, TagData, TagSchema } from "../types/tag";
+import error from "./utils/error";
+import type { Tag, TagData, TagSchema, TagValue } from "../types/tag";
 import type { Renderer } from "../types/render";
 import type { Root } from "react-dom/client";
 
 export interface Config<Schema extends TagSchema<any>> {
-  tags: Schema;
+  tags?: Schema;
   locked?: boolean;
 }
 
 const defaults = {
   locked: false,
+  tags: {},
 };
 
 interface LaunchedContextValue<Schema extends TagSchema<any>> {
   useTag<S extends Schema>(
     key: keyof S,
-    renderer?: Renderer<any> | string
+    value?: TagValue | TagValue[]
   ): readonly [TagData["value"], <T extends HTMLElement | null>(el: T) => void];
 }
 
 export default class Launched<Schema extends TagSchema<any>> {
   private readonly config: Required<Config<Schema>>;
-  private version = 0;
-  private history: {
-    key: keyof Schema;
-    value: TagValue | TagValue[];
-  }[] = [];
+  private addTag: (key: string, tag: Omit<Tag, "setData">) => void = () => {};
+  // private version = 0;
+  // private history: {
+  //   key: keyof Schema;
+  //   value: TagValue | TagValue[];
+  // }[] = [];
 
   public tags: Record<keyof Schema, Tag> = {} as Record<keyof Schema, Tag>;
   public Provider: React.FC<{ children: React.ReactNode }>;
@@ -52,8 +55,9 @@ export default class Launched<Schema extends TagSchema<any>> {
 
   constructor(config: Omit<Config<Schema>, "tags">) {
     if (Launched.instance) {
-      throw new Error("There can only be one instance of Launched.");
+      error("There can only be one instance of Launched.");
     }
+
     Launched.instance = this;
 
     this.config = { ...defaults, ...config } as Required<Config<Schema>>;
@@ -69,19 +73,14 @@ export default class Launched<Schema extends TagSchema<any>> {
             if (!tags[key]) return;
 
             setTags((p) => {
-              const pKey = p[key];
-              if (!pKey) return p;
+              const newTags = { ...p };
+              const tag = newTags[key];
 
-              return {
-                ...p,
-                [key]: {
-                  ...pKey,
-                  data: {
-                    type: pKey.data.type,
-                    value,
-                  },
-                },
-              };
+              if (tag) {
+                tag.data = { ...tag.data, value };
+              }
+
+              return newTags;
             });
 
             Launched.events.emit(
@@ -95,6 +94,10 @@ export default class Launched<Schema extends TagSchema<any>> {
           return [key, { ...data, setData }];
         })
       ) as Record<keyof Schema, Tag>;
+
+      this.addTag = (key, tag) => {
+        setTags((p) => ({ ...p, [key]: tag }));
+      };
 
       useEffect(() => {
         Launched.events.emit("data:update", this.tags);
@@ -116,22 +119,22 @@ export default class Launched<Schema extends TagSchema<any>> {
       if (!this.config.locked) this.render(key);
     });
 
-    Launched.events.on(
-      "tag:change",
-      (key: keyof Schema, value: TagValue | TagValue[]) => {
-        if (this.version === this.history.length - 1) {
-          this.history.push({ key, value });
-        } else {
-          this.history.splice(
-            this.version + 1,
-            this.history.length - this.version,
-            { key, value }
-          );
-        }
+    // Launched.events.on(
+    //   "tag:change",
+    //   (key: keyof Schema, value: TagValue | TagValue[]) => {
+    //     if (this.version === this.history.length - 1) {
+    //       this.history.push({ key, value });
+    //     } else {
+    //       this.history.splice(
+    //         this.version + 1,
+    //         this.history.length - this.version,
+    //         { key, value }
+    //       );
+    //     }
 
-        this.version++;
-      }
-    );
+    //     this.version++;
+    //   }
+    // );
   }
 
   private makeTagsFromSchema(
@@ -139,45 +142,37 @@ export default class Launched<Schema extends TagSchema<any>> {
   ): Record<keyof Schema, Omit<Tag, "setData">> {
     return Object.fromEntries(
       Object.entries(tags).map(([key, data]) => {
-        const el = createRef<HTMLElement>();
-
         let type: string, value: any;
 
-        if (typeof data === "object" && !Array.isArray(data)) {
-          if ("type" in data && typeof data.type !== "string")
-            throw new Error("Type must be a string.");
-
-          type =
-            "type" in data
-              ? data.type
-              : typeof data.value !== "object"
-                ? typeof data.value
-                : "object";
-
-          value = "value" in data ? data.value : data;
-        } else if (Array.isArray(data)) {
-          if (!data.length)
-            throw new Error("Array must have at least one item.");
+        if (Array.isArray(data)) {
+          if (!data.length) error("Array must have at least one item.");
 
           type = typeof data[0];
+          if (data.some((v) => typeof v !== type))
+            error("Array must have consistent types.");
 
-          if (type === "object")
-            throw new Error(
-              "Please create a custom type to use object arrays."
-            );
-          else if (data.some((v) => typeof v !== type))
-            throw new Error("Array must have consistent types.");
+          if (type === "object") {
+            const keys = data.map((v) => Object.keys(v));
+            if (keys[0]!.some((key) => keys.some((k) => !k.includes(key))))
+              error("Objects must have the same keys.");
+            if (keys.some((k) => k.some((k) => typeof k === "object")))
+              error("Objects cannot have nested objects.");
+          }
 
           value = data;
         } else {
-          type = typeof data;
-          value = data;
+          type =
+            typeof data === "object" && "type" in data
+              ? data.type
+              : typeof data;
+          value =
+            typeof data === "object" && "value" in data ? data.value : data;
         }
 
         return [
           key,
           {
-            el,
+            el: createRef<HTMLElement>(),
             data: { type, value },
           },
         ];
@@ -187,35 +182,40 @@ export default class Launched<Schema extends TagSchema<any>> {
 
   private useTag<S extends Schema = Schema>(
     key: keyof S,
-    renderer?: Renderer<any>
+    value?: TagValue | TagValue[]
   ): readonly [
     TagData["value"],
     <T extends HTMLElement | null>(el: T) => void,
   ] {
     const t = this ?? Launched.instance;
 
-    const tag = t.tags[key];
+    let tag: Tag | Omit<Tag, "setData"> = t.tags[key];
 
-    if (!tag) throw new Error(`Tag "${String(key)}" not found.`);
+    if (!tag && value) {
+      const newTag = this.makeTagsFromSchema({ [key]: value } as Schema)[key];
 
-    if (renderer) {
-      Launched.formats.set(tag.data.type, renderer);
-    }
+      setTimeout(() => this.addTag(String(key), newTag), 0);
+
+      tag = newTag;
+    } else if (!tag)
+      error(
+        `Tag "${String(key)}" does not exist. Either create add it to your schema or pass a value to useTag.`
+      );
 
     return [
-      tag.data.value,
+      tag.data.value as TagData["value"],
       <T extends HTMLElement | null>(el: T) => {
         if (!el) return;
 
-        (t.tags[key].el.current as T) = el;
+        (tag.el.current as T) = el;
 
-        Launched.events.emit("tag:ready", key, t.tags[key]);
+        Launched.events.emit("tag:ready", key, tag);
       },
     ] as const;
   }
 
   private render(tag?: keyof Schema) {
-    if (tag) renderSingleTagUI(this.tags[tag], String(tag));
+    if (tag && this.tags[tag]) renderSingleTagUI(this.tags[tag], String(tag));
     else
       Object.entries(this.tags).map(([key, tag]) =>
         tag.el.current ? renderSingleTagUI(tag, key) : null
@@ -227,7 +227,7 @@ export default class Launched<Schema extends TagSchema<any>> {
   }
 
   public static lock() {
-    if (!Launched.instance) throw new Error("Launched is not initialized.");
+    if (!Launched.instance) error("Launched is not initialized.");
 
     Launched.instance.config.locked = true;
 
@@ -241,7 +241,7 @@ export default class Launched<Schema extends TagSchema<any>> {
   }
 
   public static unlock() {
-    if (!Launched.instance) throw new Error("Launched is not initialized.");
+    if (!Launched.instance) error("Launched is not initialized.");
 
     Launched.instance.config.locked = false;
 
@@ -251,19 +251,19 @@ export default class Launched<Schema extends TagSchema<any>> {
   }
 
   public static toggle() {
-    if (!Launched.instance) throw new Error("Launched is not initialized.");
+    if (!Launched.instance) error("Launched is not initialized.");
 
     Launched.instance.config.locked ? Launched.unlock() : Launched.lock();
   }
 
-  public undo() {
-    if (this.version === 0) return;
+  // public undo() {
+  //   if (this.version === 0) return;
 
-    const diff = this.history[this.version - 1]!;
+  //   const diff = this.history[this.version - 1]!;
 
-    this.tags[diff.key].setData(diff.value);
-    this.version--;
-  }
+  //   this.tags[diff.key].setData(diff.value);
+  //   this.version--;
+  // }
 }
 
 export function LaunchedProvider<Schema extends TagSchema<any>>({

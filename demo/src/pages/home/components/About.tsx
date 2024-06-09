@@ -1,7 +1,10 @@
 import { useTag } from "../../../dist";
 
 export default function About() {
-  const [description, descriptionTag] = useTag("About description");
+  const [description, descriptionTag] = useTag(
+    "About description",
+    "Tired of flipping back and forth between dictionaries, rhyme lists, spell checkers, and more? Quilli has you covered, free of charge.",
+  );
 
   return (
     <section

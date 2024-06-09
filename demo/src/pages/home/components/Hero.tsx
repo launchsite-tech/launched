@@ -3,7 +3,10 @@ import { useTag } from "../../../dist";
 import GetStartedButton from "./GetStartedButton";
 
 export default function Hero() {
-  const [description, descriptionTag] = useTag("Hero description");
+  const [description, descriptionTag] = useTag(
+    "Hero description",
+    "Quilli provides you with the AI-driven tools necessary to craft exceptional lyrics, poetry, and more- all in one place.",
+  );
 
   return (
     <main className="grid w-full max-w-[1500px] grid-cols-2">

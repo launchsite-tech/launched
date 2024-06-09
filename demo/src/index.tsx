@@ -12,7 +12,6 @@ const root = ReactDOM.createRoot(
 
 const config = {
   tags,
-  locked: true,
 };
 
 root.render(

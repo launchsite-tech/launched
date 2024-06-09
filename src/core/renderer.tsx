@@ -1,5 +1,6 @@
 import "../ui/index.css";
 import Launched from "./context";
+import error from "./utils/error";
 import type { Tag, TagValue } from "../types/tag";
 import type { Renderer } from "../types/render";
 import { useRef, useState, useEffect } from "react";
@@ -124,7 +125,7 @@ function TagUI({
   }
 
   useEffect(() => {
-    if (!tag.el.current) throw new Error("Element is null.");
+    if (!tag.el.current) error("Element is null.");
 
     tag.el.current.classList.add("tagged");
 

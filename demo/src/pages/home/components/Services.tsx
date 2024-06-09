@@ -4,9 +4,36 @@ import { Music, Activity, Search, Hash, Check } from "react-feather";
 
 // eslint-disable-next-line react/jsx-key
 const icons = [<Music />, <Activity />, <Search />, <Hash />, <Check />];
+const defaultCards = [
+  {
+    icon: 0,
+    description:
+      "Generate dozens of context-conscious rhymes for any word with a single button.",
+  },
+  {
+    icon: 1,
+    description:
+      "Receive feedback and suggestions from an AI model tailored to your creative needs.",
+  },
+  {
+    icon: 2,
+    description:
+      "Search for definitions and synonyms for any word directly within the app.",
+  },
+  {
+    icon: 3,
+    description:
+      "Easily monitor your rhyme schemes, rhythm, syllables per line, and tone.",
+  },
+  {
+    icon: 4,
+    description:
+      "Enjoy the features of other high-end text editors for a familiar experience.",
+  },
+];
 
 export default function Services() {
-  const [cards, cardsTag] = useTag("Feature cards");
+  const [cards, cardsTag] = useTag("Feature cards", defaultCards);
 
   return (
     <section id="SERVICES" className="mt-20 w-full max-w-7xl">
