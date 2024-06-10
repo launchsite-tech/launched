@@ -209,7 +209,7 @@ export default class Launched<Schema extends TagSchema<any>> {
       <T extends HTMLElement | null>(el: T) => {
         if (!el) return;
 
-        (tag.el.current as T) = el;
+        (tag!.el.current as T) = el;
 
         Launched.events.emit("tag:ready", key, tag);
       },
