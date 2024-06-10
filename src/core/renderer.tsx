@@ -1,10 +1,30 @@
-import "../ui/index.css";
+import "../ui/styles/container.css";
 import Launched from "./context";
 import error from "./utils/error";
-import type { Tag, TagValue } from "../types/tag";
-import type { Renderer } from "../types/render";
+import type { Tag, TagValue } from "./context";
 import { useRef, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
+
+type RendererFunctionState = {
+  element?: HTMLElement;
+};
+
+export type RendererProps<V> = {
+  id: string;
+  element: HTMLElement;
+  value: V;
+  selected: boolean;
+  updateData: (data: V) => void;
+  close: () => void;
+};
+
+export type Renderer<V> = {
+  component: (props: RendererProps<V>) => React.JSX.Element;
+  parentValidator?: (element: HTMLElement) => boolean;
+  onClose?: (state: RendererFunctionState) => void;
+  onSelect?: (state: RendererFunctionState) => void;
+  onDataUpdate?: (state: RendererFunctionState & { data: V }) => void;
+};
 
 export function renderSingleTagUI(parentTag: Tag, id: string): void {
   if (!parentTag || !parentTag.el.current)

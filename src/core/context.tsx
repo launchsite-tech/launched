@@ -4,9 +4,25 @@ import { useState, useEffect, createRef, createContext } from "react";
 import { renderSingleTagUI, unmountSingleTagUI } from "./renderer";
 import Toolbar from "../ui/components/Toolbar";
 import error from "./utils/error";
-import type { Tag, TagData, TagValue, TagSchema } from "../types/tag";
-import type { Renderer } from "../types/render";
+import type { Renderer } from "./renderer";
 import type { Root } from "react-dom/client";
+
+export type TagValue = string | number | Record<string, string | number>;
+
+export type TagData = {
+  readonly type: string;
+  readonly value: TagValue | TagValue[];
+};
+
+export type TagSchema<T extends Record<string, TagData["value"]>> = {
+  [K in keyof T]: T[K];
+};
+
+export type Tag = {
+  data: TagData;
+  setData: (value: TagData["value"]) => void;
+  el: React.RefObject<HTMLElement>;
+};
 
 export interface Config<Schema extends TagSchema<any>> {
   tags?: Schema;
