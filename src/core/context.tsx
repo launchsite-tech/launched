@@ -4,7 +4,7 @@ import { useState, useEffect, createRef, createContext } from "react";
 import { renderSingleTagUI, unmountSingleTagUI } from "./renderer";
 import Toolbar from "../ui/components/Toolbar";
 import error from "./utils/error";
-import type { Tag, TagData, TagSchema } from "../types/tag";
+import type { Tag, TagData, TagValue, TagSchema } from "../types/tag";
 import type { Renderer } from "../types/render";
 import type { Root } from "react-dom/client";
 
@@ -233,11 +233,24 @@ export default class Launched<Schema extends TagSchema<any>> {
 
     Launched.instance.config.locked = true;
 
+    function unmountTag(id: string, value: TagValue, type: string) {
+      if (type === "object") {
+        Object.keys(value).forEach((key) => {
+          unmountSingleTagUI(`${id}-${key}`);
+        });
+      } else unmountSingleTagUI(id);
+    }
+
     Object.entries(Launched.instance.tags).map(([key, tag]) => {
-      if (!Array.isArray(tag.data.value)) unmountSingleTagUI(key);
+      if (!Array.isArray(tag.data.value))
+        unmountTag(key, tag.data.value, tag.data.type);
       else
         tag.data.value.forEach((_, i) => {
-          unmountSingleTagUI(`${key}-${i}`);
+          unmountTag(
+            `${key}-${i}`,
+            (tag.data.value as TagValue[])[i]!,
+            tag.data.type
+          );
         });
     });
   }
