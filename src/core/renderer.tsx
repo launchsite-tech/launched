@@ -81,6 +81,15 @@ export function renderSingleTagUI(parentTag: Tag, id: string): void {
         );
       }
 
+      if (
+        renderer.parentValidator &&
+        !renderer.parentValidator(tag.el.current)
+      ) {
+        return console.warn(
+          `Parent element of tag "${childId}" does not satisfy the constraints of the renderer of type "${tag.data.type}".`
+        );
+      }
+
       const id = `Lt-${childId.split(" ").join("-")}`;
 
       const existingNode = document.getElementById(id);

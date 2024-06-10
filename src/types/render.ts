@@ -13,6 +13,7 @@ export type RendererProps<V> = {
 
 export type Renderer<V> = {
   component: (props: RendererProps<V>) => React.JSX.Element;
+  parentValidator?: (element: HTMLElement) => boolean;
   onClose?: (state: RendererFunctionState) => void;
   onSelect?: (state: RendererFunctionState) => void;
   onDataUpdate?: (state: RendererFunctionState & { data: V }) => void;

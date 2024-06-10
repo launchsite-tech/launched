@@ -1,19 +1,13 @@
 import { useRef } from "react";
-import type { Renderer } from "../../types/render";
+import type { Renderer, RendererProps } from "../../types/render";
 
-function InlineTagUI({
+export function InlineTagUI({
   // element,
   value,
   selected,
   updateData,
   close,
-}: {
-  element: HTMLElement;
-  value: string;
-  selected: boolean;
-  updateData: (data: string) => void;
-  close: () => void;
-}) {
+}: RendererProps<string>) {
   const editorRef = useRef<HTMLDivElement>(null);
   const text = useRef(value);
 
@@ -55,5 +49,9 @@ function InlineTagUI({
 export const InlineTagRenderer: Renderer<string> = {
   component: (props) => {
     return <InlineTagUI {...props} />;
+  },
+  parentValidator: (element) => {
+    const whitelist = ["P", "H1", "H2", "H3", "H4", "H5", "H6", "SPAN", "DIV"];
+    return whitelist.includes(element.nodeName);
   },
 };
