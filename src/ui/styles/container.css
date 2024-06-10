@@ -1,0 +1,39 @@
+:has(> .Launched__tag-container) {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+}
+
+.Launched__tag-container {
+  position: absolute;
+  width: calc(100% + 8px);
+  height: max-content;
+  min-height: calc(100% + 8px);
+  inset: -4px;
+  padding: 4px;
+  outline: 1px dashed;
+  outline-color: color-mix(in srgb, rgba(255, 0, 255, 0.1) 70%, var(--accent));
+  transition:
+    outline-color 200ms ease-out,
+    border-radius 200ms ease-out;
+
+  &:hover,
+  &:focus {
+    outline-color: var(--accent);
+    border-radius: 1px;
+  }
+
+  &.active {
+    outline-color: var(--accent);
+    border-radius: 1px;
+    outline-style: solid;
+    background-color: var(--surface);
+    box-shadow: var(--shadow);
+    z-index: 10;
+
+    & > .Launched__tag-inlineEditor {
+      color: inherit;
+    }
+  }
+}
