@@ -16,8 +16,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rimraf dist && cmd /c scripts\\build.cmd dist",
-    "build:demo": "rimraf demo/src/dist && cmd /c scripts\\build.cmd demo/src/dist",
+    "build": "rimraf dist && sh ./scripts/build.sh dist",
+    "build:demo": "rimraf dist && sh ./scripts/build.sh demo/src/dist",
     "watch": "nodemon --exec \"npm run build:demo\"",
     "test": "jest"
   },
