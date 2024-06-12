@@ -1,5 +1,5 @@
 {
-  "name": "@michaelbeck/launched",
+  "name": "launched",
   "version": "0.0.1",
   "description": "Make website content editable by clients, no codebase access required.",
   "keywords": [
@@ -17,7 +17,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rimraf dist && sh ./scripts/build.sh dist",
-    "build:demo": "rimraf dist && sh ./scripts/build.sh demo/src/dist",
+    "build:demo": "rimraf demo/src/dist && sh ./scripts/build.sh demo/src/dist",
     "watch": "nodemon --exec \"npm run build:demo\"",
     "test": "jest"
   },

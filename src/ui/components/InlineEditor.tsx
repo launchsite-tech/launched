@@ -1,5 +1,6 @@
+import "../styles/inlineEditor.css";
 import { useRef } from "react";
-import type { Renderer, RendererProps } from "../../types/render";
+import type { Renderer, RendererProps } from "../../core/renderer";
 
 export function InlineTagUI({
   // element,

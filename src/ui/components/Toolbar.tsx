@@ -1,4 +1,5 @@
-import React, { useRef, useState } from "react";
+import "../styles/toolbar.css";
+import { useRef, useState } from "react";
 import clamp from "../../core/utils/clamp";
 
 export default function Toolbar({

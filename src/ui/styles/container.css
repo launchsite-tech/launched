@@ -32,7 +32,7 @@
     box-shadow: var(--shadow);
     z-index: 10;
 
-    & > .Launched__tag-inlineEditor {
+    & .Launched__tag-inlineEditor {
       color: inherit;
     }
   }
