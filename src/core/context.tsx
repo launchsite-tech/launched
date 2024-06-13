@@ -7,14 +7,30 @@ import error from "./utils/error";
 import type { Renderer } from "./renderer";
 import type { Root } from "react-dom/client";
 
-export type TagValue = string | number | Record<string, string | number>;
+export type TagValue = string | number | Record<string, TagData>;
+export type TagSchemaValue =
+  | TagValue
+  | TagValue[]
+  | Record<string, Partial<TagData> | string | number>
+  | Record<string, Partial<TagData> | string | number>[];
+
+export type FlatTagValue<T> =
+  T extends Array<infer R>
+    ? Array<FlatTagValue<R>>
+    : T extends Record<string, any>
+      ? {
+          [K in keyof T]: T[K] extends { type: string; value: infer V }
+            ? V
+            : FlatTagValue<T[K]>;
+        }
+      : T;
 
 export type TagData = {
   readonly type: string;
   readonly value: TagValue | TagValue[];
 };
 
-export type TagSchema<T extends Record<string, TagData["value"]>> = {
+export type TagSchema<T extends Record<string, TagSchemaValue>> = {
   [K in keyof T]: T[K];
 };
 
@@ -35,11 +51,11 @@ const defaults = {
 };
 
 interface LaunchedContextValue {
-  useTag<V extends TagData["value"] = TagData["value"]>(
+  useTag<V extends TagSchemaValue = TagData["value"]>(
     key: string,
     value?: V
   ): readonly [
-    V extends string | number ? string | number : V,
+    V extends string | number ? string | number : FlatTagValue<V>,
     <T extends HTMLElement | null>(el: T) => void,
   ];
 }
@@ -47,11 +63,6 @@ interface LaunchedContextValue {
 export default class Launched<Schema extends TagSchema<any>> {
   private readonly config: Required<Config<Schema>>;
   private addTag: (key: string, tag: Omit<Tag, "setData">) => void = () => {};
-  // private version = 0;
-  // private history: {
-  //   key: keyof Schema;
-  //   value: TagValue | TagValue[];
-  // }[] = [];
 
   public tags: Record<keyof Schema, Tag> = {} as Record<keyof Schema, Tag>;
   public Provider: React.FC<{ children: React.ReactNode }>;
@@ -64,15 +75,7 @@ export default class Launched<Schema extends TagSchema<any>> {
   public static formats = new Map<string, Renderer<any>>();
   public static roots = new Map<string, Root>();
 
-  // { title: "hello" } => { title: "goodbye" }
-  // |--> history = [{ key: title, value: "hello" }], version = 1
-  // { title: "goodbye" } => { title: "goodb" }
-  // |--> history = [{ key: title, value: "hello" }, { key: title, value: "goodbye" }], version = 2
-  // undo => version = 1
-  // redo => version = 2
-  // reset => version = 0
-
-  constructor(config?: Omit<Config<Schema>, "tags">) {
+  constructor(config?: Config<Schema>) {
     if (Launched.instance) {
       error("There can only be one instance of Launched.");
     }
@@ -88,7 +91,7 @@ export default class Launched<Schema extends TagSchema<any>> {
 
       this.tags = Object.fromEntries(
         Object.entries(tags).map(([key, data]) => {
-          const setData = (value: TagData["value"]) => {
+          const setData = (value: string | number) => {
             if (!tags[key]) return;
 
             setTags((p) => {
@@ -137,31 +140,51 @@ export default class Launched<Schema extends TagSchema<any>> {
     Launched.events.on("tag:ready", (key: keyof Schema) => {
       if (!this.config.locked) this.render(key);
     });
+  }
 
-    // Launched.events.on(
-    //   "tag:change",
-    //   (key: keyof Schema, value: TagValue | TagValue[]) => {
-    //     if (this.version === this.history.length - 1) {
-    //       this.history.push({ key, value });
-    //     } else {
-    //       this.history.splice(
-    //         this.version + 1,
-    //         this.history.length - this.version,
-    //         { key, value }
-    //       );
-    //     }
+  private flattenTagValue<V extends TagData>(
+    value: Record<string, V> | V | V[]
+  ): FlatTagValue<V> {
+    if (Array.isArray(value))
+      return value.map((v) => this.flattenTagValue(v)) as FlatTagValue<V>;
+    else if (typeof value === "object") {
+      return Object.fromEntries(
+        Object.entries(value).map(([key, v]) => {
+          if (typeof v === "object" && "value" in v) return [key, v.value];
+          else return [key, this.flattenTagValue(v)];
+        })
+      ) as FlatTagValue<V>;
+    } else return value;
+  }
 
-    //     this.version++;
-    //   }
-    // );
+  private transformObjectsToTagData(tags: Schema): Schema {
+    return Object.fromEntries(
+      Object.entries(tags).map(([key, data]) => {
+        if (Array.isArray(data)) {
+          return [key, data.map((v) => this.transformObjectsToTagData(v))];
+        } else if (typeof data === "object") {
+          return [
+            key,
+            {
+              type: data.type ?? typeof data.value,
+              value: data.value,
+            },
+          ];
+        } else {
+          return [key, { type: typeof data, value: data }];
+        }
+      })
+    ) as Schema;
   }
 
   private makeTagsFromSchema(
     tags: Schema
   ): Record<keyof Schema, Omit<Tag, "setData">> {
+    const cleanTags = this.transformObjectsToTagData(tags);
+
     return Object.fromEntries(
-      Object.entries(tags).map(([key, data]) => {
-        let type: string, value: any;
+      Object.entries(cleanTags).map(([key, data]: [string, TagData]) => {
+        let type: string, value: TagData["value"];
 
         if (Array.isArray(data)) {
           if (!data.length) error("Array must have at least one item.");
@@ -182,10 +205,7 @@ export default class Launched<Schema extends TagSchema<any>> {
 
           value = data;
         } else {
-          type =
-            typeof data.value === "object" && "type" in data
-              ? data.type
-              : typeof data;
+          type = "type" in data ? data.type : typeof data;
           value =
             typeof data === "object" && "value" in data ? data.value : data;
         }
@@ -201,7 +221,7 @@ export default class Launched<Schema extends TagSchema<any>> {
     ) as Record<keyof Schema, Omit<Tag, "setData">>;
   }
 
-  private useTag = (<V extends TagData["value"] = TagData["value"]>(
+  private useTag = (<V extends TagSchemaValue = TagData["value"]>(
     key: string,
     value?: V
   ) => {
@@ -220,8 +240,13 @@ export default class Launched<Schema extends TagSchema<any>> {
         `Tag "${String(key)}" does not exist. Either create add it to your schema or pass a value to useTag.`
       );
 
+    const v =
+      typeof tag.data.value === "object"
+        ? this.flattenTagValue(tag.data.value as Record<string, TagData>)
+        : tag.data.value;
+
     return [
-      tag.data.value as V extends string | number ? string | number : V,
+      v,
       <T extends HTMLElement | null>(el: T) => {
         if (!el) return;
 
@@ -286,15 +311,6 @@ export default class Launched<Schema extends TagSchema<any>> {
 
     Launched.instance.config.locked ? Launched.unlock() : Launched.lock();
   }
-
-  // public undo() {
-  //   if (this.version === 0) return;
-
-  //   const diff = this.history[this.version - 1]!;
-
-  //   this.tags[diff.key].setData(diff.value);
-  //   this.version--;
-  // }
 }
 
 export function LaunchedProvider<Schema extends TagSchema<any>>({

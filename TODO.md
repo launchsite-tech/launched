@@ -14,7 +14,7 @@
     - [ ] Date
     - [ ] Time
 - [x] Schema optional
-  - [ ] Register type/value/renderer inline
+  - [x] Register type/value/renderer inline
 - [x] Generate schema from user input
 - [x] Ditch object view; make every field editable independently
 - [x] Migrate to contenteditable

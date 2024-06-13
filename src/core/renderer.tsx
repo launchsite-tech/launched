@@ -1,7 +1,7 @@
 import "../ui/styles/container.css";
 import Launched from "./context";
 import error from "./utils/error";
-import type { Tag, TagValue } from "./context";
+import type { Tag, TagData, TagValue } from "./context";
 import { useRef, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 
@@ -77,14 +77,17 @@ export function renderSingleTagUI(parentTag: Tag, id: string): void {
           {
             el: { current: childEl },
             data: {
-              type: typeof tag.data.value[key],
-              value: tag.data.value[key]!,
+              type: (tag.data.value as Record<string, TagData>)[key]!.type,
+              value: tag.data.value[key]!.value,
             },
             setData: (data) => {
               tag.setData({
-                ...(tag.data.value as Record<string, TagValue>),
-                [key]: data,
-              } as TagValue);
+                ...(tag.data.value as Record<string, TagData>),
+                [key]: {
+                  type: (tag.data.value as Record<string, TagData>)[key]!.type,
+                  value: data,
+                },
+              });
             },
           },
           `${childId}-${key}`

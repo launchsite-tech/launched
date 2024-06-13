@@ -1,9 +1,9 @@
 import { useState, useLayoutEffect, useContext } from "react";
 import Launched from "./context";
 import error from "./utils/error";
-import type { TagData } from "../core/context";
+import type { TagData, TagSchemaValue } from "../core/context";
 
-export function useTag<V extends TagData["value"] = TagData["value"]>(
+export function useTag<V extends TagSchemaValue = TagData["value"]>(
   key: string,
   value?: V
 ) {
