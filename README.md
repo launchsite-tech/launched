@@ -18,7 +18,8 @@
 </p> 
 <hr/>
 -->
-<a href="https://launched.tech">Launched</a> is a tool to make website content editable to clients with no codebase access or coding knowledge required. It was created by [Michael Beck](https://linkedin.com/in/michaelbeck0) for the [Launch](https://launchsite.tech) platform.
+
+Launched is a tool to make website content editable to clients with no codebase access or coding knowledge required. It was created by [Michael Beck](https://linkedin.com/in/michaelbeck0) for the [Launch](https://launchsite.tech) platform.
 
 To get started, check out [https://launched.tech](https://launched.tech) for documentation, guides, and demos.
 
