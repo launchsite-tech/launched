@@ -2,7 +2,7 @@
   <img width="24" height="24" src="./demo/public/favicon.svg" />
   Launched
 </h1>
-<p align="center">
+<!-- <p align="center">
   <a title="Download" href="https://quilljs.com/docs/quickstart"><strong>Download</strong></a>
   &#x2022;
   <a title="Documentation" href="https://quilljs.com/docs/quickstart"><strong>Documentation</strong></a>
@@ -15,16 +15,18 @@
   <a href="https://npmjs.com/package/quill" title="Package Size"><img src="https://img.shields.io/bundlephobia/minzip/quill" alt="Package Size"></a>
   <a href="https://npmjs.com/package/quill" title="Version"><img src="https://img.shields.io/npm/v/quill.svg" alt="Version"></a>
   <a href="https://npmjs.com/package/quill" title="Downloads"><img src="https://img.shields.io/npm/dm/quill.svg" alt="Downloads"></a>
-</p>
-
+</p> 
 <hr/>
-
+-->
 <a href="https://launched.tech">Launched</a> is a tool to make website content editable to clients with no codebase access or coding knowledge required. It was created by [Michael Beck](https://linkedin.com/in/michaelbeck0) for the [Launch](https://launchsite.tech) platform.
 
 To get started, check out [https://launched.tech](https://launched.tech) for documentation, guides, and demos.
 
 > [!NOTE]
 > Your site needs to be made with react for Launched to work. Learn react [here](https://react.dev).
+
+> [!NOTE]
+> Launched is still in development. It will be released on npm within the next few weeks.
 
 ## Download
 
@@ -40,8 +42,6 @@ npm install launched
 ```
 
 ## Getting started
-
-Check out [https://launched.tech](https://launched.tech) for full guides.
 
 ```jsx
 // src/index.jsx
@@ -81,13 +81,14 @@ export default function App() {
   )
 }
 ```
-
+<!--
 ## Community
 
 Get help or stay up to date.
 
 - [Contribute](/CONTRIBUTING.md) on [issues](https://github.com/MMMJB/launched/issues)
 - Ask questions on [discussions](https://github.com/MMMJB/launched/discussions)
+-->
 
 ## License
 
