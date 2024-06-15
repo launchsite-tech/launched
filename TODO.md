@@ -9,7 +9,7 @@
   - [x] Registering custom tag types
   - [ ] Default addon tag types
     - [x] Text
-    - [ ] Link
+    - [x] Link
     - [ ] Number
     - [ ] Date
     - [ ] Time
@@ -35,4 +35,4 @@
 - [ ] Tag rendering
   - [ ] Images
     - [ ] Image upload
-  - [ ] Links
+  - [x] Links

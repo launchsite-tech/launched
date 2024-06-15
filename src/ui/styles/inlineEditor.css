@@ -1,3 +1,7 @@
+.Launched__tag-container:has(.Launched__tag-inlineEditor) {
+  font-family: inherit;
+}
+
 .Launched__tag-inlineEditor {
   outline: none;
   color: transparent;

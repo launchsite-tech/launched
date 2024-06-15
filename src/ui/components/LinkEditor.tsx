@@ -37,7 +37,7 @@ export function LinkUI({
   }, []);
 
   function onClose(e: React.FocusEvent<HTMLDivElement>) {
-    console.log(e.target, element);
+    if (element.contains(e.relatedTarget as Node)) return;
 
     if (href !== value.href) updateData({ ...value, href });
     close();
@@ -46,12 +46,18 @@ export function LinkUI({
   return (
     <div onBlur={onClose}>
       {selected && (
-        <input
-          className="Launched__tag-linkInput"
-          type="url"
-          value={href}
-          onChange={(e) => setHref(e.target.value)}
-        />
+        <div className="Launched__tag-linkInput">
+          <input
+            className=""
+            type="text"
+            value={href}
+            placeholder="Enter a URL..."
+            onChange={(e) => setHref(e.target.value)}
+            onBlur={() => {
+              if (href !== value.href) updateData({ ...value, href });
+            }}
+          />
+        </div>
       )}
       <InlineTagUI
         {...props}
