@@ -26,6 +26,9 @@ export type Renderer<V> = {
   onDataUpdate?: (state: RendererFunctionState & { data: V }) => void;
 };
 
+// TODO: Move renderer to its own class
+// TODO: Cache renderer information for faster rerenders
+
 export function renderSingleTagUI(parentTag: Tag, id: string): void {
   if (!parentTag || !parentTag.el.current)
     return console.warn(`Tag "${id}" was never bound to an element.`);

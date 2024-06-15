@@ -73,6 +73,12 @@ interface LaunchedContextValue {
 export default class Launched<Schema extends TagSchema<any>> {
   private readonly config: Required<Config<Schema>>;
   private addTag: (key: string, tag: Omit<Tag, "setData">) => void = () => {};
+  // private originalTags: Record<keyof Schema, Tag> = {} as Record<
+  //   keyof Schema,
+  //   Tag
+  // >;
+  // private version: number = 0;
+  // private history: { key: string; value: TagData["value"] }[] = [];
 
   public tags: Record<keyof Schema, Tag> = {} as Record<keyof Schema, Tag>;
   public Provider: React.FC<{ children: React.ReactNode }>;
@@ -142,7 +148,16 @@ export default class Launched<Schema extends TagSchema<any>> {
           }}
         >
           {children}
-          <Toolbar {...this.config.toolbarOptions} />
+          <Toolbar
+            {...this.config.toolbarOptions}
+            // undo={this.undo.bind(this)}
+            // redo={this.redo.bind(this)}
+            save={() => this.config.save?.(this.tags)}
+            // revert={this.restore.bind(this)}
+            undo={() => {}}
+            redo={() => {}}
+            revert={() => {}}
+          />
         </this.context.Provider>
       );
     };
@@ -150,6 +165,21 @@ export default class Launched<Schema extends TagSchema<any>> {
     Launched.events.on("tag:ready", (key: keyof Schema) => {
       if (!this.config.locked) this.render(key);
     });
+
+    Launched.events.on(
+      "tag:change",
+      (key: keyof Schema, value: TagData["value"]) => {
+        // if (this.version === 0)
+        //   this.originalTags = cloneDeep(this.tags) as Record<keyof Schema, Tag>;
+
+        // if (this.version !== this.history.length)
+        //   this.history = this.history.slice(0, this.version);
+
+        // this.history.push({ key: String(key), value });
+        // this.version++;
+        console.log(key, value);
+      }
+    );
   }
 
   private flattenTagValue<V extends TagData>(
@@ -321,6 +351,32 @@ export default class Launched<Schema extends TagSchema<any>> {
 
     Launched.instance.config.locked ? Launched.unlock() : Launched.lock();
   }
+
+  // public undo() {
+  //   console.log(this.version, this.history);
+  //   if (this.version === 0) return;
+
+  //   const { key, value } = this.history[--this.version]!;
+
+  //   this.tags[key]!.setData(value);
+  // }
+
+  // public redo() {
+  //   if (this.version === this.history.length) return;
+
+  //   const { key, value } = this.history[this.version++]!;
+
+  //   this.tags[key]!.setData(value);
+  // }
+
+  // public restore() {
+  //   this.history = [];
+  //   this.version = 0;
+
+  //   Object.values(this.originalTags).map((tag) => {
+  //     tag.setData(tag.data.value);
+  //   });
+  // }
 }
 
 export function LaunchedProvider<Schema extends TagSchema<any>>({

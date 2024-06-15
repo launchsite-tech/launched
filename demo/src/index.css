@@ -597,6 +597,10 @@ video {
   background-color: #FEF3ED;
 }
 
+.static{
+  position: static;
+}
+
 .absolute{
   position: absolute;
 }
