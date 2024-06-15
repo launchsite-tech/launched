@@ -22,13 +22,17 @@
 
 ### cx
 
-- [ ] Only update site on save
 - [x] Disable links in edit mode
 - [x] Movable toolbar
-- [ ] Undo/redo
 - [ ] Auth
 - [ ] Rich text support
 - [ ] Editable lists
+- [ ] Toolbar functionality
+  - [ ] Save changes
+  - [ ] Revert changes
+  - [ ] Undo
+  - [ ] Redo
+  - [ ] Toggle preview/edit mode
 
 ### ux
 

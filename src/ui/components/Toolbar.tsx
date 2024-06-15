@@ -3,7 +3,7 @@ import { useRef, useState, useEffect } from "react";
 import clamp from "../../core/utils/clamp";
 
 export default function Toolbar({
-  // draggable,
+  draggable,
   className,
   // position = "right",
 }: {
@@ -24,7 +24,7 @@ export default function Toolbar({
   }
 
   function onDrag(e: MouseEvent) {
-    if (!dragging || !dragButton.current) return;
+    if (!dragging || !dragButton.current || !draggable) return;
 
     setDragPosition({
       x: clamp(
@@ -55,22 +55,23 @@ export default function Toolbar({
       }}
       className={`Launched__toolbar ${className || ""}`}
     >
-      <button
-        ref={dragButton}
-        onMouseDown={() => setDragging(true)}
-        onMouseUp={() => setDragging(false)}
-        className={`Launched__toolbar-dragHandle ${dragging ? "active" : ""}`}
-      >
-        <svg viewBox="0 0 24 24" className="Launched__icon">
-          <rect x="3" y="3" width="7" height="7"></rect>
-          <rect x="14" y="3" width="7" height="7"></rect>
-          <rect x="14" y="14" width="7" height="7"></rect>
-          <rect x="3" y="14" width="7" height="7"></rect>
-        </svg>
-      </button>
+      {draggable && (
+        <button
+          ref={dragButton}
+          onMouseDown={() => setDragging(true)}
+          onMouseUp={() => setDragging(false)}
+          className={`Launched__toolbar-dragHandle ${dragging ? "active" : ""}`}
+        >
+          <svg viewBox="0 0 24 24" className="Launched__icon">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+        </button>
+      )}
       <div className="Launched__toolbar-tools">
         <button className="Launched__toolbar-saveButton">Save</button>
-        <button className="Launched__toolbar-revertButton">Revert</button>
         <button className="Launched__toolbar-button undo">
           <svg viewBox="0 0 24 24" className="Launched__icon">
             <polyline points="1 4 1 10 7 10"></polyline>
@@ -83,6 +84,7 @@ export default function Toolbar({
             <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
           </svg>
         </button>
+        <button className="Launched__toolbar-revertButton">Revert</button>
       </div>
     </div>
   );

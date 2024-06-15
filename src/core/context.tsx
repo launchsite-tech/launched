@@ -43,11 +43,21 @@ export type Tag = {
 export interface Config<Schema extends TagSchema<any>> {
   tags?: Schema;
   locked?: boolean;
+  save?: (tags: Record<keyof Schema, Tag>) => void;
+  toolbarOptions?: Partial<{
+    className: string;
+    draggable: boolean;
+    position: "center" | "right" | "left";
+  }>;
 }
 
-const defaults = {
+const defaults: Config<{}> = {
   locked: false,
   tags: {},
+  toolbarOptions: {
+    draggable: true,
+    position: "right",
+  },
 };
 
 interface LaunchedContextValue {
@@ -132,7 +142,7 @@ export default class Launched<Schema extends TagSchema<any>> {
           }}
         >
           {children}
-          <Toolbar />
+          <Toolbar {...this.config.toolbarOptions} />
         </this.context.Provider>
       );
     };

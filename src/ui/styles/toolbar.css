@@ -12,10 +12,14 @@
   background-color: var(--surface);
   box-shadow: var(--shadow);
   border-radius: 4px;
-  padding: 0.5rem;
+}
+
+.Launched__toolbar-tools {
+  padding: 0.35rem;
 }
 
 .Launched__toolbar-dragHandle {
+  padding: 0.5rem;
   align-items: center;
   justify-content: center;
   cursor: move !important;
