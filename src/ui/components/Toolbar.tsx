@@ -1,5 +1,5 @@
 import "../styles/toolbar.css";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import clamp from "../../core/utils/clamp";
 
 export default function Toolbar({
@@ -23,7 +23,7 @@ export default function Toolbar({
     };
   }
 
-  function onDrag(e: React.MouseEvent<HTMLButtonElement>) {
+  function onDrag(e: MouseEvent) {
     if (!dragging || !dragButton.current) return;
 
     setDragPosition({
@@ -40,6 +40,14 @@ export default function Toolbar({
     });
   }
 
+  useEffect(() => {
+    window.addEventListener("mousemove", onDrag);
+
+    return () => {
+      window.removeEventListener("mousemove", onDrag);
+    };
+  }, [onDrag]);
+
   return (
     <div
       style={{
@@ -51,8 +59,6 @@ export default function Toolbar({
         ref={dragButton}
         onMouseDown={() => setDragging(true)}
         onMouseUp={() => setDragging(false)}
-        onMouseLeave={() => setDragging(false)}
-        onMouseMove={onDrag}
         className={`Launched__toolbar-dragHandle ${dragging ? "active" : ""}`}
       >
         <svg viewBox="0 0 24 24" className="Launched__icon">
