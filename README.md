@@ -82,13 +82,14 @@ export default function App() {
   )
 }
 ```
+
 <!--
 ## Community
 
 Get help or stay up to date.
 
-- [Contribute](/CONTRIBUTING.md) on [issues](https://github.com/MMMJB/launched/issues)
-- Ask questions on [discussions](https://github.com/MMMJB/launched/discussions)
+- [Contribute](/CONTRIBUTING.md) on [issues](https://github.com/launchsite-tech/launched/issues)
+- Ask questions on [discussions](https://github.com/launchsite-tech/launched/discussions)
 -->
 
 ## License

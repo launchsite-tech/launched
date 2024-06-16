@@ -27,12 +27,12 @@
 - [ ] Auth
 - [ ] Rich text support
 - [ ] Editable lists
-- [ ] Toolbar functionality
-  - [ ] Save changes
-  - [ ] Revert changes
-  - [ ] Undo
-  - [ ] Redo
-  - [ ] Toggle preview/edit mode
+- [x] Toolbar functionality
+  - [x] Save changes
+  - [x] Revert changes
+  - [x] Undo
+  - [x] Redo
+  - [x] Toggle preview/edit mode
 
 ### ux
 
