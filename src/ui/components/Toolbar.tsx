@@ -1,90 +1,67 @@
 import "../styles/toolbar.css";
-import { useRef, useState, useEffect } from "react";
-import clamp from "../../core/utils/clamp";
+import Launched from "../../core/context";
 
 export default function Toolbar({
-  draggable,
+  position,
   className,
-  // position = "right",
+  canUndo,
+  canRedo,
+  undo,
+  redo,
+  save,
+  revert,
 }: {
-  draggable?: boolean;
   position?: "center" | "right" | "left";
   className?: string;
+  canUndo: boolean;
+  canRedo: boolean;
+  undo: () => void;
+  redo: () => void;
+  save: () => void;
+  revert: () => void;
 }) {
-  const dragButton = useRef<HTMLButtonElement>(null);
-
-  const [dragging, setDragging] = useState(false);
-  const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
-
-  function determinePosition() {
-    return {
-      left: dragPosition.x - 20,
-      top: dragPosition.y - 20,
-    };
-  }
-
-  function onDrag(e: MouseEvent) {
-    if (!dragging || !dragButton.current || !draggable) return;
-
-    setDragPosition({
-      x: clamp(
-        e.clientX,
-        0,
-        window.innerWidth - dragButton.current.offsetWidth
-      ),
-      y: clamp(
-        e.clientY,
-        0,
-        window.innerHeight - dragButton.current.offsetHeight
-      ),
-    });
-  }
-
-  useEffect(() => {
-    window.addEventListener("mousemove", onDrag);
-
-    return () => {
-      window.removeEventListener("mousemove", onDrag);
-    };
-  }, [onDrag]);
-
   return (
     <div
-      style={{
-        ...determinePosition(),
-      }}
+      data-position={position}
       className={`Launched__toolbar ${className || ""}`}
     >
-      {draggable && (
-        <button
-          ref={dragButton}
-          onMouseDown={() => setDragging(true)}
-          onMouseUp={() => setDragging(false)}
-          className={`Launched__toolbar-dragHandle ${dragging ? "active" : ""}`}
-        >
-          <svg viewBox="0 0 24 24" className="Launched__icon">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-          </svg>
-        </button>
-      )}
       <div className="Launched__toolbar-tools">
-        <button className="Launched__toolbar-saveButton">Save</button>
-        <button className="Launched__toolbar-button undo">
+        <button onClick={save} className="Launched__toolbar-saveButton">
+          Save
+        </button>
+        <select
+          onChange={(e) => {
+            if (e.target.value === "locked") Launched.lock();
+            else Launched.unlock();
+          }}
+          className="Launched__toolbar-lockMode"
+        >
+          <option value="unlocked">Edit</option>
+          <option value="locked">Preview</option>
+        </select>
+        <button
+          disabled={!canUndo}
+          onClick={undo}
+          className="Launched__toolbar-button undo"
+        >
           <svg viewBox="0 0 24 24" className="Launched__icon">
             <polyline points="1 4 1 10 7 10"></polyline>
             <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
           </svg>
         </button>
-        <button className="Launched__toolbar-button redo">
+        <button
+          disabled={!canRedo}
+          onClick={redo}
+          className="Launched__toolbar-button redo"
+        >
           <svg viewBox="0 0 24 24" className="Launched__icon">
             <polyline points="23 4 23 10 17 10"></polyline>
             <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
           </svg>
         </button>
-        <button className="Launched__toolbar-revertButton">Revert</button>
+        <button onClick={revert} className="Launched__toolbar-revertButton">
+          Revert
+        </button>
       </div>
     </div>
   );

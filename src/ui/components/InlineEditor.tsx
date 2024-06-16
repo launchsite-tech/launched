@@ -1,6 +1,6 @@
 import "../styles/inlineEditor.css";
 import { useRef } from "react";
-import type { Renderer, RendererProps } from "../../core/renderer";
+import type { TagRenderer, TagRendererProps } from "../../core/renderer";
 
 export function InlineTagUI({
   // element,
@@ -8,7 +8,7 @@ export function InlineTagUI({
   selected,
   updateData,
   close,
-}: RendererProps<string>) {
+}: TagRendererProps<string>) {
   const editorRef = useRef<HTMLDivElement>(null);
   const text = useRef(value);
 
@@ -47,7 +47,7 @@ export function InlineTagUI({
   );
 }
 
-export const InlineTagRenderer: Renderer<string> = {
+export const InlineTagRenderer: TagRenderer<string> = {
   component: (props) => {
     return <InlineTagUI {...props} />;
   },

@@ -1,34 +1,31 @@
 .Launched__toolbar {
   position: fixed;
+  top: 0.25rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.Launched__toolbar-tools,
-.Launched__toolbar-dragHandle {
-  display: flex;
-  gap: 0.5rem;
-  background-color: var(--surface);
-  box-shadow: var(--shadow);
-  border-radius: 4px;
+.Launched__toolbar[data-position="right"] {
+  right: 0.25rem;
+}
+
+.Launched__toolbar[data-position="left"] {
+  left: 0.25rem;
+}
+
+.Launched__toolbar[data-position="center"] {
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .Launched__toolbar-tools {
-  padding: 0.35rem;
-}
-
-.Launched__toolbar-dragHandle {
-  padding: 0.5rem;
-  align-items: center;
-  justify-content: center;
-  cursor: move !important;
-  transition: background-color 200ms ease-out;
-
-  &:hover,
-  &.active {
-    background-color: color-mix(in srgb, rgb(0, 0, 0) 5%, var(--surface));
-  }
+  display: flex;
+  padding: 0.25rem;
+  gap: 0.5rem;
+  background-color: var(--surface);
+  box-shadow: var(--shadow);
+  border-radius: 6px;
 }
 
 .Launched__toolbar-saveButton,
@@ -42,6 +39,26 @@
 
   &:hover {
     background-color: color-mix(in srgb, rgba(0, 0, 0, 0.1) 30%, var(--color));
+  }
+}
+
+select.Launched__toolbar-lockMode {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background-color: var(--surface);
+  font-size: 14px;
+  color: var(--text);
+  appearance: auto;
+  cursor: pointer;
+  transition: background-color 200ms ease-out;
+  background-color: color-mix(in srgb, rgba(0, 0, 0, 0.1) 30%, var(--surface));
+
+  &:hover {
+    background-color: color-mix(
+      in srgb,
+      rgba(0, 0, 0, 0.1) 50%,
+      var(--surface)
+    );
   }
 }
 

@@ -4,8 +4,8 @@ import GetStartedButton from "./GetStartedButton";
 
 export default function Hero() {
   const [description, descriptionTag] = useTag(
-    "Hero description",
-    "Quilli provides you with the AI-driven tools necessary to craft exceptional lyrics, poetry, and more- all in one place.",
+    "description",
+    "Write incredible poetry with the power of AI. Our AI can help you write poems, lyrics, and more. Get started now!",
   );
 
   return (

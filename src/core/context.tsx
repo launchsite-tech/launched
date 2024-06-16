@@ -1,11 +1,11 @@
 import React from "react";
 import EventEmitter from "./events";
-import { useState, useEffect, createRef, createContext } from "react";
-import { renderSingleTagUI, unmountSingleTagUI } from "./renderer";
+import { useState, useEffect, createContext } from "react";
+import Renderer from "./renderer";
 import Toolbar from "../ui/components/Toolbar";
 import error from "./utils/error";
-import type { Renderer } from "./renderer";
-import type { Root } from "react-dom/client";
+import makeTagsFromSchema from "./utils/makeTagsFromSchema";
+import flattenTagValue from "./utils/flattenTagValue";
 
 export type TagValue = string | number | Record<string, TagData>;
 export type TagSchemaValue =
@@ -36,7 +36,10 @@ export type TagSchema<T extends Record<string, TagSchemaValue>> = {
 
 export type Tag = {
   data: TagData;
-  setData: (value: TagData["value"]) => void;
+  setData: (
+    value: TagData["value"],
+    config?: Partial<{ silent: boolean }>
+  ) => void;
   el: React.RefObject<HTMLElement>;
 };
 
@@ -46,7 +49,6 @@ export interface Config<Schema extends TagSchema<any>> {
   save?: (tags: Record<keyof Schema, Tag>) => void;
   toolbarOptions?: Partial<{
     className: string;
-    draggable: boolean;
     position: "center" | "right" | "left";
   }>;
 }
@@ -55,8 +57,7 @@ const defaults: Config<{}> = {
   locked: false,
   tags: {},
   toolbarOptions: {
-    draggable: true,
-    position: "right",
+    position: "center",
   },
 };
 
@@ -70,9 +71,19 @@ interface LaunchedContextValue {
   ];
 }
 
-export default class Launched<Schema extends TagSchema<any>> {
+export default class Launched<Schema extends TagSchema<any> = {}> {
   private readonly config: Required<Config<Schema>>;
+  private renderer = new Renderer();
   private addTag: (key: string, tag: Omit<Tag, "setData">) => void = () => {};
+  private originalTags = new Map<keyof Schema, TagData["value"]>();
+  private version: number = -1;
+  private setCanUndo: React.Dispatch<React.SetStateAction<boolean>> = () => {};
+  private setCanRedo: React.Dispatch<React.SetStateAction<boolean>> = () => {};
+  private history: {
+    key: string;
+    value: TagData["value"];
+    prevValue: TagData["value"];
+  }[] = [];
 
   public tags: Record<keyof Schema, Tag> = {} as Record<keyof Schema, Tag>;
   public Provider: React.FC<{ children: React.ReactNode }>;
@@ -82,8 +93,6 @@ export default class Launched<Schema extends TagSchema<any>> {
 
   public static instance: Launched<any> | null;
   public static events = new EventEmitter();
-  public static formats = new Map<string, Renderer<any>>();
-  public static roots = new Map<string, Root>();
 
   constructor(config?: Config<Schema>) {
     if (Launched.instance) {
@@ -95,14 +104,19 @@ export default class Launched<Schema extends TagSchema<any>> {
     this.config = { ...defaults, ...config } as Required<Config<Schema>>;
 
     this.Provider = ({ children }: { children: React.ReactNode }) => {
+      const [canUndo, setCanUndo] = useState(false);
+      const [canRedo, setCanRedo] = useState(false);
       const [tags, setTags] = useState(() =>
-        this.makeTagsFromSchema(this.config.tags)
+        makeTagsFromSchema(this.config.tags)
       );
 
       this.tags = Object.fromEntries(
         Object.entries(tags).map(([key, data]) => {
-          const setData = (value: string | number) => {
-            if (!tags[key]) return;
+          const setData = (
+            value: TagData["value"],
+            config?: Partial<{ silent: boolean }>
+          ) => {
+            if (!tags[key] || this.config.locked) return;
 
             setTags((p) => {
               const newTags = { ...p };
@@ -115,12 +129,13 @@ export default class Launched<Schema extends TagSchema<any>> {
               return newTags;
             });
 
-            Launched.events.emit(
-              "tag:change",
-              key,
-              value,
-              tags[key]?.data.value
-            );
+            if (!config?.silent)
+              Launched.events.emit(
+                "tag:change",
+                key,
+                value,
+                tags[key]?.data.value
+              );
           };
 
           return [key, { ...data, setData }];
@@ -135,6 +150,11 @@ export default class Launched<Schema extends TagSchema<any>> {
         Launched.events.emit("data:update", this.tags);
       }, [tags]);
 
+      useEffect(() => {
+        this.setCanUndo = setCanUndo;
+        this.setCanRedo = setCanRedo;
+      }, []);
+
       return (
         <this.context.Provider
           value={{
@@ -142,7 +162,15 @@ export default class Launched<Schema extends TagSchema<any>> {
           }}
         >
           {children}
-          <Toolbar {...this.config.toolbarOptions} />
+          <Toolbar
+            {...this.config.toolbarOptions}
+            undo={this.undo.bind(this)}
+            redo={this.redo.bind(this)}
+            revert={this.restore.bind(this, true)}
+            save={() => this.config.save?.(this.tags)}
+            canUndo={canUndo}
+            canRedo={canRedo}
+          />
         </this.context.Provider>
       );
     };
@@ -150,85 +178,25 @@ export default class Launched<Schema extends TagSchema<any>> {
     Launched.events.on("tag:ready", (key: keyof Schema) => {
       if (!this.config.locked) this.render(key);
     });
-  }
 
-  private flattenTagValue<V extends TagData>(
-    value: Record<string, V> | V | V[]
-  ): FlatTagValue<V> {
-    if (Array.isArray(value))
-      return value.map((v) => this.flattenTagValue(v)) as FlatTagValue<V>;
-    else if (typeof value === "object") {
-      return Object.fromEntries(
-        Object.entries(value).map(([key, v]) => {
-          if (typeof v === "object" && "value" in v) return [key, v.value];
-          else return [key, this.flattenTagValue(v)];
-        })
-      ) as FlatTagValue<V>;
-    } else return value;
-  }
-
-  private transformObjectsToTagData(tags: Schema): Schema {
-    return Object.fromEntries(
-      Object.entries(tags).map(([key, data]) => {
-        if (Array.isArray(data)) {
-          return [key, data.map((v) => this.transformObjectsToTagData(v))];
-        } else if (typeof data === "object") {
-          return [
-            key,
-            {
-              type: data.type ?? typeof data.value,
-              value: data.value,
-            },
-          ];
-        } else {
-          return [key, { type: typeof data, value: data }];
-        }
-      })
-    ) as Schema;
-  }
-
-  private makeTagsFromSchema(
-    tags: Schema
-  ): Record<keyof Schema, Omit<Tag, "setData">> {
-    const cleanTags = this.transformObjectsToTagData(tags);
-
-    return Object.fromEntries(
-      Object.entries(cleanTags).map(([key, data]: [string, TagData]) => {
-        let type: string, value: TagData["value"];
-
-        if (Array.isArray(data)) {
-          if (!data.length) error("Array must have at least one item.");
-
-          type = typeof data[0];
-          if (data.some((v) => typeof v !== type))
-            error("Array must have consistent types.");
-
-          if (type === "object") {
-            const keys = data.map((v) => Object.keys(v));
-            if (keys[0]!.some((key) => keys.some((k) => !k.includes(key))))
-              error("Objects must have the same keys.");
-            if (keys.some((k) => k.some((k) => typeof k === "object")))
-              error("Objects cannot have nested objects.");
-
-            if (data[0].type) type = data[0].type;
-          }
-
-          value = data;
-        } else {
-          type = "type" in data ? data.type : typeof data;
-          value =
-            typeof data === "object" && "value" in data ? data.value : data;
+    Launched.events.on(
+      "tag:change",
+      (
+        key: keyof Schema,
+        value: TagData["value"],
+        prevValue: TagData["value"]
+      ) => {
+        if (this.version !== this.history.length - 1) {
+          this.history = this.history.slice(0, this.version + 1);
+          this.setCanRedo(false);
         }
 
-        return [
-          key,
-          {
-            el: createRef<HTMLElement>(),
-            data: { type, value },
-          },
-        ];
-      })
-    ) as Record<keyof Schema, Omit<Tag, "setData">>;
+        this.version++;
+        this.history.push({ key: String(key), value, prevValue });
+
+        this.setCanUndo(true);
+      }
+    );
   }
 
   private useTag = (<V extends TagSchemaValue = TagData["value"]>(
@@ -240,7 +208,7 @@ export default class Launched<Schema extends TagSchema<any>> {
     let tag: Tag | Omit<Tag, "setData"> | undefined = t.tags[key];
 
     if (!tag && value) {
-      const newTag = this.makeTagsFromSchema({ [key]: value } as Schema)[key]!;
+      const newTag = makeTagsFromSchema({ [key]: value } as Schema)[key]!;
 
       setTimeout(() => this.addTag(String(key), newTag), 0);
 
@@ -252,7 +220,7 @@ export default class Launched<Schema extends TagSchema<any>> {
 
     const v =
       typeof tag.data.value === "object"
-        ? this.flattenTagValue(tag.data.value as Record<string, TagData>)
+        ? flattenTagValue(tag.data.value as Record<string, TagData>)
         : tag.data.value;
 
     return [
@@ -262,21 +230,21 @@ export default class Launched<Schema extends TagSchema<any>> {
 
         (tag!.el.current as T) = el;
 
+        if (!this.originalTags.has(key))
+          this.originalTags.set(key, tag.data.value);
+
         Launched.events.emit("tag:ready", key, tag);
       },
     ] as const;
   }) as LaunchedContextValue["useTag"];
 
   private render(tag?: keyof Schema) {
-    if (tag && this.tags[tag]) renderSingleTagUI(this.tags[tag], String(tag));
+    if (tag && this.tags[tag])
+      this.renderer.renderSingleTagUI(this.tags[tag], String(tag));
     else
       Object.entries(this.tags).map(([key, tag]) =>
-        tag.el.current ? renderSingleTagUI(tag, key) : null
+        tag.el.current ? this.renderer.renderSingleTagUI(tag, key) : null
       );
-  }
-
-  public static registerTagFormat<V>(name: string, renderer: Renderer<V>) {
-    Launched.formats.set(name, renderer);
   }
 
   public static lock() {
@@ -287,9 +255,9 @@ export default class Launched<Schema extends TagSchema<any>> {
     function unmountTag(id: string, value: TagValue, type: string) {
       if (type === "object") {
         Object.keys(value).forEach((key) => {
-          unmountSingleTagUI(`${id}-${key}`);
+          Launched.instance!.renderer.unmountSingleTagUI(`${id}-${key}`);
         });
-      } else unmountSingleTagUI(id);
+      } else Launched.instance!.renderer.unmountSingleTagUI(id);
     }
 
     Object.entries(Launched.instance.tags).map(([key, tag]) => {
@@ -320,6 +288,57 @@ export default class Launched<Schema extends TagSchema<any>> {
     if (!Launched.instance) error("Launched is not initialized.");
 
     Launched.instance.config.locked ? Launched.unlock() : Launched.lock();
+  }
+
+  public undo() {
+    if (this.version === -1 || this.config.locked) return;
+    else if (this.version === 0) {
+      this.version = -1;
+      this.restore();
+
+      this.setCanUndo(false);
+      this.setCanRedo(true);
+
+      return;
+    }
+
+    const { key, prevValue } = this.history[this.version--]!;
+
+    this.tags[key]!.setData(prevValue, { silent: true });
+
+    this.setCanRedo(true);
+  }
+
+  public redo() {
+    if (
+      !this.history.length ||
+      this.version === this.history.length - 1 ||
+      this.config.locked
+    )
+      return;
+
+    const { key, value } = this.history[++this.version]!;
+
+    this.tags[key]!.setData(value, { silent: true });
+
+    this.setCanUndo(true);
+    if (this.version === this.history.length - 1) this.setCanRedo(false);
+  }
+
+  public restore(hard?: boolean) {
+    if (this.config.locked) return;
+
+    if (hard) this.history = [];
+    this.version = -1;
+
+    this.setCanUndo(false);
+    this.setCanRedo(false);
+
+    Array.from(this.originalTags.entries()).map(([key, value]) => {
+      if (this.tags[key]?.data.value !== value) {
+        this.tags[key]!.setData(value, { silent: true });
+      }
+    });
   }
 }
 
