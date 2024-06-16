@@ -1,4 +1,5 @@
 import "../styles/toolbar.css";
+import Launched from "../../core/context";
 
 export default function Toolbar({
   position,
@@ -24,6 +25,16 @@ export default function Toolbar({
         <button onClick={save} className="Launched__toolbar-saveButton">
           Save
         </button>
+        <select
+          onChange={(e) => {
+            if (e.target.value === "locked") Launched.lock();
+            else Launched.unlock();
+          }}
+          className="Launched__toolbar-lockMode"
+        >
+          <option value="unlocked">Edit</option>
+          <option value="locked">Preview</option>
+        </select>
         <button onClick={undo} className="Launched__toolbar-button undo">
           <svg viewBox="0 0 24 24" className="Launched__icon">
             <polyline points="1 4 1 10 7 10"></polyline>
