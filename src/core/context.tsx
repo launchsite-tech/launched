@@ -36,7 +36,10 @@ export type TagSchema<T extends Record<string, TagSchemaValue>> = {
 
 export type Tag = {
   data: TagData;
-  setData: (value: TagData["value"]) => void;
+  setData: (
+    value: TagData["value"],
+    config?: Partial<{ silent: boolean }>
+  ) => void;
   el: React.RefObject<HTMLElement>;
 };
 
@@ -74,7 +77,11 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
   private addTag: (key: string, tag: Omit<Tag, "setData">) => void = () => {};
   private originalTags = new Map<keyof Schema, TagData["value"]>();
   private version: number = -1;
-  private history: { key: string; value: TagData["value"] }[] = [];
+  private history: {
+    key: string;
+    value: TagData["value"];
+    prevValue: TagData["value"];
+  }[] = [];
 
   public tags: Record<keyof Schema, Tag> = {} as Record<keyof Schema, Tag>;
   public Provider: React.FC<{ children: React.ReactNode }>;
@@ -101,7 +108,10 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
 
       this.tags = Object.fromEntries(
         Object.entries(tags).map(([key, data]) => {
-          const setData = (value: string | number) => {
+          const setData = (
+            value: TagData["value"],
+            config?: Partial<{ silent: boolean }>
+          ) => {
             if (!tags[key]) return;
 
             setTags((p) => {
@@ -115,12 +125,13 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
               return newTags;
             });
 
-            Launched.events.emit(
-              "tag:change",
-              key,
-              value,
-              tags[key]?.data.value
-            );
+            if (!config?.silent)
+              Launched.events.emit(
+                "tag:change",
+                key,
+                value,
+                tags[key]?.data.value
+              );
           };
 
           return [key, { ...data, setData }];
@@ -146,7 +157,7 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
             {...this.config.toolbarOptions}
             undo={this.undo.bind(this)}
             redo={this.redo.bind(this)}
-            revert={this.restore.bind(this)}
+            revert={this.restore.bind(this, true)}
             save={() => this.config.save?.(this.tags)}
           />
         </this.context.Provider>
@@ -159,14 +170,16 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
 
     Launched.events.on(
       "tag:change",
-      (key: keyof Schema, value: TagData["value"]) => {
-        if (this.version !== this.history.length)
-          this.history = this.history.slice(0, this.version);
+      (
+        key: keyof Schema,
+        value: TagData["value"],
+        prevValue: TagData["value"]
+      ) => {
+        if (this.version !== this.history.length - 1)
+          this.history = this.history.slice(0, this.version + 1);
 
-        this.history.push({ key: String(key), value });
         this.version++;
-
-        console.log(this.version);
+        this.history.push({ key: String(key), value, prevValue });
       }
     );
   }
@@ -263,37 +276,34 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
   }
 
   public undo() {
-    console.log(this.version);
-
     if (this.version === -1) return;
     else if (this.version === 0) {
-      this.version -= 2;
+      this.version = -1;
       this.restore();
       return;
     }
 
-    const { key, value } = this.history[this.version - 1]!;
-    this.version -= 2;
+    const { key, prevValue } = this.history[this.version--]!;
 
-    this.tags[key]!.setData(value);
+    this.tags[key]!.setData(prevValue, { silent: true });
   }
 
   public redo() {
-    if (this.version === this.history.length) return;
+    if (!this.history.length || this.version === this.history.length - 1)
+      return;
 
-    const { key, value } = this.history[this.version + 1]!;
+    const { key, value } = this.history[++this.version]!;
 
-    this.tags[key]!.setData(value);
+    this.tags[key]!.setData(value, { silent: true });
   }
 
-  public restore() {
-    this.history = [];
+  public restore(hard?: boolean) {
+    if (hard) this.history = [];
     this.version = -1;
 
     Array.from(this.originalTags.entries()).map(([key, value]) => {
       if (this.tags[key]?.data.value !== value) {
-        console.log(key, value);
-        this.tags[key]!.setData(value);
+        this.tags[key]!.setData(value, { silent: true });
       }
     });
   }
