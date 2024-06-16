@@ -70,12 +70,9 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
   private readonly config: Required<Config<Schema>>;
   private renderer = new Renderer();
   private addTag: (key: string, tag: Omit<Tag, "setData">) => void = () => {};
-  // private originalTags: Record<keyof Schema, Tag> = {} as Record<
-  //   keyof Schema,
-  //   Tag
-  // >;
-  // private version: number = 0;
-  // private history: { key: string; value: TagData["value"] }[] = [];
+  private originalTags = new Map<keyof Schema, TagData["value"]>();
+  private version: number = -1;
+  private history: { key: string; value: TagData["value"] }[] = [];
 
   public tags: Record<keyof Schema, Tag> = {} as Record<keyof Schema, Tag>;
   public Provider: React.FC<{ children: React.ReactNode }>;
@@ -145,13 +142,10 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
           {children}
           <Toolbar
             {...this.config.toolbarOptions}
-            // undo={this.undo.bind(this)}
-            // redo={this.redo.bind(this)}
+            undo={this.undo.bind(this)}
+            redo={this.redo.bind(this)}
+            revert={this.restore.bind(this)}
             save={() => this.config.save?.(this.tags)}
-            // revert={this.restore.bind(this)}
-            undo={() => {}}
-            redo={() => {}}
-            revert={() => {}}
           />
         </this.context.Provider>
       );
@@ -164,15 +158,11 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
     Launched.events.on(
       "tag:change",
       (key: keyof Schema, value: TagData["value"]) => {
-        // if (this.version === 0)
-        //   this.originalTags = cloneDeep(this.tags) as Record<keyof Schema, Tag>;
+        if (this.version !== this.history.length)
+          this.history = this.history.slice(0, this.version);
 
-        // if (this.version !== this.history.length)
-        //   this.history = this.history.slice(0, this.version);
-
-        // this.history.push({ key: String(key), value });
-        // this.version++;
-        console.log(key, value);
+        this.history.push({ key: String(key), value });
+        this.version++;
       }
     );
   }
@@ -287,6 +277,9 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
 
         (tag!.el.current as T) = el;
 
+        if (!this.originalTags.has(key))
+          this.originalTags.set(key, tag.data.value);
+
         Launched.events.emit("tag:ready", key, tag);
       },
     ] as const;
@@ -344,31 +337,38 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
     Launched.instance.config.locked ? Launched.unlock() : Launched.lock();
   }
 
-  // public undo() {
-  //   console.log(this.version, this.history);
-  //   if (this.version === 0) return;
+  public undo() {
+    if (this.version === -1) return;
+    else if (this.version === 0) {
+      this.version = -1;
+      this.restore();
+      return;
+    }
 
-  //   const { key, value } = this.history[--this.version]!;
+    const { key, value } = this.history[--this.version]!;
 
-  //   this.tags[key]!.setData(value);
-  // }
+    this.tags[key]!.setData(value);
+  }
 
-  // public redo() {
-  //   if (this.version === this.history.length) return;
+  public redo() {
+    if (this.version === this.history.length) return;
 
-  //   const { key, value } = this.history[this.version++]!;
+    const { key, value } = this.history[this.version++]!;
 
-  //   this.tags[key]!.setData(value);
-  // }
+    this.tags[key]!.setData(value);
+  }
 
-  // public restore() {
-  //   this.history = [];
-  //   this.version = 0;
+  public restore() {
+    this.history = [];
+    this.version = -1;
 
-  //   Object.values(this.originalTags).map((tag) => {
-  //     tag.setData(tag.data.value);
-  //   });
-  // }
+    Array.from(this.originalTags.entries()).map(([key, value]) => {
+      if (this.tags[key]?.data.value !== value) {
+        console.log(key, value);
+        this.tags[key]!.setData(value);
+      }
+    });
+  }
 }
 
 export function LaunchedProvider<Schema extends TagSchema<any>>({

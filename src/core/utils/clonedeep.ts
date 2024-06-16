@@ -1,5 +1,5 @@
 export default function cloneDeep<T>(obj: T): T {
-  if (typeof obj !== "object" || obj === null) {
+  if (typeof obj !== "object" || obj === null || "current" in obj) {
     return obj;
   }
 
