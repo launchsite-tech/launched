@@ -1,11 +1,9 @@
 import React from "react";
 import EventEmitter from "./events";
 import { useState, useEffect, createRef, createContext } from "react";
-import { renderSingleTagUI, unmountSingleTagUI } from "./renderer";
+import Renderer from "./renderer";
 import Toolbar from "../ui/components/Toolbar";
 import error from "./utils/error";
-import type { Renderer } from "./renderer";
-import type { Root } from "react-dom/client";
 
 export type TagValue = string | number | Record<string, TagData>;
 export type TagSchemaValue =
@@ -70,8 +68,9 @@ interface LaunchedContextValue {
   ];
 }
 
-export default class Launched<Schema extends TagSchema<any>> {
+export default class Launched<Schema extends TagSchema<any> = {}> {
   private readonly config: Required<Config<Schema>>;
+  private renderer = new Renderer();
   private addTag: (key: string, tag: Omit<Tag, "setData">) => void = () => {};
 
   public tags: Record<keyof Schema, Tag> = {} as Record<keyof Schema, Tag>;
@@ -82,8 +81,6 @@ export default class Launched<Schema extends TagSchema<any>> {
 
   public static instance: Launched<any> | null;
   public static events = new EventEmitter();
-  public static formats = new Map<string, Renderer<any>>();
-  public static roots = new Map<string, Root>();
 
   constructor(config?: Config<Schema>) {
     if (Launched.instance) {
@@ -268,15 +265,12 @@ export default class Launched<Schema extends TagSchema<any>> {
   }) as LaunchedContextValue["useTag"];
 
   private render(tag?: keyof Schema) {
-    if (tag && this.tags[tag]) renderSingleTagUI(this.tags[tag], String(tag));
+    if (tag && this.tags[tag])
+      this.renderer.renderSingleTagUI(this.tags[tag], String(tag));
     else
       Object.entries(this.tags).map(([key, tag]) =>
-        tag.el.current ? renderSingleTagUI(tag, key) : null
+        tag.el.current ? this.renderer.renderSingleTagUI(tag, key) : null
       );
-  }
-
-  public static registerTagFormat<V>(name: string, renderer: Renderer<V>) {
-    Launched.formats.set(name, renderer);
   }
 
   public static lock() {
@@ -287,9 +281,9 @@ export default class Launched<Schema extends TagSchema<any>> {
     function unmountTag(id: string, value: TagValue, type: string) {
       if (type === "object") {
         Object.keys(value).forEach((key) => {
-          unmountSingleTagUI(`${id}-${key}`);
+          Launched.instance!.renderer.unmountSingleTagUI(`${id}-${key}`);
         });
-      } else unmountSingleTagUI(id);
+      } else Launched.instance!.renderer.unmountSingleTagUI(id);
     }
 
     Object.entries(Launched.instance.tags).map(([key, tag]) => {
