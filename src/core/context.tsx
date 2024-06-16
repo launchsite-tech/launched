@@ -44,7 +44,6 @@ export interface Config<Schema extends TagSchema<any>> {
   save?: (tags: Record<keyof Schema, Tag>) => void;
   toolbarOptions?: Partial<{
     className: string;
-    draggable: boolean;
     position: "center" | "right" | "left";
   }>;
 }
@@ -53,8 +52,7 @@ const defaults: Config<{}> = {
   locked: false,
   tags: {},
   toolbarOptions: {
-    draggable: true,
-    position: "right",
+    position: "center",
   },
 };
 
