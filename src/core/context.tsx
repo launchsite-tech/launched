@@ -1,9 +1,11 @@
 import React from "react";
 import EventEmitter from "./events";
-import { useState, useEffect, createRef, createContext } from "react";
+import { useState, useEffect, createContext } from "react";
 import Renderer from "./renderer";
 import Toolbar from "../ui/components/Toolbar";
 import error from "./utils/error";
+import makeTagsFromSchema from "./utils/makeTagsFromSchema";
+import flattenTagValue from "./utils/flattenTagValue";
 
 export type TagValue = string | number | Record<string, TagData>;
 export type TagSchemaValue =
@@ -94,7 +96,7 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
 
     this.Provider = ({ children }: { children: React.ReactNode }) => {
       const [tags, setTags] = useState(() =>
-        this.makeTagsFromSchema(this.config.tags)
+        makeTagsFromSchema(this.config.tags)
       );
 
       this.tags = Object.fromEntries(
@@ -163,87 +165,10 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
 
         this.history.push({ key: String(key), value });
         this.version++;
+
+        console.log(this.version);
       }
     );
-  }
-
-  private flattenTagValue<V extends TagData>(
-    value: Record<string, V> | V | V[]
-  ): FlatTagValue<V> {
-    if (Array.isArray(value))
-      return value.map((v) => this.flattenTagValue(v)) as FlatTagValue<V>;
-    else if (typeof value === "object") {
-      return Object.fromEntries(
-        Object.entries(value).map(([key, v]) => {
-          if (typeof v === "object" && "value" in v) return [key, v.value];
-          else return [key, this.flattenTagValue(v)];
-        })
-      ) as FlatTagValue<V>;
-    } else return value;
-  }
-
-  private transformObjectsToTagData(tags: Schema): Schema {
-    return Object.fromEntries(
-      Object.entries(tags).map(([key, data]) => {
-        if (Array.isArray(data)) {
-          return [key, data.map((v) => this.transformObjectsToTagData(v))];
-        } else if (typeof data === "object") {
-          return [
-            key,
-            {
-              type: data.type ?? typeof data.value,
-              value: data.value,
-            },
-          ];
-        } else {
-          return [key, { type: typeof data, value: data }];
-        }
-      })
-    ) as Schema;
-  }
-
-  private makeTagsFromSchema(
-    tags: Schema
-  ): Record<keyof Schema, Omit<Tag, "setData">> {
-    const cleanTags = this.transformObjectsToTagData(tags);
-
-    return Object.fromEntries(
-      Object.entries(cleanTags).map(([key, data]: [string, TagData]) => {
-        let type: string, value: TagData["value"];
-
-        if (Array.isArray(data)) {
-          if (!data.length) error("Array must have at least one item.");
-
-          type = typeof data[0];
-          if (data.some((v) => typeof v !== type))
-            error("Array must have consistent types.");
-
-          if (type === "object") {
-            const keys = data.map((v) => Object.keys(v));
-            if (keys[0]!.some((key) => keys.some((k) => !k.includes(key))))
-              error("Objects must have the same keys.");
-            if (keys.some((k) => k.some((k) => typeof k === "object")))
-              error("Objects cannot have nested objects.");
-
-            if (data[0].type) type = data[0].type;
-          }
-
-          value = data;
-        } else {
-          type = "type" in data ? data.type : typeof data;
-          value =
-            typeof data === "object" && "value" in data ? data.value : data;
-        }
-
-        return [
-          key,
-          {
-            el: createRef<HTMLElement>(),
-            data: { type, value },
-          },
-        ];
-      })
-    ) as Record<keyof Schema, Omit<Tag, "setData">>;
   }
 
   private useTag = (<V extends TagSchemaValue = TagData["value"]>(
@@ -255,7 +180,7 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
     let tag: Tag | Omit<Tag, "setData"> | undefined = t.tags[key];
 
     if (!tag && value) {
-      const newTag = this.makeTagsFromSchema({ [key]: value } as Schema)[key]!;
+      const newTag = makeTagsFromSchema({ [key]: value } as Schema)[key]!;
 
       setTimeout(() => this.addTag(String(key), newTag), 0);
 
@@ -267,7 +192,7 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
 
     const v =
       typeof tag.data.value === "object"
-        ? this.flattenTagValue(tag.data.value as Record<string, TagData>)
+        ? flattenTagValue(tag.data.value as Record<string, TagData>)
         : tag.data.value;
 
     return [
@@ -338,14 +263,17 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
   }
 
   public undo() {
+    console.log(this.version);
+
     if (this.version === -1) return;
     else if (this.version === 0) {
-      this.version = -1;
+      this.version -= 2;
       this.restore();
       return;
     }
 
-    const { key, value } = this.history[--this.version]!;
+    const { key, value } = this.history[this.version - 1]!;
+    this.version -= 2;
 
     this.tags[key]!.setData(value);
   }
@@ -353,7 +281,7 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
   public redo() {
     if (this.version === this.history.length) return;
 
-    const { key, value } = this.history[this.version++]!;
+    const { key, value } = this.history[this.version + 1]!;
 
     this.tags[key]!.setData(value);
   }
