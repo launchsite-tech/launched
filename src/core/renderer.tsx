@@ -1,15 +1,16 @@
 import "../ui/styles/container.css";
-import Launched from "./context";
 import error from "./utils/error";
-import type { Tag, TagData, TagValue } from "./context";
 import { useRef, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
+import type { Tag, TagData, TagValue } from "./context";
+import type { Root } from "react-dom/client";
+import Launched from "./context";
 
-type RendererFunctionState = {
+type TagRendererFunctionState = {
   element?: HTMLElement;
 };
 
-export type RendererProps<V> = {
+export type TagRendererProps<V> = {
   id: string;
   element: HTMLElement;
   value: V;
@@ -18,141 +19,150 @@ export type RendererProps<V> = {
   close: () => void;
 };
 
-export type Renderer<V> = {
-  component: (props: RendererProps<V>) => React.JSX.Element;
+export type TagRenderer<V> = {
+  component: (props: TagRendererProps<V>) => React.JSX.Element;
   parentValidator?: (element: HTMLElement) => boolean;
-  onClose?: (state: RendererFunctionState) => void;
-  onSelect?: (state: RendererFunctionState) => void;
-  onDataUpdate?: (state: RendererFunctionState & { data: V }) => void;
+  onClose?: (state: TagRendererFunctionState) => void;
+  onSelect?: (state: TagRendererFunctionState) => void;
+  onDataUpdate?: (state: TagRendererFunctionState & { data: V }) => void;
 };
 
-// TODO: Move renderer to its own class
-// TODO: Cache renderer information for faster rerenders
+export default class Renderer {
+  public static formats = new Map<string, TagRenderer<any>>();
+  public static roots = new Map<string, Root>();
 
-export function renderSingleTagUI(parentTag: Tag, id: string): void {
-  if (!parentTag || !parentTag.el.current)
-    return console.warn(`Tag "${id}" was never bound to an element.`);
+  constructor() {}
 
-  function renderTag(parentTag: Tag, tag: Tag, childId: string): void {
-    if (!tag.el.current) return;
+  public static registerTagFormat<V>(name: string, renderer: TagRenderer<V>) {
+    Renderer.formats.set(name, renderer);
+  }
 
-    if (Array.isArray(tag.data.value)) {
-      tag.data.value.forEach((t, i) => {
-        // TODO: Make configurable
-        const childEl =
-          (tag.el.current!.children[i] as HTMLElement) ?? tag.el.current;
+  public renderSingleTagUI(parentTag: Tag, id: string): void {
+    if (!parentTag || !parentTag.el.current)
+      return console.warn(`Tag "${id}" was never bound to an element.`);
 
-        renderTag(
-          parentTag,
-          {
-            el: { current: childEl },
-            data: {
-              type: tag.data.type,
-              value: t,
-            },
-            setData: (data) => {
-              tag.setData(
-                (tag.data.value as TagValue[]).map((v, index) =>
-                  index === i ? (data as TagValue) : v
-                )
-              );
-            },
-          },
-          `${id}-${i}`
-        );
-      });
-    } else if (
-      tag.data.type === "object" &&
-      typeof tag.data.value === "object"
-    ) {
-      for (const key in tag.data.value) {
-        const childEl = tag.el.current!.querySelector(
-          `[data-key="${key}"]`
-        ) as HTMLElement;
-
-        if (!childEl)
-          error(
-            `Child element with key "${key}" (under "${id}") not found. If you're using a custom renderer, make sure to add a data-key attribute to the targeted element.`
-          );
-
-        renderTag(
-          parentTag,
-          {
-            el: { current: childEl },
-            data: {
-              type: (tag.data.value as Record<string, TagData>)[key]!.type,
-              value: tag.data.value[key]!.value,
-            },
-            setData: (data) => {
-              tag.setData({
-                ...(tag.data.value as Record<string, TagData>),
-                [key]: {
-                  type: (tag.data.value as Record<string, TagData>)[key]!.type,
-                  value: data,
-                },
-              });
-            },
-          },
-          `${childId}-${key}`
-        );
-      }
-    } else {
+    function renderTag(parentTag: Tag, tag: Tag, childId: string): void {
       if (!tag.el.current) return;
 
-      const renderer = Launched.formats.get(tag.data.type);
+      if (Array.isArray(tag.data.value)) {
+        tag.data.value.forEach((t, i) => {
+          // TODO: Make configurable
+          const childEl =
+            (tag.el.current!.children[i] as HTMLElement) ?? tag.el.current;
 
-      if (!renderer) {
-        return console.warn(
-          `No renderer found for tag type "${tag.data.type}".`
-        );
-      }
-
-      if (
-        renderer.parentValidator &&
-        !renderer.parentValidator(tag.el.current)
+          renderTag(
+            parentTag,
+            {
+              el: { current: childEl },
+              data: {
+                type: tag.data.type,
+                value: t,
+              },
+              setData: (data) => {
+                tag.setData(
+                  (tag.data.value as TagValue[]).map((v, index) =>
+                    index === i ? (data as TagValue) : v
+                  )
+                );
+              },
+            },
+            `${id}-${i}`
+          );
+        });
+      } else if (
+        tag.data.type === "object" &&
+        typeof tag.data.value === "object"
       ) {
-        return console.warn(
-          `Parent element of tag "${childId}" does not satisfy the constraints of the renderer of type "${tag.data.type}".`
-        );
-      }
+        for (const key in tag.data.value) {
+          const childEl = tag.el.current!.querySelector(
+            `[data-key="${key}"]`
+          ) as HTMLElement;
 
-      const id = `Lt-${childId.split(" ").join("-")}`;
+          if (!childEl)
+            error(
+              `Child element with key "${key}" (under "${id}") not found. If you're using a custom renderer, make sure to add a data-key attribute to the targeted element.`
+            );
 
-      const existingNode = document.getElementById(id);
-      if (existingNode) existingNode.remove();
+          renderTag(
+            parentTag,
+            {
+              el: { current: childEl },
+              data: {
+                type: (tag.data.value as Record<string, TagData>)[key]!.type,
+                value: tag.data.value[key]!.value,
+              },
+              setData: (data) => {
+                tag.setData({
+                  ...(tag.data.value as Record<string, TagData>),
+                  [key]: {
+                    type: (tag.data.value as Record<string, TagData>)[key]!
+                      .type,
+                    value: data,
+                  },
+                });
+              },
+            },
+            `${childId}-${key}`
+          );
+        }
+      } else {
+        if (!tag.el.current) return;
 
-      setTimeout(() => {
-        if (Launched.roots.get(childId)) {
-          Launched.roots.get(childId)!.unmount();
-          Launched.roots.delete(childId);
+        const renderer = Renderer.formats.get(tag.data.type);
+
+        if (!renderer) {
+          return console.warn(
+            `No renderer found for tag type "${tag.data.type}".`
+          );
         }
 
-        const rootNode = document.createElement("div");
-        rootNode.id = id;
-        tag.el.current!.appendChild(rootNode);
-        const root = createRoot(rootNode);
+        if (
+          renderer.parentValidator &&
+          !renderer.parentValidator(tag.el.current)
+        ) {
+          return console.warn(
+            `Parent element of tag "${childId}" does not satisfy the constraints of the renderer of type "${tag.data.type}".`
+          );
+        }
 
-        Launched.roots.set(childId, root);
+        const id = `Lt-${childId.split(" ").join("-")}`;
 
-        root.render(<TagUI tag={tag} renderer={renderer!} id={childId} />);
-      }, 0);
+        const existingNode = document.getElementById(id);
+        if (existingNode) existingNode.remove();
+
+        setTimeout(() => {
+          if (Renderer.roots.get(childId)) {
+            Renderer.roots.get(childId)!.unmount();
+            Renderer.roots.delete(childId);
+          }
+
+          const rootNode = document.createElement("div");
+          rootNode.id = id;
+          tag.el.current!.appendChild(rootNode);
+          const root = createRoot(rootNode);
+
+          Renderer.roots.set(childId, root);
+
+          root.render(<TagUI tag={tag} renderer={renderer!} id={childId} />);
+        }, 0);
+      }
     }
+
+    renderTag(parentTag, parentTag, id);
   }
 
-  renderTag(parentTag, parentTag, id);
-}
+  public unmountSingleTagUI(tagId: string): void {
+    const id = `Lt-${tagId.split(" ").join("-")}`;
+    const root = Renderer.roots.get(tagId);
 
-export function unmountSingleTagUI(tagId: string): void {
-  const id = `Lt-${tagId.split(" ").join("-")}`;
-  const root = Launched.roots.get(tagId);
+    if (root) {
+      root.unmount();
+      Renderer.roots.delete(tagId);
+    }
 
-  if (root) {
-    root.unmount();
-    Launched.roots.delete(tagId);
+    const node = document.getElementById(id);
+    if (node) node.remove();
   }
-
-  const node = document.getElementById(id);
-  if (node) node.remove();
 }
 
 function TagUI({
@@ -161,7 +171,7 @@ function TagUI({
   id,
 }: {
   tag: Tag;
-  renderer: Renderer<any>;
+  renderer: TagRenderer<any>;
   id: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);

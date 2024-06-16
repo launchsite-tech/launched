@@ -1,6 +1,6 @@
 import "../styles/linkEditor.css";
 import { InlineTagUI } from "./InlineEditor";
-import type { Renderer, RendererProps } from "../../core/renderer";
+import type { TagRenderer, TagRendererProps } from "../../core/renderer";
 import { useState, useEffect } from "react";
 
 type Link = {
@@ -15,7 +15,7 @@ export function LinkUI({
   updateData,
   close,
   ...props
-}: RendererProps<Link>) {
+}: TagRendererProps<Link>) {
   const [href, setHref] = useState(value.href);
 
   function onMouseEnter() {
@@ -71,7 +71,7 @@ export function LinkUI({
   );
 }
 
-export const LinkRenderer: Renderer<Link> = {
+export const LinkRenderer: TagRenderer<Link> = {
   component: (props) => {
     return <LinkUI {...props} />;
   },
