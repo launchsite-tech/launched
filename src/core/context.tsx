@@ -77,6 +77,8 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
   private addTag: (key: string, tag: Omit<Tag, "setData">) => void = () => {};
   private originalTags = new Map<keyof Schema, TagData["value"]>();
   private version: number = -1;
+  private setCanUndo: React.Dispatch<React.SetStateAction<boolean>> = () => {};
+  private setCanRedo: React.Dispatch<React.SetStateAction<boolean>> = () => {};
   private history: {
     key: string;
     value: TagData["value"];
@@ -102,6 +104,8 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
     this.config = { ...defaults, ...config } as Required<Config<Schema>>;
 
     this.Provider = ({ children }: { children: React.ReactNode }) => {
+      const [canUndo, setCanUndo] = useState(false);
+      const [canRedo, setCanRedo] = useState(false);
       const [tags, setTags] = useState(() =>
         makeTagsFromSchema(this.config.tags)
       );
@@ -112,7 +116,7 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
             value: TagData["value"],
             config?: Partial<{ silent: boolean }>
           ) => {
-            if (!tags[key]) return;
+            if (!tags[key] || this.config.locked) return;
 
             setTags((p) => {
               const newTags = { ...p };
@@ -146,6 +150,11 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
         Launched.events.emit("data:update", this.tags);
       }, [tags]);
 
+      useEffect(() => {
+        this.setCanUndo = setCanUndo;
+        this.setCanRedo = setCanRedo;
+      }, []);
+
       return (
         <this.context.Provider
           value={{
@@ -159,6 +168,8 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
             redo={this.redo.bind(this)}
             revert={this.restore.bind(this, true)}
             save={() => this.config.save?.(this.tags)}
+            canUndo={canUndo}
+            canRedo={canRedo}
           />
         </this.context.Provider>
       );
@@ -175,11 +186,15 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
         value: TagData["value"],
         prevValue: TagData["value"]
       ) => {
-        if (this.version !== this.history.length - 1)
+        if (this.version !== this.history.length - 1) {
           this.history = this.history.slice(0, this.version + 1);
+          this.setCanRedo(false);
+        }
 
         this.version++;
         this.history.push({ key: String(key), value, prevValue });
+
+        this.setCanUndo(true);
       }
     );
   }
@@ -276,30 +291,48 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
   }
 
   public undo() {
-    if (this.version === -1) return;
+    if (this.version === -1 || this.config.locked) return;
     else if (this.version === 0) {
       this.version = -1;
       this.restore();
+
+      this.setCanUndo(false);
+      this.setCanRedo(true);
+
       return;
     }
 
     const { key, prevValue } = this.history[this.version--]!;
 
     this.tags[key]!.setData(prevValue, { silent: true });
+
+    this.setCanRedo(true);
   }
 
   public redo() {
-    if (!this.history.length || this.version === this.history.length - 1)
+    if (
+      !this.history.length ||
+      this.version === this.history.length - 1 ||
+      this.config.locked
+    )
       return;
 
     const { key, value } = this.history[++this.version]!;
 
     this.tags[key]!.setData(value, { silent: true });
+
+    this.setCanUndo(true);
+    if (this.version === this.history.length - 1) this.setCanRedo(false);
   }
 
   public restore(hard?: boolean) {
+    if (this.config.locked) return;
+
     if (hard) this.history = [];
     this.version = -1;
+
+    this.setCanUndo(false);
+    this.setCanRedo(false);
 
     Array.from(this.originalTags.entries()).map(([key, value]) => {
       if (this.tags[key]?.data.value !== value) {

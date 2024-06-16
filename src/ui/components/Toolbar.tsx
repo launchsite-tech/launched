@@ -4,6 +4,8 @@ import Launched from "../../core/context";
 export default function Toolbar({
   position,
   className,
+  canUndo,
+  canRedo,
   undo,
   redo,
   save,
@@ -11,6 +13,8 @@ export default function Toolbar({
 }: {
   position?: "center" | "right" | "left";
   className?: string;
+  canUndo: boolean;
+  canRedo: boolean;
   undo: () => void;
   redo: () => void;
   save: () => void;
@@ -35,13 +39,21 @@ export default function Toolbar({
           <option value="unlocked">Edit</option>
           <option value="locked">Preview</option>
         </select>
-        <button onClick={undo} className="Launched__toolbar-button undo">
+        <button
+          disabled={!canUndo}
+          onClick={undo}
+          className="Launched__toolbar-button undo"
+        >
           <svg viewBox="0 0 24 24" className="Launched__icon">
             <polyline points="1 4 1 10 7 10"></polyline>
             <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
           </svg>
         </button>
-        <button onClick={redo} className="Launched__toolbar-button redo">
+        <button
+          disabled={!canRedo}
+          onClick={redo}
+          className="Launched__toolbar-button redo"
+        >
           <svg viewBox="0 0 24 24" className="Launched__icon">
             <polyline points="23 4 23 10 17 10"></polyline>
             <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
