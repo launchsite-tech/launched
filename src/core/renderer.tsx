@@ -223,20 +223,23 @@ function TagUI({
     };
   }, []);
 
+  function select() {
+    if (selected) return;
+
+    setSelected(true);
+    renderer?.onSelect?.({ element: tag.el.current! });
+
+    Launched.events.emit("tag:select", id, tag);
+  }
+
   if (!tag.el.current) return null;
 
   return (
     <div
       ref={containerRef}
       tabIndex={0}
-      onMouseDown={() => {
-        if (selected) return;
-
-        setSelected(true);
-        renderer?.onSelect?.({ element: tag.el.current! });
-
-        Launched.events.emit("tag:select", id, tag);
-      }}
+      onMouseDown={select}
+      onFocus={select}
       className={`Launched__tag-container ${selected && "active"}`}
     >
       <renderer.component
