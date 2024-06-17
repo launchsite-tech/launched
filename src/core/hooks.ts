@@ -5,13 +5,14 @@ import type { TagData, TagSchemaValue } from "../core/context";
 
 export function useTag<V extends TagSchemaValue = TagData["value"]>(
   key: string,
-  value?: V
+  value?: V,
+  type?: string
 ) {
   if (!Launched.instance) error("Launched not initialized.");
 
   const { useTag } = useContext(Launched.instance.context);
 
-  return useTag(key, value);
+  return useTag(key, value, type);
 }
 
 export function useMediaQuery(query: string) {

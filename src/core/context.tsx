@@ -64,9 +64,14 @@ const defaults: Config<{}> = {
 interface LaunchedContextValue {
   useTag<V extends TagSchemaValue = TagData["value"]>(
     key: string,
-    value?: V
+    value?: V,
+    type?: string
   ): readonly [
-    V extends string | number ? string | number : FlatTagValue<V>,
+    V extends string | number
+      ? V extends string // Nonsense to avoid constants
+        ? string
+        : number
+      : FlatTagValue<V>,
     <T extends HTMLElement | null>(el: T) => void,
   ];
 }
@@ -201,14 +206,17 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
 
   private useTag = (<V extends TagSchemaValue = TagData["value"]>(
     key: string,
-    value?: V
+    value?: V,
+    type?: string
   ) => {
     const t = this ?? Launched.instance;
 
     let tag: Tag | Omit<Tag, "setData"> | undefined = t.tags[key];
 
     if (!tag && value !== null) {
-      const newTag = makeTagsFromSchema({ [key]: value } as Schema)[key]!;
+      const v = type ? { type, value } : value;
+
+      const newTag = makeTagsFromSchema({ [key]: v } as Schema)[key]!;
 
       setTimeout(() => this.addTag(String(key), newTag), 0);
 
