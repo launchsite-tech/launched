@@ -207,7 +207,7 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
 
     let tag: Tag | Omit<Tag, "setData"> | undefined = t.tags[key];
 
-    if (!tag && value) {
+    if (!tag && value !== null) {
       const newTag = makeTagsFromSchema({ [key]: value } as Schema)[key]!;
 
       setTimeout(() => this.addTag(String(key), newTag), 0);
