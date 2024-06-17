@@ -1,5 +1,5 @@
 import "../styles/linkEditor.css";
-import { InlineTagUI } from "./InlineEditor";
+import { InlineTextUI } from "./InlineEditor";
 import type { TagRenderer, TagRendererProps } from "../../core/renderer";
 import { useState, useEffect } from "react";
 
@@ -59,7 +59,7 @@ export function LinkUI({
           />
         </div>
       )}
-      <InlineTagUI
+      <InlineTextUI
         {...props}
         value={value.text}
         updateData={(text) => updateData({ ...value, text })}

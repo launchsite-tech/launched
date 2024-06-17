@@ -10,7 +10,7 @@
   - [ ] Default addon tag types
     - [x] Text
     - [x] Link
-    - [ ] Number
+    - [ ] Image
     - [ ] Date
     - [ ] Time
 - [x] Schema optional

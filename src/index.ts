@@ -8,11 +8,11 @@ import { useTag } from "./core/hooks";
 import type { Config, TagData, TagValue, Tag, TagSchema } from "./core/context";
 import type { TagRenderer, TagRendererProps } from "./core/renderer";
 
-import { InlineTagRenderer } from "./ui/components/InlineEditor";
+import { InlineTextRenderer } from "./ui/components/InlineEditor";
 import { LinkRenderer } from "./ui/components/LinkEditor";
 
-Renderer.registerTagFormat("string", InlineTagRenderer);
-Renderer.registerTagFormat("number", InlineTagRenderer);
+Renderer.registerTagFormat("string", InlineTextRenderer);
+Renderer.registerTagFormat("number", InlineTextRenderer);
 Renderer.registerTagFormat("link", LinkRenderer);
 
 export default Launched;

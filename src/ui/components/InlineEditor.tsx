@@ -48,33 +48,6 @@ export function InlineTextUI({
   );
 }
 
-export function InlineNumberUI({
-  value,
-  selected,
-  updateData,
-  close,
-}: TagRendererProps<number>) {
-  const editorRef = useRef<HTMLInputElement>(null);
-
-  function onClose() {
-    if (editorRef.current && editorRef.current.value !== value.toString()) {
-      updateData(Number(editorRef.current.value));
-    }
-    close();
-  }
-
-  return (
-    <input
-      ref={editorRef}
-      type="number"
-      defaultValue={value}
-      onBlur={onClose}
-      className="Launched__tag-inlineEditor"
-      spellCheck={selected}
-    />
-  );
-}
-
 export const InlineTextRenderer: TagRenderer<string> = {
   component: (props) => {
     return <InlineTextUI {...props} />;
@@ -82,11 +55,5 @@ export const InlineTextRenderer: TagRenderer<string> = {
   parentValidator: (element) => {
     const whitelist = ["P", "H1", "H2", "H3", "H4", "H5", "H6", "SPAN", "DIV"];
     return whitelist.includes(element.nodeName);
-  },
-};
-
-export const InlineNumberRenderer: TagRenderer<number> = {
-  component: (props) => {
-    return <InlineNumberUI {...props} />;
   },
 };
