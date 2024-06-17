@@ -1,8 +1,8 @@
 import "../styles/inlineEditor.css";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import type { TagRenderer, TagRendererProps } from "../../core/renderer";
 
-export function InlineTagUI({
+export function InlineTextUI({
   // element,
   value,
   selected,
@@ -10,7 +10,7 @@ export function InlineTagUI({
   close,
 }: TagRendererProps<string>) {
   const editorRef = useRef<HTMLDivElement>(null);
-  const text = useRef(value);
+  const [text, setText] = useState(value);
 
   function getText(): string {
     if (!editorRef.current) return "";
@@ -30,30 +30,63 @@ export function InlineTagUI({
   }
 
   function onClose() {
-    if (text.current !== value) updateData(text.current);
+    if (text !== value) updateData(text);
     close();
   }
 
   return (
     <div
       ref={editorRef}
-      onInput={() => (text.current = getText())}
+      onInput={() => setText(getText())}
       onBlur={onClose}
       className="Launched__tag-inlineEditor"
       contentEditable
-      data-value={value}
+      data-empty={text === ""}
       dangerouslySetInnerHTML={{ __html: value }}
       spellCheck={selected}
     ></div>
   );
 }
 
-export const InlineTagRenderer: TagRenderer<string> = {
+export function InlineNumberUI({
+  value,
+  selected,
+  updateData,
+  close,
+}: TagRendererProps<number>) {
+  const editorRef = useRef<HTMLInputElement>(null);
+
+  function onClose() {
+    if (editorRef.current && editorRef.current.value !== value.toString()) {
+      updateData(Number(editorRef.current.value));
+    }
+    close();
+  }
+
+  return (
+    <input
+      ref={editorRef}
+      type="number"
+      defaultValue={value}
+      onBlur={onClose}
+      className="Launched__tag-inlineEditor"
+      spellCheck={selected}
+    />
+  );
+}
+
+export const InlineTextRenderer: TagRenderer<string> = {
   component: (props) => {
-    return <InlineTagUI {...props} />;
+    return <InlineTextUI {...props} />;
   },
   parentValidator: (element) => {
     const whitelist = ["P", "H1", "H2", "H3", "H4", "H5", "H6", "SPAN", "DIV"];
     return whitelist.includes(element.nodeName);
+  },
+};
+
+export const InlineNumberRenderer: TagRenderer<number> = {
+  component: (props) => {
+    return <InlineNumberUI {...props} />;
   },
 };

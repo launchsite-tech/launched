@@ -1,8 +1,10 @@
 .Launched__tag-container:has(.Launched__tag-inlineEditor) {
   font-family: inherit;
+  min-width: min-content;
 }
 
 .Launched__tag-inlineEditor {
+  display: inline-block;
   outline: none;
   color: transparent;
 
@@ -24,10 +26,13 @@
   text-overflow: inherit;
   text-orientation: inherit;
 
-  &[data-value=""]::after {
-    content: "";
-    display: inline-block;
-    width: 1em;
-    height: 1em;
+  &[data-empty="true"] {
+    color: inherit;
+
+    &::after {
+      content: "Enter text...";
+      pointer-events: none;
+      width: 100%;
+    }
   }
 }
