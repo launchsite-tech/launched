@@ -3,8 +3,24 @@ import { useTag } from "../../../dist/";
 import { Instagram, Youtube, GitHub } from "react-feather";
 
 export default function Footer() {
-  const [footerLinks, footerLinksTag] =
-    useTag<{ text: string; href: string }[]>("Footer links");
+  const [footerLinks, footerLinksTag] = useTag(
+    "Footer links",
+    [
+      {
+        text: "About",
+        href: "#",
+      },
+      {
+        text: "Privacy",
+        href: "#",
+      },
+      {
+        text: "Terms",
+        href: "#",
+      },
+    ],
+    "link",
+  );
 
   return (
     <footer className="flex w-full justify-center bg-salmon-lgt p-8">
