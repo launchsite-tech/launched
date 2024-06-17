@@ -41,6 +41,7 @@ export function InlineTagUI({
       onBlur={onClose}
       className="Launched__tag-inlineEditor"
       contentEditable
+      data-value={value}
       dangerouslySetInnerHTML={{ __html: value }}
       spellCheck={selected}
     ></div>

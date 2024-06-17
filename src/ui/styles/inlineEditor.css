@@ -23,4 +23,11 @@
   text-justify: inherit;
   text-overflow: inherit;
   text-orientation: inherit;
+
+  &[data-value=""]::after {
+    content: "";
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+  }
 }
