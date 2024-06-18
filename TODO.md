@@ -10,7 +10,7 @@
   - [ ] Default addon tag types
     - [x] Text
     - [x] Link
-    - [ ] Image
+    - [x] Image
     - [ ] Date
     - [ ] Time
 - [x] Schema optional
@@ -19,6 +19,7 @@
 - [x] Ditch object view; make every field editable independently
 - [x] Migrate to contenteditable
   - [x] Sanitize input
+- [ ] Add react components for default addon tag types
 
 ### cx
 
@@ -36,7 +37,9 @@
 
 ### ux
 
-- [ ] Tag rendering
-  - [ ] Images
-    - [ ] Image upload
+- [x] Tag rendering
+  - [x] Images
+    - [x] Image upload
   - [x] Links
+  - [ ] Dates
+  - [ ] Times

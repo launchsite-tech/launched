@@ -3,6 +3,11 @@ import { useTag } from "../../../dist";
 import GetStartedButton from "./GetStartedButton";
 
 export default function Hero() {
+  const [image, imageTag] = useTag(
+    "image",
+    "/images/ink_illustration.svg",
+    "image",
+  );
   const [description, descriptionTag] = useTag(
     "description",
     "Write incredible poetry with the power of AI. Our AI can help you write poems, lyrics, and more. Get started now!",
@@ -33,11 +38,9 @@ export default function Hero() {
           </button>
         </div>
       </div>
-      <img
-        className="max-h-[80vh] justify-self-center"
-        src="/images/ink_illustration.svg"
-        alt="Illustration"
-      ></img>
+      <div ref={imageTag} className="max-h-[80vh] justify-self-center">
+        <img className="h-full w-full" src={image} alt="Illustration"></img>
+      </div>
     </main>
   );
 }

@@ -10,10 +10,12 @@ import type { TagRenderer, TagRendererProps } from "./core/renderer";
 
 import { InlineTextRenderer } from "./ui/components/InlineEditor";
 import { LinkRenderer } from "./ui/components/LinkEditor";
+import { ImageRenderer } from "./ui/components/ImageEditor";
 
 Renderer.registerTagFormat("string", InlineTextRenderer);
 Renderer.registerTagFormat("number", InlineTextRenderer);
 Renderer.registerTagFormat("link", LinkRenderer);
+Renderer.registerTagFormat("image", ImageRenderer);
 
 export default Launched;
 export { useTag, LaunchedProvider };

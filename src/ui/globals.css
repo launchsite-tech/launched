@@ -39,3 +39,16 @@
   stroke-linejoin: round;
   fill: none;
 }
+
+.Launched__button {
+  padding: 0.25rem 0.5rem;
+  color: white;
+  border-radius: 4px;
+  transition: background-color 200ms ease-out;
+  font-size: 14px;
+  background-color: var(--color);
+
+  &:hover {
+    background-color: color-mix(in srgb, rgba(255, 255, 255) 25%, var(--color));
+  }
+}

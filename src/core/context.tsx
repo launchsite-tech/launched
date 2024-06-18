@@ -42,7 +42,8 @@ export type Tag = {
 export type Config = Partial<{
   locked: boolean;
   save: (tags: Record<string, Tag>) => void;
-  toolbarOptions?: Partial<{
+  onImageUpload: (file: File) => void;
+  toolbarOptions: Partial<{
     className: string;
     position: "center" | "right" | "left";
   }>;
@@ -71,7 +72,7 @@ interface LaunchedContextValue {
 }
 
 export default class Launched {
-  private readonly config: Required<Config>;
+  private readonly config: Config;
   private renderer = new Renderer();
   private addTag: (key: string, tag: Omit<Tag, "setData">) => void = () => {};
   private originalTags = new Map<string, TagData["value"]>();
@@ -85,6 +86,7 @@ export default class Launched {
   }[] = [];
 
   public tags: Record<string, Tag> = {} as Record<string, Tag>;
+  public onImageUpload?: (file: File) => void;
   public Provider: React.FC<{ children: React.ReactNode }>;
   public context = createContext<LaunchedContextValue>(
     {} as LaunchedContextValue
@@ -100,7 +102,8 @@ export default class Launched {
 
     Launched.instance = this;
 
-    this.config = { ...defaults, ...config } as Required<Config>;
+    this.config = { ...defaults, ...config };
+    this.onImageUpload = this.config.onImageUpload;
 
     this.Provider = ({ children }: { children: React.ReactNode }) => {
       const [canUndo, setCanUndo] = useState(false);
