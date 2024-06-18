@@ -3,6 +3,7 @@ import type { TagRenderer, TagRendererProps } from "../../core/renderer";
 
 export function ImageUI({
   id,
+  selected,
   context,
   updateData,
   close,
@@ -28,10 +29,14 @@ export function ImageUI({
     }
   }
 
-  return (
+  return !selected ? null : (
     <div className="Launched__tag-imageUpload">
       <label className="Launched__button" htmlFor={`${id}-upload`}>
-        Upload Image
+        <svg viewBox="0 0 24 24" className="Launched__icon">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
       </label>
       <input
         id={`${id}-upload`}

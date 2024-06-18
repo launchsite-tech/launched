@@ -8,7 +8,9 @@
   }
 
   > label {
-    --color: var(--accent);
+    display: block;
+    padding: 0.5rem;
     cursor: pointer;
+    --color: var(--accent);
   }
 }
