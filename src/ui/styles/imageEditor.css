@@ -1,0 +1,16 @@
+.Launched__tag-imageUpload {
+  position: absolute;
+  right: 0.25rem;
+  top: 0.25rem;
+
+  > input {
+    display: none;
+  }
+
+  > label {
+    display: block;
+    padding: 0.5rem;
+    cursor: pointer;
+    --color: var(--accent);
+  }
+}

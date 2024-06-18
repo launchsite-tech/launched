@@ -28,20 +28,6 @@
   border-radius: 6px;
 }
 
-.Launched__toolbar-saveButton,
-.Launched__toolbar-revertButton {
-  padding: 0.25rem 0.5rem;
-  color: white;
-  border-radius: 4px;
-  transition: background-color 200ms ease-out;
-  font-size: 14px;
-  background-color: var(--color);
-
-  &:hover {
-    background-color: color-mix(in srgb, rgba(0, 0, 0, 0.1) 30%, var(--color));
-  }
-}
-
 select.Launched__toolbar-lockMode {
   padding: 0.25rem 0.5rem;
   border-radius: 4px;

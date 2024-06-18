@@ -28,7 +28,6 @@
     outline-color: var(--accent);
     border-radius: 1px;
     outline-style: solid;
-    background-color: var(--surface);
     box-shadow: var(--shadow);
     z-index: 10;
 

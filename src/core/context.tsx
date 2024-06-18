@@ -4,7 +4,7 @@ import { useState, useEffect, createContext } from "react";
 import Renderer from "./renderer";
 import Toolbar from "../ui/components/Toolbar";
 import error from "./utils/error";
-import makeTagsFromSchema from "./utils/makeTagsFromSchema";
+import createTag from "./utils/createTag";
 import flattenTagValue from "./utils/flattenTagValue";
 
 export type TagValue = string | number | Record<string, TagData>;
@@ -30,10 +30,6 @@ export type TagData = {
   readonly value: TagValue | TagValue[];
 };
 
-export type TagSchema<T extends Record<string, TagSchemaValue>> = {
-  [K in keyof T]: T[K];
-};
-
 export type Tag = {
   data: TagData;
   setData: (
@@ -43,19 +39,18 @@ export type Tag = {
   el: React.RefObject<HTMLElement>;
 };
 
-export interface Config<Schema extends TagSchema<any>> {
-  tags?: Schema;
-  locked?: boolean;
-  save?: (tags: Record<keyof Schema, Tag>) => void;
-  toolbarOptions?: Partial<{
+export type Config = Partial<{
+  locked: boolean;
+  save: (tags: Record<string, Tag>) => void;
+  onImageUpload: (file: File) => void;
+  toolbarOptions: Partial<{
     className: string;
     position: "center" | "right" | "left";
   }>;
-}
+}>;
 
-const defaults: Config<{}> = {
+const defaults: Config = {
   locked: false,
-  tags: {},
   toolbarOptions: {
     position: "center",
   },
@@ -64,18 +59,23 @@ const defaults: Config<{}> = {
 interface LaunchedContextValue {
   useTag<V extends TagSchemaValue = TagData["value"]>(
     key: string,
-    value?: V
+    value?: V,
+    type?: string
   ): readonly [
-    V extends string | number ? string | number : FlatTagValue<V>,
+    V extends string | number
+      ? V extends string // Nonsense to avoid constants
+        ? string
+        : number
+      : FlatTagValue<V>,
     <T extends HTMLElement | null>(el: T) => void,
   ];
 }
 
-export default class Launched<Schema extends TagSchema<any> = {}> {
-  private readonly config: Required<Config<Schema>>;
+export default class Launched {
+  private readonly config: Config;
   private renderer = new Renderer();
   private addTag: (key: string, tag: Omit<Tag, "setData">) => void = () => {};
-  private originalTags = new Map<keyof Schema, TagData["value"]>();
+  private originalTags = new Map<string, TagData["value"]>();
   private version: number = -1;
   private setCanUndo: React.Dispatch<React.SetStateAction<boolean>> = () => {};
   private setCanRedo: React.Dispatch<React.SetStateAction<boolean>> = () => {};
@@ -85,29 +85,31 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
     prevValue: TagData["value"];
   }[] = [];
 
-  public tags: Record<keyof Schema, Tag> = {} as Record<keyof Schema, Tag>;
+  public tags: Record<string, Tag> = {} as Record<string, Tag>;
+  public onImageUpload?: (file: File) => void;
   public Provider: React.FC<{ children: React.ReactNode }>;
   public context = createContext<LaunchedContextValue>(
     {} as LaunchedContextValue
   );
 
-  public static instance: Launched<any> | null;
+  public static instance: Launched | null;
   public static events = new EventEmitter();
 
-  constructor(config?: Config<Schema>) {
+  constructor(config?: Config) {
     if (Launched.instance) {
       error("There can only be one instance of Launched.");
     }
 
     Launched.instance = this;
 
-    this.config = { ...defaults, ...config } as Required<Config<Schema>>;
+    this.config = { ...defaults, ...config };
+    this.onImageUpload = this.config.onImageUpload;
 
     this.Provider = ({ children }: { children: React.ReactNode }) => {
       const [canUndo, setCanUndo] = useState(false);
       const [canRedo, setCanRedo] = useState(false);
-      const [tags, setTags] = useState(() =>
-        makeTagsFromSchema(this.config.tags)
+      const [tags, setTags] = useState(
+        {} as Record<string, Omit<Tag, "setData">>
       );
 
       this.tags = Object.fromEntries(
@@ -140,7 +142,7 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
 
           return [key, { ...data, setData }];
         })
-      ) as Record<keyof Schema, Tag>;
+      ) as Record<string, Tag>;
 
       this.addTag = (key, tag) => {
         setTags((p) => ({ ...p, [key]: tag }));
@@ -175,17 +177,13 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
       );
     };
 
-    Launched.events.on("tag:ready", (key: keyof Schema) => {
+    Launched.events.on("tag:ready", (key: string) => {
       if (!this.config.locked) this.render(key);
     });
 
     Launched.events.on(
       "tag:change",
-      (
-        key: keyof Schema,
-        value: TagData["value"],
-        prevValue: TagData["value"]
-      ) => {
+      (key: string, value: TagData["value"], prevValue: TagData["value"]) => {
         if (this.version !== this.history.length - 1) {
           this.history = this.history.slice(0, this.version + 1);
           this.setCanRedo(false);
@@ -201,14 +199,17 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
 
   private useTag = (<V extends TagSchemaValue = TagData["value"]>(
     key: string,
-    value?: V
+    value?: V,
+    type?: string
   ) => {
     const t = this ?? Launched.instance;
 
     let tag: Tag | Omit<Tag, "setData"> | undefined = t.tags[key];
 
-    if (!tag && value !== null) {
-      const newTag = makeTagsFromSchema({ [key]: value } as Schema)[key]!;
+    if (!tag && value != null) {
+      const v = type ? ({ type, value } as TagData) : value;
+
+      const newTag = createTag(v, type ?? typeof v);
 
       setTimeout(() => this.addTag(String(key), newTag), 0);
 
@@ -238,9 +239,9 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
     ] as const;
   }) as LaunchedContextValue["useTag"];
 
-  private render(tag?: keyof Schema) {
+  private render(tag?: string) {
     if (tag && this.tags[tag])
-      this.renderer.renderSingleTagUI(this.tags[tag], String(tag));
+      this.renderer.renderSingleTagUI(this.tags[tag]!, String(tag));
     else
       Object.entries(this.tags).map(([key, tag]) =>
         tag.el.current ? this.renderer.renderSingleTagUI(tag, key) : null
@@ -342,11 +343,11 @@ export default class Launched<Schema extends TagSchema<any> = {}> {
   }
 }
 
-export function LaunchedProvider<Schema extends TagSchema<any>>({
+export function LaunchedProvider({
   config,
   children,
 }: {
-  config: Config<Schema>;
+  config?: Config;
   children: React.ReactNode;
 }) {
   const L = Launched.instance ?? new Launched(config);

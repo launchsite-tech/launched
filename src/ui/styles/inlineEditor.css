@@ -1,6 +1,10 @@
 .Launched__tag-container:has(.Launched__tag-inlineEditor) {
   font-family: inherit;
   min-width: min-content;
+
+  &.active {
+    background-color: var(--surface);
+  }
 }
 
 .Launched__tag-inlineEditor {

@@ -15,6 +15,7 @@ export type TagRendererProps<V> = {
   element: HTMLElement;
   value: V;
   selected: boolean;
+  context: Launched;
   updateData: (data: V) => void;
   close: () => void;
 };
@@ -121,7 +122,7 @@ export default class Renderer {
           !renderer.parentValidator(tag.el.current)
         ) {
           return console.warn(
-            `Parent element of tag "${childId}" does not satisfy the constraints of the renderer of type "${tag.data.type}".`
+            `Parent element of tag "${childId}" does not satisfy the constraints of the "${tag.data.type}" renderer.`
           );
         }
 
@@ -249,6 +250,7 @@ function TagUI({
         updateData={(v) => updateData(v)}
         close={() => close()}
         id={id}
+        context={Launched.instance!}
       />
     </div>
   );

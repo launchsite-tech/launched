@@ -26,7 +26,10 @@ export default function Toolbar({
       className={`Launched__toolbar ${className || ""}`}
     >
       <div className="Launched__toolbar-tools">
-        <button onClick={save} className="Launched__toolbar-saveButton">
+        <button
+          onClick={save}
+          className="Launched__toolbar-saveButton Launched__button"
+        >
           Save
         </button>
         <select
@@ -59,7 +62,10 @@ export default function Toolbar({
             <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
           </svg>
         </button>
-        <button onClick={revert} className="Launched__toolbar-revertButton">
+        <button
+          onClick={revert}
+          className="Launched__toolbar-revertButton Launched__button"
+        >
           Revert
         </button>
       </div>
