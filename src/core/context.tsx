@@ -86,7 +86,7 @@ export default class Launched {
   }[] = [];
 
   public tags: Record<string, Tag> = {} as Record<string, Tag>;
-  public onImageUpload?: (file: File) => void;
+  public uploadImage?: (file: File) => void;
   public Provider: React.FC<{ children: React.ReactNode }>;
   public context = createContext<LaunchedContextValue>(
     {} as LaunchedContextValue
@@ -103,7 +103,7 @@ export default class Launched {
     Launched.instance = this;
 
     this.config = { ...defaults, ...config };
-    this.onImageUpload = this.config.onImageUpload;
+    this.uploadImage = this.config.onImageUpload;
 
     this.Provider = ({ children }: { children: React.ReactNode }) => {
       const [canUndo, setCanUndo] = useState(false);
@@ -216,7 +216,7 @@ export default class Launched {
       tag = newTag;
     } else if (!tag)
       error(
-        `Tag "${String(key)}" does not exist. Either create add it to your schema or pass a value to useTag.`
+        `Tag "${String(key)}" does not exist. Try providing a value to useTag.`
       );
 
     const v =

@@ -15,7 +15,7 @@ export function ImageUI({
       else if (!file.type.startsWith("image/"))
         return console.error("Invalid file type. Please upload an image.");
 
-      context.onImageUpload?.(file);
+      context.uploadImage?.(file);
 
       const reader = new FileReader();
       reader.onloadend = () => {
