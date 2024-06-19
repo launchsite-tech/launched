@@ -20,7 +20,8 @@
     "build": "rimraf dist && sh ./scripts/build.sh dist",
     "build:demo": "rimraf demo/src/dist && sh ./scripts/build.sh demo/src/dist",
     "watch": "nodemon --exec \"npm run build:demo\"",
-    "test": "vitest --config test/vitest.config.ts"
+    "test": "vitest --config test/vitest.config.ts",
+    "test:coverage": "vitest --config test/vitest.config.ts --coverage"
   },
   "author": "Michael Beck <beck.jacob.michael@gmail.com>",
   "license": "ISC",
@@ -32,9 +33,12 @@
     ".": "./dist/index.js"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
     "@testing-library/react-hooks": "^8.0.1",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",
+    "@vitest/coverage-v8": "^1.6.0",
     "jsdom": "^24.1.0",
     "nodemon": "^3.1.2",
     "prettier": "^3.2.5",

@@ -1,3 +1,4 @@
+import React from "react";
 import Launched from "../../src/core/context";
 import {
   useTagHook,
@@ -5,6 +6,8 @@ import {
   describe,
   it,
   expect,
+  render,
+  screen,
 } from "../.helpers/test-utils";
 
 const L = new Launched();
@@ -16,5 +19,22 @@ describe("#useTag", () => {
         'Tag "foo" does not exist. Try providing a value to useTag.'
       )
     );
+  });
+
+  it("should return the value and reference of a new tag", () => {
+    const value = "bar";
+
+    const [v, ref] = useTagHook(L, "foo", value);
+
+    expect(v).toBe(value);
+    expect(ref).toBeDefined();
+  });
+
+  it("should bind the tag to an element", () => {
+    const [v, ref] = useTagHook(L, "foo", "bar");
+
+    render(<div ref={ref}>{v}</div>);
+
+    expect(screen.getByText(v)).toBeInTheDocument();
   });
 });
