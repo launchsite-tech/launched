@@ -7,6 +7,7 @@ export default defineConfig({
   },
   test: {
     include: [resolve(__dirname, "**/*.test.{ts,tsx}")],
+    environment: "jsdom",
     // typecheck: {
     //   enabled: true,
     //   include: [resolve(__dirname, "**/*.test-d.ts")],
