@@ -12,6 +12,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["json"],
+      exclude: ["demo"],
     },
     onStackTrace: (error: Error, { file }: ParsedStack) => {
       if (error.message.includes("Launched error:")) return;

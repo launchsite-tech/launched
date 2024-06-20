@@ -2,6 +2,11 @@ import { createRef } from "react";
 import error from "./error";
 import type { Tag, TagData, TagSchemaValue } from "../context";
 
+function validateObjectKeys(tag: any, keys: string[][]) {
+  if (keys.some((k) => k.some((k) => typeof tag[k] === "object")))
+    error("Objects cannot have nested objects.");
+}
+
 function transformObjectToTagData(
   tag: TagSchemaValue | Partial<TagData>,
   type: string
@@ -15,8 +20,6 @@ function transformObjectToTagData(
       if (Array.isArray(tag[0])) error("Array cannot have nested arrays.");
 
       const keys = tag.map((v) => Object.keys(v));
-      if (keys.some((k) => k.some((k) => typeof k === "object")))
-        error("Objects cannot have nested objects.");
       if (keys[0]!.some((key) => keys.some((k) => !k.includes(key))))
         error("Objects must have the same keys.");
 
