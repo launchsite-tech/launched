@@ -53,7 +53,9 @@ describe("#createTag", () => {
   it("creates a tag with a nested object value", () => {
     // @ts-expect-error
     expect(() => createTag({ foo: { bar: "baz" } }, "object")).toThrow(
-      generateError("Objects cannot have nested objects.")
+      generateError(
+        "Objects cannot have nested objects without an explicit type."
+      )
     );
   });
 
