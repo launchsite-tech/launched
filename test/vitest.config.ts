@@ -11,8 +11,8 @@ export default defineConfig({
     environment: "jsdom",
     coverage: {
       provider: "v8",
-      reporter: ["json"],
-      exclude: ["demo"],
+      reporter: ["text", "json"],
+      exclude: ["demo", "test"],
     },
     onStackTrace: (error: Error, { file }: ParsedStack) => {
       if (error.message.includes("Launched error:")) return;
