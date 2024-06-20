@@ -1,7 +1,7 @@
 import type { TagData, FlatTagValue } from "../context";
 
 export default function flattenTagValue<V extends TagData>(
-  value: Record<string, V> | V | V[]
+  value: Record<string, V> | Record<string, V>[] | V | V[]
 ): FlatTagValue<V> {
   if (Array.isArray(value))
     return value.map((v) => flattenTagValue(v)) as FlatTagValue<V>;
