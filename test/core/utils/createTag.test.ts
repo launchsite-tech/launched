@@ -29,7 +29,7 @@ describe("#createTag", () => {
     });
   });
 
-  it("should create a tag with an array of different types value", () => {
+  it("should not create a tag with an array of different types value", () => {
     expect(() => createTag(["foo", 1], "string")).toThrow(
       generateError("Array must have items of the same type.")
     );
@@ -56,13 +56,13 @@ describe("#createTag", () => {
     });
   });
 
-  it("should create a tag with an array of objects with different types value", () => {
+  it("should not create a tag with an array of objects with different types value", () => {
     expect(() => createTag([{ foo: "bar" }, { bar: 1 }], "object")).toThrow(
       generateError("Objects must have the same keys.")
     );
   });
 
-  it("should create a tag with a nested object value", () => {
+  it("should not create a tag with a nested object value", () => {
     // @ts-expect-error
     expect(() => createTag({ foo: { bar: "baz" } }, "object")).toThrow(
       generateError(
@@ -80,7 +80,7 @@ describe("#createTag", () => {
     });
   });
 
-  it("should create a tag with a nested array value", () => {
+  it("should not create a tag with a nested array value", () => {
     // @ts-expect-error
     expect(() => createTag([["foo", "bar"]], "array")).toThrow(
       generateError("Array cannot have nested arrays.")
