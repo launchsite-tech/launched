@@ -20,6 +20,15 @@ describe("#createTag", () => {
     });
   });
 
+  it("should create a tag with an empty array value", () => {
+    const tag = createTag([], "string");
+
+    expect(tag.data).toEqual({
+      type: "string",
+      value: [],
+    });
+  });
+
   it("should create a tag with an array of different types value", () => {
     expect(() => createTag(["foo", 1], "string")).toThrow(
       generateError("Array must have items of the same type.")

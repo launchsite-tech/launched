@@ -1,5 +1,6 @@
 import React from "react";
 import Launched from "../../src/core/context";
+import { useTag } from "../../src/core/hooks";
 import {
   useTagHook,
   generateError,
@@ -13,6 +14,16 @@ import {
 const L = new Launched();
 
 describe("#useTag", () => {
+  it("should throw an error if there is no Launched instance", () => {
+    Launched.instance = null;
+
+    expect(() => useTag("foo")).toThrow(
+      generateError("Launched not initialized.")
+    );
+
+    Launched.instance = L;
+  });
+
   it("should throw an error if the tag is not found", () => {
     expect(() => useTagHook(L, "foo")).toThrow(
       generateError(

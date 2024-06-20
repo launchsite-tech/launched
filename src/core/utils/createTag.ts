@@ -1,6 +1,6 @@
 import { createRef } from "react";
 import error from "./error";
-import type { Tag, TagData, TagValue, TagSchemaValue } from "../context";
+import type { Tag, TagData, TagSchemaValue } from "../context";
 
 function validateObject(tag: Record<string, any>) {
   if (
@@ -12,24 +12,16 @@ function validateObject(tag: Record<string, any>) {
 }
 
 function transformObjectToTagData(
-  value: TagValue | Record<string, any>,
+  value: Record<string, any>,
   type: string
 ): string | number | Record<string, TagData> {
-  if (typeof value !== "object") return value;
-  else if ("type" in value && "value" in value) return value;
+  if ("type" in value && "value" in value) return value;
 
   return Object.fromEntries(
     Object.entries(value).map(
       ([k, v]: [string, TagData | Partial<TagData> | string | number]) => {
         if (typeof v !== "object") return [k, { type: typeof v, value: v }];
-        else
-          return [
-            k,
-            transformObjectToTagData(
-              v,
-              (v as TagData)["type"] ?? typeof (v as TagData)["value"] ?? type
-            ),
-          ];
+        else return [k, transformObjectToTagData(v, type)];
       }
     )
   );
@@ -40,7 +32,7 @@ function transformTag(
   type: string
 ): TagData {
   if (Array.isArray(tag)) {
-    if (!tag.length) error("Array must have at least one item.");
+    if (!tag.length) return { type, value: [] };
     else if (tag.some((v) => typeof v !== typeof tag[0]))
       error("Array must have items of the same type.");
 
@@ -55,7 +47,9 @@ function transformTag(
 
       return {
         type,
-        value: tag.map((v) => transformObjectToTagData(v, type)),
+        value: tag.map((v) =>
+          transformObjectToTagData(v as Record<string, any>, type)
+        ),
       };
     } else
       return {
