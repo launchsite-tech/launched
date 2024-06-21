@@ -11,6 +11,15 @@ describe("#createTag", () => {
     });
   });
 
+  it("should create a basic tag with a custom type", () => {
+    const tag = createTag("foo", "image");
+
+    expect(tag.data).toEqual({
+      type: "image",
+      value: "foo",
+    });
+  });
+
   it("should create a tag with an array value", () => {
     const tag = createTag(["foo", "bar"], "string");
 
@@ -88,10 +97,10 @@ describe("#createTag", () => {
   });
 
   it("should create a tag with a nested tagData array value", () => {
-    const tag = createTag([{ type: "string", value: "foo" }], "array");
+    const tag = createTag([{ type: "string", value: "foo" }], "object");
 
     expect(tag.data).toEqual({
-      type: "array",
+      type: "object",
       value: [{ type: "string", value: "foo" }],
     });
   });
@@ -99,11 +108,11 @@ describe("#createTag", () => {
   it("should create a tag of complex type", () => {
     const tag = createTag(
       [{ foo: { type: "bar", value: "baz" }, bar: 1 }],
-      "object"
+      "abomination"
     );
 
     expect(tag.data).toEqual({
-      type: "object",
+      type: "abomination",
       value: [
         {
           foo: { type: "bar", value: "baz" },

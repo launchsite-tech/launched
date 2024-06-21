@@ -207,9 +207,7 @@ export default class Launched {
     let tag: Tag | Omit<Tag, "setData"> | undefined = t.tags[key];
 
     if (!tag && value != null) {
-      const v = type ? ({ type, value } as TagData) : value;
-
-      const newTag = createTag(v, type ?? typeof v);
+      const newTag = createTag(value, type ?? typeof value);
 
       setTimeout(() => this.addTag(String(key), newTag), 0);
 

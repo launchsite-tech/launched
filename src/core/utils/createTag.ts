@@ -3,19 +3,23 @@ import error from "./error";
 import type { Tag, TagData, TagSchemaValue } from "../context";
 
 function validateObject(tag: Record<string, any>) {
+  if ("type" in tag && "value" in tag) return;
+
   if (
     Object.values(tag).some(
       (v) => typeof v === "object" && !("type" in v) && !("value" in v)
     )
-  )
+  ) {
     error("Objects cannot have nested objects without an explicit type.");
+  }
 }
 
 function transformObjectToTagData(
   value: Record<string, any>,
   type: string
 ): string | number | Record<string, TagData> {
-  if ("type" in value && "value" in value) return value;
+  if (typeof value === "object" && "type" in value && "value" in value)
+    return value;
 
   return Object.fromEntries(
     Object.entries(value).map(
@@ -37,7 +41,8 @@ function transformTag(
       error("Array must have items of the same type.");
 
     if (typeof tag[0] === "object") {
-      if (Array.isArray(tag[0])) error("Array cannot have nested arrays.");
+      if (tag.some((v) => Array.isArray(v)))
+        error("Array cannot have nested arrays.");
 
       const keys = tag.map((v) => Object.keys(v));
       if (keys[0]!.some((key) => keys.some((k) => !k.includes(key))))
@@ -67,7 +72,7 @@ function transformTag(
     };
   } else {
     return {
-      type: typeof tag,
+      type,
       value: tag as string | number,
     };
   }
