@@ -17,11 +17,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rimraf dist && sh ./scripts/build.sh dist",
-    "build:demo": "rimraf demo/src/dist && sh ./scripts/build.sh demo/src/dist",
+    "build": "rimraf dist && ./scripts/build.sh dist",
+    "build:demo": "rimraf demo/src/dist && ./scripts/build.sh demo/src/dist",
     "watch": "nodemon --exec \"npm run build:demo\"",
-    "test": "vitest --config test/vitest.config.ts",
-    "test:coverage": "vitest run --config test/vitest.config.ts --coverage"
+    "test": "vitest -u --config test/vitest.config.ts",
+    "test:coverage": "vitest run -u --config test/vitest.config.ts --coverage"
   },
   "author": "Michael Beck <beck.jacob.michael@gmail.com>",
   "license": "ISC",

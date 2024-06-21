@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/opt/homebrew/bin/bash
 
 if [ -z "$1" ]; then
     echo "No output directory specified."
