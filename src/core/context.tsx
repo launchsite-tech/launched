@@ -121,6 +121,14 @@ export default class Launched {
             if (!tags[key] || this.config.locked) return;
 
             setTags((p) => {
+              if (!config?.silent)
+                Launched.events.emit(
+                  "tag:change",
+                  key,
+                  value,
+                  p[key]?.data.value
+                );
+
               const newTags = { ...p };
               const tag = newTags[key];
 
@@ -130,14 +138,6 @@ export default class Launched {
 
               return newTags;
             });
-
-            if (!config?.silent)
-              Launched.events.emit(
-                "tag:change",
-                key,
-                value,
-                tags[key]?.data.value
-              );
           };
 
           return [key, { ...data, setData }];
