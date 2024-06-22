@@ -19,7 +19,9 @@
     "build": "rimraf dist && sh ./scripts/build.sh dist",
     "build:demo": "rimraf demo/src/dist && sh ./scripts/build.sh demo/src/dist",
     "watch": "nodemon --exec \"npm run build:demo\"",
-    "test": "jest"
+    "test": "vitest run -u --config test/vitest.config.ts",
+    "test:coverage": "vitest run -u --config test/vitest.config.ts --coverage",
+    "test:watch": "vitest -u --config test/vitest.config.ts"
   },
   "author": "Michael Beck <beck.jacob.michael@gmail.com>",
   "license": "ISC",
