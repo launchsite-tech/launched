@@ -5,7 +5,6 @@ import {
   expect,
   generateError,
   useHookWithWrapper,
-  renderWithWrapper,
   render,
   screen,
 } from "../.helpers/test-utils";
@@ -64,7 +63,9 @@ describe("#Launched", () => {
       generateError("There can only be one instance of Launched.")
     );
   });
+});
 
+describe("#Launched.addTag", () => {
   it("should create a new tag", async () => {
     const tag: Omit<Tag, "setData"> = {
       data: {
@@ -92,21 +93,25 @@ describe("#Launched", () => {
     // @ts-expect-error
     l.originalTags.set("foo", "bar");
   });
+});
 
+describe("#Launched.lock", () =>
   it("should lock the editor", () => {
     Launched.lock();
 
     // @ts-expect-error
     expect(l.config.locked).toEqual(true);
-  });
+  }));
 
+describe("#Launched.unlock", () =>
   it("should unlock the editor", () => {
     Launched.unlock();
 
     // @ts-expect-error
     expect(l.config.locked).toEqual(false);
-  });
+  }));
 
+describe("#Launched.toggle", () =>
   it("should toggle the editor", () => {
     Launched.toggle();
 
@@ -117,8 +122,7 @@ describe("#Launched", () => {
 
     // @ts-expect-error
     expect(l.config.locked).toEqual(false);
-  });
-});
+  }));
 
 describe("#History", () => {
   it("should add an item to the history", () => {

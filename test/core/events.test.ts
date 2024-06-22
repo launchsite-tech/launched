@@ -7,14 +7,15 @@ function listener(o: Record<string, any>) {
   o["foo"] = "bar";
 }
 
-describe("#EventEmitter", () => {
+describe("#EventEmitter.on", () =>
   it("should add a listener", () => {
     e.on("test", listener);
 
     // @ts-expect-error
     expect(e.events["test"]).toHaveLength(1);
-  });
+  }));
 
+describe("#EventEmitter.emit", () => {
   it("should emit an event", () => {
     const o: Record<string, any> = {};
 
@@ -30,7 +31,9 @@ describe("#EventEmitter", () => {
 
     expect(o).toEqual({});
   });
+});
 
+describe("#EventEmitter.off", () => {
   it("should remove a listener", () => {
     e.off("test", listener);
 
