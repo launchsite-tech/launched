@@ -36,6 +36,8 @@ export default class Renderer {
   constructor() {}
 
   public static registerTagFormat<V>(name: string, renderer: TagRenderer<V>) {
+    if (!renderer.component) error("Custom renderers must have a component.");
+
     Renderer.formats.set(name, renderer);
   }
 
