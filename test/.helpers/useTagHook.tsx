@@ -11,16 +11,20 @@ const wrapper = ({
   children: React.ReactNode;
 }) => <context.Provider>{children}</context.Provider>;
 
+export function useHookWithWrapper<T>(hook: () => T, context: Launched): T {
+  const { result } = renderHook(hook, {
+    wrapper: (props: { children: React.ReactNode }) =>
+      wrapper({ context, children: props.children }),
+  });
+
+  return result.current;
+}
+
 export default function useTagHook(
   context: Launched,
   key: string,
   value?: any,
   type?: string
 ) {
-  const { result } = renderHook(() => useTag(key, value, type), {
-    wrapper: (props: { children: React.ReactNode }) =>
-      wrapper({ context, children: props.children }),
-  });
-
-  return result.current;
+  return useHookWithWrapper(() => useTag(key, value, type), context);
 }
