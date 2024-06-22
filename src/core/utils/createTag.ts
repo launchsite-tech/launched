@@ -2,67 +2,77 @@ import { createRef } from "react";
 import error from "./error";
 import type { Tag, TagData, TagSchemaValue } from "../context";
 
+function validateObject(tag: Record<string, any>) {
+  if ("type" in tag && "value" in tag) return;
+
+  if (
+    Object.values(tag).some(
+      (v) => typeof v === "object" && !("type" in v) && !("value" in v)
+    )
+  ) {
+    error("Objects cannot have nested objects without an explicit type.");
+  }
+}
+
 function transformObjectToTagData(
+  value: Record<string, any>,
+  type: string
+): string | number | Record<string, TagData> {
+  if (typeof value === "object" && "type" in value && "value" in value)
+    return value;
+
+  return Object.fromEntries(
+    Object.entries(value).map(
+      ([k, v]: [string, TagData | Partial<TagData> | string | number]) => {
+        if (typeof v !== "object") return [k, { type: typeof v, value: v }];
+        else return [k, transformObjectToTagData(v, type)];
+      }
+    )
+  );
+}
+
+function transformTag(
   tag: TagSchemaValue | Partial<TagData>,
   type: string
 ): TagData {
   if (Array.isArray(tag)) {
-    if (!tag.length) error("Array must have at least one item.");
+    if (!tag.length) return { type, value: [] };
     else if (tag.some((v) => typeof v !== typeof tag[0]))
       error("Array must have items of the same type.");
 
     if (typeof tag[0] === "object") {
-      if (Array.isArray(tag[0])) error("Array cannot have nested arrays.");
+      if (tag.some((v) => Array.isArray(v)))
+        error("Array cannot have nested arrays.");
 
       const keys = tag.map((v) => Object.keys(v));
-      if (keys.some((k) => k.some((k) => typeof k === "object")))
-        error("Objects cannot have nested objects.");
       if (keys[0]!.some((key) => keys.some((k) => !k.includes(key))))
         error("Objects must have the same keys.");
 
+      validateObject(tag[0]);
+
       return {
-        // tag: Record<string, TagData>[] | Record<string, Partial<TagData> | string | number>[]
         type,
         value: tag.map((v) =>
-          Object.fromEntries(
-            Object.entries(v).map(
-              ([k, v]: [
-                string,
-                TagData | Partial<TagData> | string | number,
-              ]) => {
-                if (typeof v !== "object")
-                  return [k, { type: typeof v, value: v }];
-                else
-                  return [
-                    k,
-                    transformObjectToTagData(
-                      v,
-                      (v as TagData)["type"] ??
-                        typeof (v as TagData)["value"] ??
-                        type
-                    ),
-                  ];
-              }
-            )
-          )
+          transformObjectToTagData(v as Record<string, any>, type)
         ),
       };
     } else
       return {
-        // tag: string[] | number[]
         type: typeof tag[0],
         value: tag as string[] | number[],
       };
   } else if (typeof tag === "object") {
+    validateObject(tag);
+
+    const value = transformObjectToTagData(tag, type);
+
     return {
-      // tag: Record<string, TagData> | Record<string, Partial<TagData> | string | number>
       type,
-      value: (tag as TagData)["value"] ?? tag,
+      value,
     };
   } else {
     return {
-      // tag: string | number
-      type: typeof tag,
+      type,
       value: tag as string | number,
     };
   }
@@ -72,7 +82,7 @@ export default function createTag(
   tag: TagSchemaValue | TagData,
   type: string
 ): Omit<Tag, "setData"> {
-  const t = transformObjectToTagData(tag, type);
+  const t = transformTag(tag, type);
 
   return {
     el: createRef<HTMLElement>(),

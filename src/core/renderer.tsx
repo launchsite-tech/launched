@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 import type { Tag, TagData, TagValue } from "./context";
 import type { Root } from "react-dom/client";
 import Launched from "./context";
+import flattenTagValue from "./utils/flattenTagValue";
 
 type TagRendererFunctionState = {
   element?: HTMLElement;
@@ -35,6 +36,8 @@ export default class Renderer {
   constructor() {}
 
   public static registerTagFormat<V>(name: string, renderer: TagRenderer<V>) {
+    if (!renderer.component) error("Custom renderers must have a component.");
+
     Renderer.formats.set(name, renderer);
   }
 
@@ -144,7 +147,15 @@ export default class Renderer {
 
           Renderer.roots.set(childId, root);
 
-          root.render(<TagUI tag={tag} renderer={renderer!} id={childId} />);
+          const t = {
+            ...tag,
+            data: {
+              type: tag.data.type,
+              value: flattenTagValue(tag.data.value as any),
+            },
+          };
+
+          root.render(<TagUI tag={t} renderer={renderer!} id={childId} />);
         }, 0);
       }
     }
@@ -171,7 +182,12 @@ function TagUI({
   renderer,
   id,
 }: {
-  tag: Tag;
+  tag: Omit<Tag, "data"> & {
+    data: {
+      type: string;
+      value: any;
+    };
+  };
   renderer: TagRenderer<any>;
   id: string;
 }) {
