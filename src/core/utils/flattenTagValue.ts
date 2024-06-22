@@ -8,7 +8,8 @@ export default function flattenTagValue<V extends TagData>(
   else if (typeof value === "object") {
     return Object.fromEntries(
       Object.entries(value).map(([key, v]) => {
-        if (typeof v === "object" && "value" in v) return [key, v.value];
+        if (typeof v === "object" && "value" in v)
+          return [key, flattenTagValue(v.value)];
         else return [key, flattenTagValue(v)];
       })
     ) as FlatTagValue<V>;
