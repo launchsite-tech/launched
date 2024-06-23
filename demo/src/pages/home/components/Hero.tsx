@@ -1,18 +1,8 @@
-import { useTag } from "../../../dist";
+import { Text, Image } from "../../../dist/components";
 
 import GetStartedButton from "./GetStartedButton";
 
 export default function Hero() {
-  const [image, imageTag] = useTag(
-    "image",
-    "/images/ink_illustration.svg",
-    "image",
-  );
-  const [description, descriptionTag] = useTag(
-    "description",
-    "Write incredible poetry with the power of AI. Our AI can help you write poems, lyrics, and more. Get started now!",
-  );
-
   return (
     <main className="grid w-full max-w-[1500px] grid-cols-2">
       <div className="flex min-w-[700px] flex-col justify-center pl-28 text-home">
@@ -21,9 +11,10 @@ export default function Hero() {
           <span className="decorated font-script text-brand">poetry&nbsp;</span>{" "}
           with the power of AI
         </h1>
-        <p ref={descriptionTag} className="mt-4 max-w-xl">
-          {description}
-        </p>
+        <Text tag="hero description" className="mt-4 max-w-xl">
+          Write incredible poetry with the power of AI. Our AI can help you
+          write poems, lyrics, and more. Get started now!
+        </Text>
         <div className="mt-8 flex">
           <GetStartedButton />
           <button
@@ -38,9 +29,15 @@ export default function Hero() {
           </button>
         </div>
       </div>
-      <div ref={imageTag} className="max-h-[80vh] justify-self-center">
-        <img className="h-full w-full" src={image} alt="Illustration"></img>
-      </div>
+      <Image
+        tag="hero image"
+        src="/images/ink_illustration.svg"
+        alt="Illustration"
+        classNames={{
+          container: "max-h-[80vh] justify-self-center",
+          image: "h-full w-full",
+        }}
+      />
     </main>
   );
 }

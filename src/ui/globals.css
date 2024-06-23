@@ -14,9 +14,6 @@
 *[class^="Launched__"] {
   appearance: none;
   border: none;
-  background: none;
-  padding: 0;
-  margin: 0;
   box-sizing: border-box;
   font-family: var(--font);
 }

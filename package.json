@@ -31,7 +31,8 @@
     "url": "git+https://github.com/MMMJB/launched.git"
   },
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./components": "./dist/components/index.js"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.6",

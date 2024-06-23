@@ -7,12 +7,10 @@
   - [ ] `async` initial values
 - [ ] Custom tag types
   - [x] Registering custom tag types
-  - [ ] Default addon tag types
+  - [x] Default addon tag types
     - [x] Text
     - [x] Link
     - [x] Image
-    - [ ] Date
-    - [ ] Time
 - [x] Schema optional
   - [x] Register type/value/renderer inline
 - [x] Generate schema from user input
@@ -20,6 +18,12 @@
 - [x] Migrate to contenteditable
   - [x] Sanitize input
 - [ ] Add react components for default addon tag types
+  - [x] Text
+  - [x] Link
+  - [x] Image
+  - [ ] Array
+  - [ ] Object
+- [ ] Add all component tests
 
 ### cx
 
@@ -41,5 +45,3 @@
   - [x] Images
     - [x] Image upload
   - [x] Links
-  - [ ] Dates
-  - [ ] Times
