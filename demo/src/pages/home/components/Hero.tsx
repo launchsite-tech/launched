@@ -1,4 +1,5 @@
 import { useTag } from "../../../dist";
+import Text from "../../../dist/components/Text";
 
 import GetStartedButton from "./GetStartedButton";
 
@@ -7,10 +8,6 @@ export default function Hero() {
     "image",
     "/images/ink_illustration.svg",
     "image",
-  );
-  const [description, descriptionTag] = useTag(
-    "description",
-    "Write incredible poetry with the power of AI. Our AI can help you write poems, lyrics, and more. Get started now!",
   );
 
   return (
@@ -21,9 +18,10 @@ export default function Hero() {
           <span className="decorated font-script text-brand">poetry&nbsp;</span>{" "}
           with the power of AI
         </h1>
-        <p ref={descriptionTag} className="mt-4 max-w-xl">
-          {description}
-        </p>
+        <Text tag="hero description" className="mt-4 max-w-xl">
+          Write incredible poetry with the power of AI. Our AI can help you
+          write poems, lyrics, and more. Get started now!
+        </Text>
         <div className="mt-8 flex">
           <GetStartedButton />
           <button
