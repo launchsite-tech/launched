@@ -6,7 +6,7 @@ export interface LaunchedComponentProps<
 > extends React.HTMLAttributes<HTMLElement> {
   tag: string;
   children: v;
-  Container?: c;
+  element?: c;
 }
 
 export { Text };

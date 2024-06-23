@@ -15,7 +15,7 @@ type validTextTags =
 
 export default function Text({
   tag,
-  Container = "p",
+  element = "p",
   children,
   ...rest
 }: LaunchedComponentProps<string, validTextTags>) {
@@ -25,6 +25,8 @@ export default function Text({
     );
 
   const [text, textRef] = useTag(tag, children);
+
+  const Container = element;
 
   return (
     <Container {...rest} ref={textRef}>
