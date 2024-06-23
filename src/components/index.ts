@@ -1,12 +1,13 @@
 import Text from "./Text";
+import Image from "./Image";
 
-export interface LaunchedComponentProps<
+export type LaunchedComponentProps<
   v extends React.ReactNode,
   c extends keyof JSX.IntrinsicElements,
-> extends React.HTMLAttributes<HTMLElement> {
+> = JSX.IntrinsicElements[c] & {
   tag: string;
   children: v;
   element?: c;
-}
+};
 
-export { Text };
+export { Text, Text as Number, Image };
