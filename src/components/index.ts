@@ -1,5 +1,6 @@
 import Text from "./Text";
 import Image from "./Image";
+import Link from "./Link";
 
 export type LaunchedComponentProps<
   v extends React.ReactNode,
@@ -10,4 +11,4 @@ export type LaunchedComponentProps<
   element?: c;
 };
 
-export { Text, Text as Number, Image };
+export { Text, Text as Number, Image, Link };
