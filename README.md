@@ -63,21 +63,16 @@ root.render(
 ```jsx
 // src/app.jsx
 
-/* Import the useTag hook */
-import { useTag } from "launched";
+/* Import the Launched Text element */
+import { Text } from "launched/components";
 
 ...
 
 export default function App() {
-  /* Define and retrieve references to tags */
-  const [title, titleTag] = useTag("title", "Hello, world!");
-  const [description, descriptionTag] = useTag("description", "Welcome to my site.");
-
-  /* Bind tag data to elements */
   return (
     <div>
-      <h1 ref={titleTag}>{title}</h1>
-      <p ref={descriptionTag}>{description}</p>
+      <Text tag="title" element="h1">Hello, world!</Text>
+      <Text tag="description">Welcome to my site.</Text>
     </div>
   )
 }
