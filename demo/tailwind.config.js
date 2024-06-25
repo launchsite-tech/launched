@@ -9,6 +9,11 @@ export default {
           primary: "#FFFFFF",
           secondary: "#E0EBFF",
         },
+        brand: {
+          light: "#FF9524",
+          mid: "#FF7F24",
+          dark: "#FF6924",
+        },
         bg: "#2F3C54",
       },
     },

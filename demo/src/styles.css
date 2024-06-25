@@ -9,6 +9,18 @@
   src: url("../public/fonts/FTBold.otf") format("opentype");
 }
 
+@property --bg1 {
+  syntax: "<color>";
+  initial-value: transparent;
+  inherits: false;
+}
+
+@property --bg2 {
+  syntax: "<color>";
+  initial-value: transparent;
+  inherits: false;
+}
+
 :root {
   font-family: "Faktum Test", sans-serif;
   background-color: theme("colors.bg");
@@ -17,3 +29,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply rounded-lg border border-white/10 bg-white/10 px-5 py-2.5;
+    transition:
+      --bg1 300ms ease-out,
+      --bg2 300ms ease-out;
+    background-image: radial-gradient(
+      circle at 100% 300%,
+      var(--bg1) 0%,
+      var(--bg2) 100%
+    );
+
+    &:hover {
+      --bg1: rgba(255, 105, 36, 0.25);
+      --bg2: rgba(255, 149, 36, 0);
+    }
+  }
+}

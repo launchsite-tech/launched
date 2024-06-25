@@ -41,9 +41,7 @@ export default function Nav() {
           Star on Github
         </NavItem>
         <NavItem href="/">
-          <button className="rounded-lg border border-white/10 bg-white/10 px-5 py-2.5">
-            Get started
-          </button>
+          <button className="btn">Get started</button>
         </NavItem>
       </nav>
     </div>
