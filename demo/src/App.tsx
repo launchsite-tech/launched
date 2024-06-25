@@ -6,6 +6,7 @@ export default function App() {
     <div className="mx-auto w-full max-w-screen-lg">
       <Nav />
       <Hero />
+      <div className="h-screen w-full rounded-2xl bg-white" />
     </div>
   );
 }

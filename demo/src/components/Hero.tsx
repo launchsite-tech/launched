@@ -1,9 +1,18 @@
-import { ChevronRight } from "react-feather";
+import { ChevronRight, ArrowRight } from "react-feather";
 
 export default function Hero() {
   return (
-    <section className="-mt-20 grid h-full place-items-center py-40">
+    <section className="-mt-20 grid h-full place-items-center pb-10 pt-40">
       <div className="flex flex-col items-center justify-center gap-5 text-center">
+        <a
+          href="/"
+          className="text-text-secondary rounded-full border border-white/10 px-3 py-1 text-sm transition-colors hover:bg-white/5"
+        >
+          <span>Our alpha release is out on NPM! </span>
+          <span className="text-brand-light inline-flex items-center">
+            Check it out <ArrowRight className="text-brand-light h-4" />
+          </span>
+        </a>
         <h1 className="text-text-primary max-w-[500px] text-6xl/[69px] tracking-tight">
           Finish the site, never look back.
         </h1>
