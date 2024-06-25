@@ -21,7 +21,7 @@ function NavItem({
 
 export default function Nav() {
   return (
-    <div className="bg-bg sticky top-0 flex w-full items-center justify-center gap-10 py-5 pl-10 pr-5">
+    <div className="sticky top-0 flex w-full items-center justify-center gap-10 py-5 pl-10 pr-5">
       <nav className="flex items-center gap-5">
         {/* <svg
           viewBox="0 0 48 48"

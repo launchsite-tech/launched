@@ -32,6 +32,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes box-pulse {
+  0%,
+  100% {
+    filter: drop-shadow(0px 0px 0px rgba(8, 8, 21, 0.1));
+  }
+  50% {
+    filter: drop-shadow(0px 7px 20px rgba(8, 8, 21, 0.1));
+  }
+}
+
 @layer components {
   .btn {
     @apply rounded-lg border border-white/10 bg-white/10 px-3 py-1.5;
@@ -48,5 +58,10 @@
       --bg1: rgba(255, 105, 36, 0.25);
       --bg2: rgba(255, 149, 36, 0);
     }
+  }
+
+  .box {
+    filter: drop-shadow(0px 7px 20px rgba(8, 8, 21, 0.2));
+    animation: box-pulse 4s infinite ease-in-out;
   }
 }
