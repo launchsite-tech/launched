@@ -60,19 +60,19 @@ function GridBackground({ cols, n }: { cols: number; n: number }) {
 
 export default function Hero() {
   return (
-    <section className="relative -mt-20 grid h-full place-items-center pb-32 pt-40">
+    <section className="relative grid h-full place-items-center py-10 sm:pb-32 sm:pt-40">
       <GridBackground cols={10} n={10} />
-      <div className="flex flex-col items-center justify-center gap-5 text-center">
+      <div className="flex flex-col items-center justify-center gap-5 px-10 text-center">
         <a
           href="/"
-          className="text-text-secondary rounded-full border border-white/10 px-3 py-1 text-sm transition-colors hover:bg-white/5"
+          className="text-text-secondary rounded-2xl border border-white/10 px-3 py-2 text-sm transition-colors hover:bg-white/5 sm:rounded-full sm:py-1"
         >
           <span>Our alpha release is out on NPM! </span>
           <span className="text-brand-light inline-flex items-center">
             Check it out <ArrowRight className="text-brand-light h-4" />
           </span>
         </a>
-        <h1 className="text-text-primary max-w-[500px] text-6xl/[69px] tracking-tight">
+        <h1 className="text-text-primary max-w-[500px] text-4xl tracking-tight sm:text-6xl/[69px]">
           Finish the site, never look back.
         </h1>
         <p className="text-text-secondary text-xl/[28px]">

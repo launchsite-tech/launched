@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { useWindowSize } from "usehooks-ts";
 
 // import { ChevronDown } from "react-feather";
 import gsap from "gsap";
@@ -27,25 +28,26 @@ export default function Nav() {
   gsap.registerPlugin(ScrollTrigger);
 
   const root = useRef<HTMLDivElement>(null);
+  const { width } = useWindowSize();
 
   useEffect(() => {
-    if (!root.current) return;
+    if (!root.current || width < 640) return;
 
     const trigger = ScrollTrigger.create({
       start: "top+=1",
       end: "bottom",
       onToggle: ({ isActive }) => {
-        root.current!.classList.toggle("!bg-bg", isActive);
+        root.current!.classList.toggle("sm:!bg-bg", isActive);
       },
     });
 
     return () => trigger.kill();
-  }, []);
+  }, [width]);
 
   return (
     <div
       ref={root}
-      className="sticky top-0 z-50 flex w-full items-center justify-center gap-10 bg-transparent py-5 pl-10 pr-5 transition-colors ease-out"
+      className="bg-bg fixed bottom-0 left-1/2 z-50 flex w-full -translate-x-1/2 items-center justify-center gap-10 py-5 pl-10 pr-5 transition-colors ease-out sm:bottom-auto sm:top-0 sm:bg-transparent"
     >
       <nav className="flex items-center gap-5">
         {/* <svg
