@@ -38,6 +38,7 @@
   - [x] Undo
   - [x] Redo
   - [x] Toggle preview/edit mode
+- [ ] Add mobile compatibility
 
 ### ux
 

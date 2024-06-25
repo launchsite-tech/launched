@@ -2,6 +2,15 @@
 export default {
   content: ["./src/**/*.{ts,tsx}", "./*.html"],
   mode: "jit",
-  theme: {},
+  theme: {
+    extend: {
+      colors: {
+        text: {
+          primary: "#FFFFFF",
+          secondary: "#E0EBFF",
+        },
+      },
+    },
+  },
   plugins: [],
 };
