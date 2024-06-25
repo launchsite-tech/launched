@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap");
+
 @font-face {
   font-family: "Faktum Test";
 
@@ -168,7 +170,7 @@ code,
 kbd,
 samp,
 pre {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: JetBrains Mono, monospace;
   /* 1 */
   font-feature-settings: normal;
   /* 2 */
@@ -472,7 +474,7 @@ video {
   display: none;
 }
 
-*, ::before, ::after {
+*, ::before, ::after{
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
   --tw-translate-x: 0;
@@ -526,7 +528,7 @@ video {
   --tw-contain-style:  ;
 }
 
-::backdrop {
+::backdrop{
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
   --tw-translate-x: 0;
@@ -580,41 +582,41 @@ video {
   --tw-contain-style:  ;
 }
 
-.container {
+.container{
   width: 100%;
 }
 
-@media (min-width: 640px) {
-  .container {
+@media (min-width: 640px){
+  .container{
     max-width: 640px;
   }
 }
 
-@media (min-width: 768px) {
-  .container {
+@media (min-width: 768px){
+  .container{
     max-width: 768px;
   }
 }
 
-@media (min-width: 1024px) {
-  .container {
+@media (min-width: 1024px){
+  .container{
     max-width: 1024px;
   }
 }
 
-@media (min-width: 1280px) {
-  .container {
+@media (min-width: 1280px){
+  .container{
     max-width: 1280px;
   }
 }
 
-@media (min-width: 1536px) {
-  .container {
+@media (min-width: 1536px){
+  .container{
     max-width: 1536px;
   }
 }
 
-.btn {
+.btn{
   border-radius: 0.5rem;
   border-width: 1px;
   border-color: rgb(255 255 255 / 0.1);
@@ -637,74 +639,172 @@ video {
   }
 }
 
-.static {
+.static{
   position: static;
 }
 
-.mx-auto {
+.sticky{
+  position: -webkit-sticky;
+  position: sticky;
+}
+
+.top-0{
+  top: 0px;
+}
+
+.mx-auto{
   margin-left: auto;
   margin-right: auto;
 }
 
-.my-5 {
+.my-5{
   margin-top: 1.25rem;
   margin-bottom: 1.25rem;
 }
 
-.ml-auto {
+.-mt-20{
+  margin-top: -5rem;
+}
+
+.ml-auto{
   margin-left: auto;
 }
 
-.mr-10 {
+.mr-10{
   margin-right: 2.5rem;
 }
 
-.flex {
+.mt-5{
+  margin-top: 1.25rem;
+}
+
+.flex{
   display: flex;
 }
 
-.h-6 {
+.grid{
+  display: grid;
+}
+
+.h-6{
   height: 1.5rem;
 }
 
-.w-6 {
+.h-full{
+  height: 100%;
+}
+
+.w-6{
   width: 1.5rem;
 }
 
-.w-full {
+.w-full{
   width: 100%;
 }
 
-.max-w-screen-lg {
+.max-w-\[500px\]{
+  max-width: 500px;
+}
+
+.max-w-screen-lg{
   max-width: 1024px;
 }
 
-.items-center {
+.flex-col{
+  flex-direction: column;
+}
+
+.place-items-center{
+  place-items: center;
+}
+
+.items-center{
   align-items: center;
 }
 
-.gap-5 {
+.justify-center{
+  justify-content: center;
+}
+
+.gap-5{
   gap: 1.25rem;
 }
 
-.pl-10 {
+.rounded-lg{
+  border-radius: 0.5rem;
+}
+
+.border{
+  border-width: 1px;
+}
+
+.border-black\/10{
+  border-color: rgb(0 0 0 / 0.1);
+}
+
+.bg-black\/10{
+  background-color: rgb(0 0 0 / 0.1);
+}
+
+.p-5{
+  padding: 1.25rem;
+}
+
+.py-40{
+  padding-top: 10rem;
+  padding-bottom: 10rem;
+}
+
+.pl-10{
   padding-left: 2.5rem;
 }
 
-.pr-5 {
+.pr-5{
   padding-right: 1.25rem;
 }
 
-.text-sm {
+.pr-10{
+  padding-right: 2.5rem;
+}
+
+.text-center{
+  text-align: center;
+}
+
+.text-6xl\/\[69px\]{
+  font-size: 3.75rem;
+  line-height: 69px;
+}
+
+.text-sm{
   font-size: 0.875rem;
   line-height: 1.25rem;
 }
 
-.text-text-secondary {
+.text-xl\/\[28px\]{
+  font-size: 1.25rem;
+  line-height: 28px;
+}
+
+.tracking-tight{
+  letter-spacing: -0.025em;
+}
+
+.text-text-primary{
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.text-text-secondary{
   --tw-text-opacity: 1;
   color: rgb(224 235 255 / var(--tw-text-opacity));
 }
 
-.hover\:underline:hover {
+.text-brand-dark{
+  --tw-text-opacity: 1;
+  color: rgb(255 105 36 / var(--tw-text-opacity));
+}
+
+.hover\:underline:hover{
   text-decoration-line: underline;
 }

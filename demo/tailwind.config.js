@@ -16,6 +16,9 @@ export default {
         },
         bg: "#2F3C54",
       },
+      fontFamily: {
+        mono: ["JetBrains Mono", "monospace"],
+      },
     },
   },
   plugins: [],
