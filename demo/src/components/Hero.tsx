@@ -15,8 +15,6 @@ function GridBackground({ cols, n }: { cols: number; n: number }) {
   const rows = Math.ceil(h / boxSize);
 
   function pickRandomBoxPositions() {
-    setBoxes([]);
-
     for (let i = 0; i < n; i++) {
       setBoxes((p) => [...p, Math.floor(Math.random() * (rows * cols))]);
     }
@@ -25,11 +23,18 @@ function GridBackground({ cols, n }: { cols: number; n: number }) {
   useEffect(() => {
     pickRandomBoxPositions();
 
-    const interval = setInterval(() => {
+    const spawnInterval = setInterval(() => {
       pickRandomBoxPositions();
-    }, 3990);
+    }, 2000);
 
-    return () => clearInterval(interval);
+    const despawnInterval = setInterval(() => {
+      setBoxes((p) => p.slice(0, p.length - n));
+    }, 4000);
+
+    return () => {
+      clearInterval(spawnInterval);
+      clearInterval(despawnInterval);
+    };
   }, []);
 
   return (
