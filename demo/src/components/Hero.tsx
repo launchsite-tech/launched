@@ -24,16 +24,12 @@ function GridBackground({ cols, n }: { cols: number; n: number }) {
     pickRandomBoxPositions();
 
     const spawnInterval = setInterval(() => {
+      setBoxes([]);
       pickRandomBoxPositions();
-    }, 2000);
-
-    const despawnInterval = setInterval(() => {
-      setBoxes((p) => p.slice(0, p.length - n));
     }, 4000);
 
     return () => {
       clearInterval(spawnInterval);
-      clearInterval(despawnInterval);
     };
   }, []);
 
@@ -64,7 +60,7 @@ function GridBackground({ cols, n }: { cols: number; n: number }) {
 
 export default function Hero() {
   return (
-    <section className="relative -mt-20 grid h-full place-items-center pb-10 pt-40">
+    <section className="relative -mt-20 grid h-full place-items-center pb-32 pt-40">
       <GridBackground cols={10} n={10} />
       <div className="flex flex-col items-center justify-center gap-5 text-center">
         <a

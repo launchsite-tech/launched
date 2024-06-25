@@ -1,4 +1,8 @@
+import { useRef, useEffect } from "react";
+
 // import { ChevronDown } from "react-feather";
+import gsap from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
 
 function NavItem({
   children,
@@ -20,8 +24,29 @@ function NavItem({
 }
 
 export default function Nav() {
+  gsap.registerPlugin(ScrollTrigger);
+
+  const root = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!root.current) return;
+
+    const trigger = ScrollTrigger.create({
+      start: "top+=1",
+      end: "bottom",
+      onToggle: ({ isActive }) => {
+        root.current!.classList.toggle("!bg-bg", isActive);
+      },
+    });
+
+    return () => trigger.kill();
+  }, []);
+
   return (
-    <div className="sticky top-0 flex w-full items-center justify-center gap-10 py-5 pl-10 pr-5">
+    <div
+      ref={root}
+      className="sticky top-0 z-50 flex w-full items-center justify-center gap-10 bg-transparent py-5 pl-10 pr-5 transition-colors ease-out"
+    >
       <nav className="flex items-center gap-5">
         {/* <svg
           viewBox="0 0 48 48"
