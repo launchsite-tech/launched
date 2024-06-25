@@ -2,6 +2,7 @@ import "./index.css";
 
 import ReactDOM from "react-dom/client";
 
+import App from "./App";
 import { LaunchedProvider } from "./dist";
 
 const root = ReactDOM.createRoot(
@@ -10,8 +11,8 @@ const root = ReactDOM.createRoot(
 
 root.render(
   // <React.StrictMode>
-  <LaunchedProvider>
-    <main>Demo</main>
-  </LaunchedProvider>,
+  // <LaunchedProvider>
+  <App />,
+  // </LaunchedProvider>,
   // </React.StrictMode>
 );
