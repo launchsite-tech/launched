@@ -1,4 +1,18 @@
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Gilda+Display&family=Kaushan+Script&family=Open+Sans:wght@400;500;600;700&family=Roboto:wght@300;400;700&display=swap");
+@font-face {
+  font-family: "Faktum Test";
+  src: url("../public/fonts/FTRegular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Faktum Test";
+  font-weight: bold;
+  src: url("../public/fonts/FTBold.otf") format("opentype");
+}
+
+:root {
+  font-family: "Faktum Test", sans-serif;
+  background-color: theme("colors.bg");
+}
 
 @tailwind base;
 @tailwind components;

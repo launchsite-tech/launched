@@ -9,6 +9,7 @@ export default {
           primary: "#FFFFFF",
           secondary: "#E0EBFF",
         },
+        bg: "#2F3C54",
       },
     },
   },
