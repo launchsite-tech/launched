@@ -20,6 +20,9 @@ export default function Toolbar({
   save: () => void;
   revert: () => void;
 }) {
+  // @ts-expect-error
+  const initiallyLocked = Launched.instance?.config?.locked;
+
   return (
     <div
       data-position={position}
@@ -39,8 +42,12 @@ export default function Toolbar({
           }}
           className="Launched__toolbar-lockMode"
         >
-          <option value="unlocked">Edit</option>
-          <option value="locked">Preview</option>
+          <option value="unlocked" selected={!initiallyLocked}>
+            Edit
+          </option>
+          <option value="locked" selected={initiallyLocked}>
+            Preview
+          </option>
         </select>
         <button
           disabled={!canUndo}
