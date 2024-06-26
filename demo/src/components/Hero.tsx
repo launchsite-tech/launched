@@ -1,7 +1,9 @@
 import { useWindowSize } from "usehooks-ts";
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 
 import { ChevronRight, ArrowRight } from "react-feather";
+
+import gsap from "gsap";
 
 function GridBackground({ cols, n }: { cols: number; n: number }) {
   const [boxes, setBoxes] = useState<number[]>([]);
@@ -59,10 +61,27 @@ function GridBackground({ cols, n }: { cols: number; n: number }) {
 }
 
 export default function Hero() {
+  const root = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!root.current) return;
+
+    gsap.from(root.current.children, {
+      y: 50,
+      opacity: 0,
+      stagger: 0.2,
+      duration: 0.8,
+      ease: "power2.out",
+    });
+  }, []);
+
   return (
     <section className="relative grid h-full place-items-center py-10 sm:pb-32 sm:pt-40">
       <GridBackground cols={10} n={10} />
-      <div className="flex flex-col items-center justify-center gap-5 px-10 text-center">
+      <div
+        ref={root}
+        className="flex flex-col items-center justify-center gap-5 px-10 text-center"
+      >
         <a
           href="/"
           className="text-text-secondary rounded-2xl border border-white/10 px-3 py-2 text-sm transition-colors hover:bg-white/5 sm:rounded-full sm:py-1"
