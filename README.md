@@ -27,7 +27,7 @@ To get started, check out [https://launched.tech](https://launched.tech) for doc
 > Your site needs to be made with react for Launched to work. Learn react [here](https://react.dev).
 
 > [!NOTE]
-> Launched is still in development. It will be released on npm within the next few weeks.
+> Launched is still in development. Be careful when using it in production.
 
 ## Download
 
