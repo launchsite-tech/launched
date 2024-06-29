@@ -41,6 +41,7 @@ export type Tag = {
 
 export type Config = Partial<{
   locked: boolean;
+  determineVisibility: (context?: Launched) => boolean;
   save: (tags: Record<string, Tag>) => void;
   onImageUpload: (file: File) => void;
   toolbarOptions: Partial<{
@@ -51,6 +52,9 @@ export type Config = Partial<{
 
 const defaults: Config = {
   locked: false,
+  determineVisibility: () =>
+    window &&
+    new URLSearchParams(window.location.search).get("mode") === "edit",
   toolbarOptions: {
     position: "center",
   },
@@ -108,6 +112,13 @@ export default class Launched {
     this.Provider = ({ children }: { children: React.ReactNode }) => {
       const [canUndo, setCanUndo] = useState(false);
       const [canRedo, setCanRedo] = useState(false);
+      const [visible] = useState(() => {
+        const visible = this.config.determineVisibility!(this);
+
+        if (!visible) this.config.locked = true;
+
+        return visible;
+      });
       const [tags, setTags] = useState(
         {} as Record<string, Omit<Tag, "setData">>
       );
@@ -164,15 +175,17 @@ export default class Launched {
           }}
         >
           {children}
-          <Toolbar
-            {...this.config.toolbarOptions}
-            undo={this.undo.bind(this)}
-            redo={this.redo.bind(this)}
-            revert={this.restore.bind(this, true)}
-            save={() => this.config.save?.(this.tags)}
-            canUndo={canUndo}
-            canRedo={canRedo}
-          />
+          {visible && (
+            <Toolbar
+              {...this.config.toolbarOptions}
+              undo={this.undo.bind(this)}
+              redo={this.redo.bind(this)}
+              revert={this.restore.bind(this, true)}
+              save={() => this.config.save?.(this.tags)}
+              canUndo={canUndo}
+              canRedo={canRedo}
+            />
+          )}
         </this.context.Provider>
       );
     };
