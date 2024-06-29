@@ -1,6 +1,6 @@
 import "../styles/inlineEditor.css";
 import { useRef, useState } from "react";
-import type { TagRenderer, TagRendererProps } from "../../core/renderer";
+import type { TagRenderer, TagRendererProps } from "../../core/renderer.js";
 
 export function InlineTextUI({
   // element,

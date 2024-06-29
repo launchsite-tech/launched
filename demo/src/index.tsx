@@ -3,9 +3,9 @@ import "./index.css";
 import ReactDOM from "react-dom/client";
 
 import App from "./App";
-import { LaunchedProvider } from "./dist";
+import { LaunchedProvider } from "launched";
 
-import type { Config } from "./dist";
+import type { Config } from "launched";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,

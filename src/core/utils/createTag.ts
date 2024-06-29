@@ -1,6 +1,6 @@
 import { createRef } from "react";
-import error from "./error";
-import type { Tag, TagData, TagSchemaValue } from "../context";
+import error from "./error.js";
+import type { Tag, TagData, TagSchemaValue } from "../context.js";
 
 function validateObject(tag: Record<string, any>) {
   if ("type" in tag && "value" in tag) return;

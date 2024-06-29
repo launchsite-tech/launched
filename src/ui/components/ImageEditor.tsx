@@ -1,5 +1,5 @@
 import "../styles/imageEditor.css";
-import type { TagRenderer, TagRendererProps } from "../../core/renderer";
+import type { TagRenderer, TagRendererProps } from "../../core/renderer.js";
 
 export function ImageUI({
   id,

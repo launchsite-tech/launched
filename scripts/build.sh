@@ -26,4 +26,4 @@ done
 
 echo "Building project..."
 
-npx tsc --outDir "$DIST" || { echo "Build failed"; exit 1; }
+npx tsc --outDir "$DIST" && npx tsc-alias --outDir "$DIST" || { echo "Build failed"; exit 1; }

@@ -1,6 +1,6 @@
-import Text from "./Text";
-import Image from "./Image";
-import Link from "./Link";
+import Text from "./Text.js";
+import Image from "./Image.js";
+import Link from "./Link.js";
 
 export type LaunchedComponentProps<
   v extends React.ReactNode,

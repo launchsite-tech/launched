@@ -1,4 +1,4 @@
-import type { TagData, FlatTagValue } from "../context";
+import type { TagData, FlatTagValue } from "../context.js";
 
 export default function flattenTagValue<V extends TagData>(
   value: Record<string, V> | Record<string, V>[] | V | V[]

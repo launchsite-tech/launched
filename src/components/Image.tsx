@@ -1,6 +1,6 @@
-import { useTag } from "../core/hooks";
+import { useTag } from "../core/hooks.js";
 import { LaunchedComponentProps } from ".";
-import error from "../core/utils/error";
+import error from "../core/utils/error.js";
 
 type HTMLTagsWithoutChildren =
   | "img"

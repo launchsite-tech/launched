@@ -1,6 +1,6 @@
 {
   "name": "launched",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0-alpha.2",
   "type": "module",
   "description": "Make website content editable by clients, no codebase access required.",
   "keywords": [
@@ -46,6 +46,7 @@
     "prettier": "^3.2.5",
     "rimraf": "^5.0.7",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.10",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
   },
