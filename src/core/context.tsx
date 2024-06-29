@@ -1,12 +1,12 @@
 import React from "react";
-import EventEmitter from "./events";
+import EventEmitter from "./events.js";
 import { useState, useEffect, createContext } from "react";
-import Renderer from "./renderer";
-import Toolbar from "../ui/components/Toolbar";
-import error from "./utils/error";
-import createTag from "./utils/createTag";
-import flattenTagValue from "./utils/flattenTagValue";
-import tagToValues from "./utils/tagToValues";
+import Renderer from "./renderer.js";
+import Toolbar from "../ui/components/Toolbar.js";
+import error from "./utils/error.js";
+import createTag from "./utils/createTag.js";
+import flattenTagValue from "./utils/flattenTagValue.js";
+import tagToValues from "./utils/tagToValues.js";
 
 export type TagValue = string | number | Record<string, TagData>;
 export type TagSchemaValue =

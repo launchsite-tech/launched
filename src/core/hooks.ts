@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import Launched from "./context";
-import error from "./utils/error";
-import type { TagData, TagSchemaValue } from "../core/context";
+import Launched from "./context.js";
+import error from "./utils/error.js";
+import type { TagData, TagSchemaValue } from "../core/context.js";
 
 export function useTag<V extends TagSchemaValue = TagData["value"]>(
   key: string,

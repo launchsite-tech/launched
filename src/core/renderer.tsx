@@ -1,11 +1,11 @@
 import "../ui/styles/container.css";
-import error from "./utils/error";
+import error from "./utils/error.js";
 import { useRef, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import type { Tag, TagData, TagValue } from "./context";
+import type { Tag, TagData, TagValue } from "./context.js";
 import type { Root } from "react-dom/client";
-import Launched from "./context";
-import flattenTagValue from "./utils/flattenTagValue";
+import Launched from "./context.js";
+import flattenTagValue from "./utils/flattenTagValue.js";
 
 type TagRendererFunctionState = {
   element?: HTMLElement;

@@ -1,5 +1,5 @@
 import "../styles/toolbar.css";
-import Launched from "../../core/context";
+import Launched from "../../core/context.js";
 
 export default function Toolbar({
   position,

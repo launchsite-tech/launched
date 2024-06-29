@@ -1,16 +1,16 @@
 import "./ui/globals.css";
 
-import Launched from "./core/context";
-import Renderer from "./core/renderer";
-import { LaunchedProvider } from "./core/context";
-import { useTag } from "./core/hooks";
+import Launched from "./core/context.js";
+import Renderer from "./core/renderer.js";
+import { LaunchedProvider } from "./core/context.js";
+import { useTag } from "./core/hooks.js";
 
-import type { Config, TagData, TagValue, Tag } from "./core/context";
-import type { TagRenderer, TagRendererProps } from "./core/renderer";
+import type { Config, TagData, TagValue, Tag } from "./core/context.js";
+import type { TagRenderer, TagRendererProps } from "./core/renderer.js";
 
-import { InlineTextRenderer } from "./ui/components/InlineEditor";
-import { LinkRenderer } from "./ui/components/LinkEditor";
-import { ImageRenderer } from "./ui/components/ImageEditor";
+import { InlineTextRenderer } from "./ui/components/InlineEditor.js";
+import { LinkRenderer } from "./ui/components/LinkEditor.js";
+import { ImageRenderer } from "./ui/components/ImageEditor.js";
 
 Renderer.registerTagFormat("string", InlineTextRenderer);
 Renderer.registerTagFormat("number", InlineTextRenderer);
