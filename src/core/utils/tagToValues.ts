@@ -1,5 +1,5 @@
-import flattenTagValue from "./flattenTagValue";
-import type { Tag, TagData } from "../context";
+import flattenTagValue from "./flattenTagValue.js";
+import type { Tag, TagData } from "../context.js";
 
 export default function tagToValues(tag: Tag): TagData["value"] {
   if (Array.isArray(tag.data.value)) {
