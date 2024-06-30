@@ -6,6 +6,7 @@ import Toolbar from "../ui/components/Toolbar";
 import error from "./utils/error";
 import createTag from "./utils/createTag";
 import flattenTagValue from "./utils/flattenTagValue";
+import tagToValues from "./utils/tagToValues";
 
 export type TagValue = string | number | Record<string, TagData>;
 export type TagSchemaValue =
@@ -42,7 +43,7 @@ export type Tag = {
 export type Config = Partial<{
   locked: boolean;
   determineVisibility: (context?: Launched) => boolean;
-  save: (tags: Record<string, Tag>) => void;
+  save: (tags: Record<string, TagData["value"]>) => void;
   onImageUpload: (file: File) => void;
   toolbarOptions: Partial<{
     className: string;
@@ -181,7 +182,15 @@ export default class Launched {
               undo={this.undo.bind(this)}
               redo={this.redo.bind(this)}
               revert={this.restore.bind(this, true)}
-              save={() => this.config.save?.(this.tags)}
+              save={() =>
+                this.config.save?.(
+                  Object.fromEntries(
+                    Object.entries(this.tags).map(
+                      ([key, tag]) => [key, tagToValues(tag)] as const
+                    )
+                  )
+                )
+              }
               canUndo={canUndo}
               canRedo={canRedo}
             />

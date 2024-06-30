@@ -11,7 +11,11 @@ const root = ReactDOM.createRoot(
 
 root.render(
   // <React.StrictMode>
-  <LaunchedProvider>
+  <LaunchedProvider
+    config={{
+      save: (tags) => console.log(tags),
+    }}
+  >
     <App />
   </LaunchedProvider>,
   // </React.StrictMode>

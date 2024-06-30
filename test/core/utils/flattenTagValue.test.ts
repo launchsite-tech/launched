@@ -1,4 +1,4 @@
-import { generateError, describe, it, expect } from "../../.helpers/test-utils";
+import { describe, it, expect } from "../../.helpers/test-utils";
 import flattenTagValue from "../../../src/core/utils/flattenTagValue";
 
 describe("#flattenTagValue", () => {
