@@ -39,6 +39,7 @@
   - [x] Redo
   - [x] Toggle preview/edit mode
 - [ ] Add mobile compatibility
+- [ ] Saving indicator
 
 ### ux
 

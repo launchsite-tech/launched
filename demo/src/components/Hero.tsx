@@ -83,7 +83,7 @@ export default function Hero() {
         className="flex flex-col items-center justify-center gap-5 px-10 text-center"
       >
         <a
-          href="/"
+          href="https://www.npmjs.com/package/launched"
           className="text-text-secondary rounded-2xl border border-white/10 px-3 py-2 text-sm transition-colors hover:bg-white/5 sm:rounded-full sm:py-1"
         >
           <span>Our alpha release is out on NPM! </span>

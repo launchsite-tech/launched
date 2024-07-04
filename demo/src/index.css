@@ -729,6 +729,10 @@ video {
   height: 100%;
 }
 
+.h-screen{
+  height: 100vh;
+}
+
 .w-6{
   width: 1.5rem;
 }

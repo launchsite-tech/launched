@@ -19,7 +19,8 @@ export default function App() {
     <div className="mx-auto w-full max-w-screen-lg">
       <Nav />
       <Hero />
-      <Monologue />
+      <div className="h-screen rounded-2xl bg-white"></div>
+      {/* <Monologue /> */}
       {/* <Lottie options={defaultOptions} height={400} /> */}
     </div>
   );
