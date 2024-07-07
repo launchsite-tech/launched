@@ -8,6 +8,7 @@ import createTag from "./utils/createTag.js";
 import flattenTagValue from "./utils/flattenTagValue.js";
 import tagToValues from "./utils/tagToValues.js";
 import mergeDeep from "./utils/mergeDeep.js";
+import type { TagRenderer } from "./renderer.js";
 
 export type TagValue = string | number | Record<string, TagData>;
 export type TagSchemaValue =
@@ -316,6 +317,10 @@ export default class Launched {
     if (!Launched.instance) error("Launched is not initialized.");
 
     return Launched.instance.config.determineVisibility!(Launched.instance);
+  }
+
+  public static registerTagFormat<V>(name: string, renderer: TagRenderer<V>) {
+    Renderer.registerTagFormat(name, renderer);
   }
 
   public undo() {
