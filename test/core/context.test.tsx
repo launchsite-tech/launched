@@ -45,6 +45,9 @@ describe("#Launched", () => {
       locked: false,
       save,
       onImageUpload,
+      toolbarOptions: {
+        className: "foo",
+      },
     });
 
     // @ts-expect-error
@@ -52,6 +55,7 @@ describe("#Launched", () => {
       locked: false,
       toolbarOptions: {
         position: "center",
+        className: "foo",
       },
       save,
       onImageUpload,

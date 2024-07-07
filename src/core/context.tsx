@@ -7,6 +7,7 @@ import error from "./utils/error.js";
 import createTag from "./utils/createTag.js";
 import flattenTagValue from "./utils/flattenTagValue.js";
 import tagToValues from "./utils/tagToValues.js";
+import mergeDeep from "./utils/mergeDeep.js";
 
 export type TagValue = string | number | Record<string, TagData>;
 export type TagSchemaValue =
@@ -107,7 +108,7 @@ export default class Launched {
 
     Launched.instance = this;
 
-    this.config = { ...defaults, ...config };
+    this.config = mergeDeep(defaults, config ?? {});
     this.uploadImage = this.config.onImageUpload;
 
     this.Provider = ({ children }: { children: React.ReactNode }) => {
