@@ -1,7 +1,6 @@
 import "./ui/globals.css";
 
 import Launched from "./core/context.js";
-import Renderer from "./core/renderer.js";
 import { LaunchedProvider } from "./core/context.js";
 import { useTag } from "./core/hooks.js";
 
@@ -12,10 +11,10 @@ import { InlineTextRenderer } from "./ui/components/InlineEditor.js";
 import { LinkRenderer } from "./ui/components/LinkEditor.js";
 import { ImageRenderer } from "./ui/components/ImageEditor.js";
 
-Renderer.registerTagFormat("string", InlineTextRenderer);
-Renderer.registerTagFormat("number", InlineTextRenderer);
-Renderer.registerTagFormat("link", LinkRenderer);
-Renderer.registerTagFormat("image", ImageRenderer);
+Launched.registerTagFormat("string", InlineTextRenderer);
+Launched.registerTagFormat("number", InlineTextRenderer);
+Launched.registerTagFormat("link", LinkRenderer);
+Launched.registerTagFormat("image", ImageRenderer);
 
 export default Launched;
 export { useTag, LaunchedProvider };

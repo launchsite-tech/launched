@@ -1,6 +1,6 @@
 {
   "name": "launched",
-  "version": "0.1.0-alpha.5",
+  "version": "0.1.0-alpha.6",
   "type": "module",
   "description": "Make website content editable by clients, no codebase access required.",
   "keywords": [
