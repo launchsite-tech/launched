@@ -312,6 +312,12 @@ export default class Launched {
     Launched.instance.config.locked ? Launched.unlock() : Launched.lock();
   }
 
+  public static isVisible() {
+    if (!Launched.instance) error("Launched is not initialized.");
+
+    return Launched.instance.config.determineVisibility!(Launched.instance);
+  }
+
   public undo() {
     if (this.version === -1 || this.config.locked) return;
     else if (this.version === 0) {
