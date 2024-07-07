@@ -32,7 +32,7 @@
     z-index: 10;
 
     & .Launched__tag-inlineEditor {
-      color: inherit;
+      color: var(--text);
     }
   }
 }
