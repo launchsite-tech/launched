@@ -61,7 +61,18 @@ export const InlineTextRenderer: TagRenderer<string> = {
     return <InlineTextUI {...props} />;
   },
   parentValidator: (element) => {
-    const whitelist = ["P", "H1", "H2", "H3", "H4", "H5", "H6", "SPAN", "DIV"];
+    const whitelist = [
+      "P",
+      "H1",
+      "H2",
+      "H3",
+      "H4",
+      "H5",
+      "H6",
+      "SPAN",
+      "DIV",
+      "LI",
+    ];
     return whitelist.includes(element.nodeName);
   },
 };
