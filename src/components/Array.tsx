@@ -32,17 +32,17 @@ export function PrimitiveArray({
 
   const Container = element as React.ElementType;
 
-  const elements = arr.map((item, i) => {
-    const [value, ref] = useTag(`${tag}-${i}`, item);
+  const [value, ref] = useTag(tag, arr);
 
-    const props = { [targetProp]: value, ref, key: i };
-
-    return cloneElement(
-      children,
-      props,
-      targetProp === "children" ? item : null
-    );
-  });
-
-  return <Container {...rest}>{elements}</Container>;
+  return (
+    <Container ref={ref} {...rest}>
+      {value.map((item, i) =>
+        cloneElement(
+          children,
+          { [targetProp]: item, key: i },
+          targetProp === "children" ? item : null
+        )
+      )}
+    </Container>
+  );
 }
