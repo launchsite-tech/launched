@@ -1,44 +1,87 @@
-import { useTag } from "../core/hooks.js";
-import { LaunchedComponentProps } from "./index.js";
-import type { HTMLTagsWithChildren } from "./index.js";
+import { LaunchedComponentProps } from ".";
+import type { HTMLTagsWithChildren, HTMLTextTags } from ".";
+import { Text, Number, Image, Link } from ".";
 import error from "../core/utils/error.js";
-import { cloneElement } from "react";
 
-export function PrimitiveArray({
+type LaunchedArrayProps<T, E extends keyof JSX.IntrinsicElements> = Omit<
+  LaunchedComponentProps<any, HTMLTagsWithChildren>,
+  "children"
+> & {
+  arr: T[];
+  children?: React.ReactElement;
+  childProps?: Omit<LaunchedComponentProps<null, E>, "tag" | "children">;
+};
+
+function PrimitiveArray<E extends keyof JSX.IntrinsicElements>({
   tag,
   element = "div",
   children,
   arr,
-  targetProp = "children",
+  type,
+  childProps,
   ...rest
-}: LaunchedComponentProps<React.ReactElement, HTMLTagsWithChildren> & {
-  arr: string[] | number[];
-  targetProp?: string;
+}: LaunchedArrayProps<any, E> & {
+  type?: string;
 }) {
-  const type = typeof arr[0];
-
-  if (!arr.length)
-    error(
-      "Primitive array component requires at least one child component. Make sure to provide a valid child component."
-    );
-  else if (!["string", "number"].includes(type))
-    error(
-      "Primitive array component requires all children to be of type string, number, or boolean."
-    );
+  const tagType = type ?? typeof arr[0];
 
   const Container = element as React.ElementType;
 
-  const [array, ref] = useTag(tag, arr);
-
   return (
-    <Container ref={ref} {...rest}>
-      {array.map((item, i) =>
-        cloneElement(
-          children,
-          { [targetProp]: item, key: i },
-          targetProp === "children" ? item : null
-        )
-      )}
+    <Container {...rest}>
+      {arr.map((item, i) => {
+        switch (tagType) {
+          case "string":
+            return (
+              <Text
+                key={i}
+                tag={`${tag}-${i}`}
+                children={item}
+                {...(childProps as JSX.IntrinsicElements["p"])}
+              />
+            );
+          case "number":
+            return (
+              <Number
+                key={i}
+                tag={`${tag}-${i}`}
+                children={item}
+                {...(childProps as JSX.IntrinsicElements["p"])}
+              />
+            );
+          case "image":
+            return (
+              <Image
+                key={i}
+                tag={`${tag}-${i}`}
+                src={item}
+                {...(childProps as JSX.IntrinsicElements["img"])}
+              />
+            );
+          case "link":
+            return (
+              <Link
+                key={i}
+                tag={`${tag}-${i}`}
+                href={item.href}
+                children={item.text}
+                {...(childProps as JSX.IntrinsicElements["a"])}
+              />
+            );
+          default:
+            return error("Invalid type for PrimitiveArray.");
+        }
+      })}
     </Container>
   );
 }
+
+export const TextArray = (props: LaunchedArrayProps<string, HTMLTextTags>) =>
+  PrimitiveArray<HTMLTextTags>({ ...props, type: "string" });
+export const NumberArray = (props: LaunchedArrayProps<number, HTMLTextTags>) =>
+  PrimitiveArray<HTMLTextTags>({ ...props, type: "number" });
+export const ImageArray = (props: LaunchedArrayProps<string, "img">) =>
+  PrimitiveArray<"img">({ ...props, type: "image" });
+export const LinkArray = (
+  props: LaunchedArrayProps<{ href: string; text: string }, "a">
+) => PrimitiveArray<"a">({ ...props, type: "link" });

@@ -1,7 +1,7 @@
 import Text from "./Text.js";
 import Image from "./Image.js";
 import Link from "./Link.js";
-import { PrimitiveArray } from "./Array.js";
+import { TextArray, NumberArray, LinkArray, ImageArray } from "./Array.js";
 
 export type LaunchedComponentProps<
   v extends React.ReactNode,
@@ -16,6 +16,7 @@ export type HTMLTextTags =
   | "p"
   | "span"
   | "div"
+  | "li"
   | "h1"
   | "h2"
   | "h3"
@@ -44,4 +45,13 @@ export type HTMLTagsWithChildren = Exclude<
   HTMLTagsWithoutChildren
 >;
 
-export { Text, Text as Number, Image, Link, PrimitiveArray };
+export {
+  Text,
+  Text as Number,
+  Image,
+  Link,
+  TextArray,
+  NumberArray,
+  LinkArray,
+  ImageArray,
+};

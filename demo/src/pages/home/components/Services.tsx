@@ -1,7 +1,7 @@
 import { useTag } from "../../../dist";
 
 import { Music, Activity, Search, Hash, Check } from "react-feather";
-import { PrimitiveArray } from "../../../dist/components";
+import { TextArray } from "../../../dist/components";
 
 // eslint-disable-next-line react/jsx-key
 const icons = [<Music />, <Activity />, <Search />, <Hash />, <Check />];
@@ -66,14 +66,17 @@ export default function Services() {
             <p data-key="description">{card.description}</p>
           </li>
         ))} */}
-      <PrimitiveArray
+      <TextArray
         element="ul"
         tag="Feature cards"
         arr={defaultCards.map((c) => c.description)}
         className="grid w-full grid-cols-5 gap-[2vw] rounded-3xl bg-white p-14 shadow-secondary"
-      >
-        <li className="flex h-64 max-w-48 flex-col items-center justify-center gap-6 rounded-2xl border border-gray-border px-6 text-center font-sans text-sm/[19.6px] text-home" />
-      </PrimitiveArray>
+        childProps={{
+          className:
+            "flex h-64 max-w-48 flex-col items-center justify-center gap-6 rounded-2xl border border-gray-border px-6 text-center font-sans text-sm/[19.6px] text-home",
+          element: "li",
+        }}
+      ></TextArray>
       {/* </ul> */}
     </section>
   );
