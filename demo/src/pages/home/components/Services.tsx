@@ -1,6 +1,7 @@
 import { useTag } from "../../../dist";
 
 import { Music, Activity, Search, Hash, Check } from "react-feather";
+import { PrimitiveArray } from "../../../dist/components";
 
 // eslint-disable-next-line react/jsx-key
 const icons = [<Music />, <Activity />, <Search />, <Hash />, <Check />];
@@ -48,15 +49,15 @@ const defaultCards = [
 ];
 
 export default function Services() {
-  const [cards, cardsTag] = useTag("Feature cards", defaultCards);
+  // const [cards, cardsTag] = useTag("Feature cards", defaultCards);
 
   return (
     <section id="SERVICES" className="mt-20 w-full max-w-7xl">
-      <ul
+      {/* <ul
         ref={cardsTag}
         className="grid w-full grid-cols-5 gap-[2vw] rounded-3xl bg-white p-14 shadow-secondary"
-      >
-        {cards.map((card, index) => (
+      > */}
+      {/* {cards.map((card, index) => (
           <li
             key={index}
             className="flex h-64 max-w-48 flex-col items-center justify-center gap-6 rounded-2xl border border-gray-border px-6 text-center font-sans text-sm/[19.6px] text-home"
@@ -64,8 +65,16 @@ export default function Services() {
             <span data-key="icon">{icons[card.icon]}</span>
             <p data-key="description">{card.description}</p>
           </li>
-        ))}
-      </ul>
+        ))} */}
+      <PrimitiveArray
+        element="ul"
+        tag="Feature cards"
+        arr={defaultCards.map((c) => c.description)}
+        className="grid w-full grid-cols-5 gap-[2vw] rounded-3xl bg-white p-14 shadow-secondary"
+      >
+        <li className="flex h-64 max-w-48 flex-col items-center justify-center gap-6 rounded-2xl border border-gray-border px-6 text-center font-sans text-sm/[19.6px] text-home" />
+      </PrimitiveArray>
+      {/* </ul> */}
     </section>
   );
 }
