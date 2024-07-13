@@ -16,7 +16,6 @@ export type HTMLTextTags =
   | "p"
   | "span"
   | "div"
-  | "li"
   | "h1"
   | "h2"
   | "h3"

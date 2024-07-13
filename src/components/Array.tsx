@@ -3,6 +3,8 @@ import type { HTMLTagsWithChildren, HTMLTextTags } from ".";
 import { Text, Number, Image, Link } from ".";
 import error from "../core/utils/error.js";
 
+type HTMLTextAndListTags = HTMLTextTags | "li";
+
 type LaunchedArrayProps<T, E extends keyof JSX.IntrinsicElements> = Omit<
   LaunchedComponentProps<any, HTMLTagsWithChildren>,
   "children"
@@ -76,10 +78,12 @@ function PrimitiveArray<E extends keyof JSX.IntrinsicElements>({
   );
 }
 
-export const TextArray = (props: LaunchedArrayProps<string, HTMLTextTags>) =>
-  PrimitiveArray<HTMLTextTags>({ ...props, type: "string" });
-export const NumberArray = (props: LaunchedArrayProps<number, HTMLTextTags>) =>
-  PrimitiveArray<HTMLTextTags>({ ...props, type: "number" });
+export const TextArray = (
+  props: LaunchedArrayProps<string, HTMLTextAndListTags>
+) => PrimitiveArray<HTMLTextAndListTags>({ ...props, type: "string" });
+export const NumberArray = (
+  props: LaunchedArrayProps<number, HTMLTextAndListTags>
+) => PrimitiveArray<HTMLTextAndListTags>({ ...props, type: "number" });
 export const ImageArray = (props: LaunchedArrayProps<string, "img">) =>
   PrimitiveArray<"img">({ ...props, type: "image" });
 export const LinkArray = (
