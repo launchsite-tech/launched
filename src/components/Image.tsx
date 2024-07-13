@@ -1,26 +1,7 @@
 import { useTag } from "../core/hooks.js";
 import { LaunchedComponentProps } from ".";
 import error from "../core/utils/error.js";
-
-type HTMLTagsWithoutChildren =
-  | "img"
-  | "input"
-  | "hr"
-  | "br"
-  | "area"
-  | "base"
-  | "col"
-  | "embed"
-  | "link"
-  | "meta"
-  | "param"
-  | "source"
-  | "track"
-  | "wbr";
-type validImageContainerTags = Omit<
-  keyof JSX.IntrinsicElements,
-  HTMLTagsWithoutChildren
->;
+import type { HTMLTagsWithChildren } from ".";
 
 export default function Image({
   tag,
@@ -32,7 +13,7 @@ export default function Image({
   LaunchedComponentProps<string, "img">,
   "children" | "className" | "element"
 > & {
-  element?: validImageContainerTags;
+  element?: HTMLTagsWithChildren;
   classNames?: {
     container?: string;
     image?: string;

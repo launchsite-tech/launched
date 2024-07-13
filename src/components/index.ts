@@ -1,6 +1,7 @@
 import Text from "./Text.js";
 import Image from "./Image.js";
 import Link from "./Link.js";
+import { PrimitiveArray } from "./Array.js";
 
 export type LaunchedComponentProps<
   v extends React.ReactNode,
@@ -11,4 +12,25 @@ export type LaunchedComponentProps<
   element?: c;
 };
 
-export { Text, Text as Number, Image, Link };
+export type HTMLTagsWithoutChildren =
+  | "img"
+  | "input"
+  | "hr"
+  | "br"
+  | "area"
+  | "base"
+  | "col"
+  | "embed"
+  | "link"
+  | "meta"
+  | "param"
+  | "source"
+  | "track"
+  | "wbr";
+
+export type HTMLTagsWithChildren = Exclude<
+  keyof JSX.IntrinsicElements,
+  HTMLTagsWithoutChildren
+>;
+
+export { Text, Text as Number, Image, Link, PrimitiveArray };
