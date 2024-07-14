@@ -138,6 +138,9 @@ export default class Renderer {
         }
 
         const id = `Lt-${childId.split(" ").join("-")}`;
+        const userOptions = {
+          isMutable: options?.isMutable && Array.isArray(parentTag.data.value),
+        };
 
         const existingNode = document.getElementById(id);
         if (existingNode) existingNode.remove();
@@ -168,7 +171,7 @@ export default class Renderer {
               tag={t}
               renderer={renderer!}
               id={childId}
-              options={options}
+              options={userOptions}
             />
           );
         }, 0);
@@ -206,16 +209,16 @@ function TagUI({
   };
   renderer: TagRenderer<any>;
   id: string;
-  options?: TagRenderOptions;
+  options: TagRenderOptions;
 }) {
-  console.log(id, options);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [selected, setSelected] = useState(false);
 
   function close() {
     setSelected(false);
-    (document.activeElement as HTMLElement).blur();
+
+    containerRef.current?.blur();
 
     renderer?.onClose?.({
       element: tag.el.current ?? undefined,
@@ -286,6 +289,31 @@ function TagUI({
         id={id}
         context={Launched.instance!}
       />
+      {options.isMutable && (
+        <div
+          onMouseDown={(e) => e.preventDefault()}
+          className="Launched__tag-arrayControls Launched__toolbar-tools"
+        >
+          <button
+            className="Launched__toolbar-button add"
+            onClick={() => console.log(`Add ${id}`)}
+          >
+            <svg viewBox="0 0 24 24" className="Launched__icon">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+          <button
+            className="Launched__button remove"
+            onClick={() => console.log(`Remove ${id}`)}
+          >
+            <svg viewBox="0 0 24 24" className="Launched__icon">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
