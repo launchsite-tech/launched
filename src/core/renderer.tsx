@@ -60,7 +60,12 @@ export default class Renderer {
     if (!parentTag || !parentTag.el.current)
       return console.warn(`Tag "${id}" was never bound to an element.`);
 
-    const renderTag = (parentTag: Tag, tag: Tag, childId: string): void => {
+    const renderTag = (
+      parentTag: Tag,
+      tag: Tag,
+      childId: string,
+      index: number
+    ): void => {
       if (!tag.el.current) return;
 
       if (Array.isArray(tag.data.value)) {
@@ -80,12 +85,17 @@ export default class Renderer {
               setData: (data) => {
                 tag.setData(
                   (tag.data.value as TagValue[]).map((v, index) =>
-                    index === i ? (data as TagValue) : v
+                    index === i
+                      ? ((typeof data === "function"
+                          ? data(v)
+                          : data) as TagValue)
+                      : v
                   )
                 );
               },
             },
-            `${id}-${i}`
+            `${id}-${i}`,
+            i
           );
         });
       } else if (
@@ -111,17 +121,25 @@ export default class Renderer {
                 value: tag.data.value[key]!.value,
               },
               setData: (data) => {
+                const newValue =
+                  typeof data === "function"
+                    ? data(
+                        (tag.data.value as Record<string, TagData>)[key]!.value
+                      )
+                    : data;
+
                 tag.setData({
                   ...(tag.data.value as Record<string, TagData>),
                   [key]: {
                     type: (tag.data.value as Record<string, TagData>)[key]!
                       .type,
-                    value: data,
+                    value: newValue,
                   },
                 });
               },
             },
-            `${childId}-${key}`
+            `${childId}-${key}`,
+            index
           );
         }
       } else {
@@ -152,7 +170,7 @@ export default class Renderer {
         else {
           userOptions = {
             isMutable: options?.isMutable ?? false,
-            index: 0,
+            index,
             parentTag,
           };
 
@@ -194,7 +212,7 @@ export default class Renderer {
       }
     };
 
-    renderTag(parentTag, parentTag, id);
+    renderTag(parentTag, parentTag, id, 0);
   }
 
   public unmountSingleTagUI(tagId: string): void {
@@ -231,12 +249,14 @@ function TagUI({
 
   const [selected, setSelected] = useState(false);
 
+  const { isMutable, parentTag, index } = options;
+
   function close() {
     setSelected(false);
 
     containerRef.current?.blur();
 
-    renderer?.onClose?.({
+    renderer.onClose?.({
       element: tag.el.current ?? undefined,
     });
 
@@ -246,13 +266,23 @@ function TagUI({
   function updateData(data: any) {
     tag.setData(data);
 
-    renderer?.onDataUpdate?.({
+    renderer.onDataUpdate?.({
       element: tag.el.current ?? undefined,
       data,
     });
 
     // @ts-expect-error
     tag.el.current = null;
+  }
+
+  function duplicateTagItem() {
+    if (!Array.isArray(parentTag.data.value)) return;
+
+    parentTag.setData((p) => [
+      ...(p as TagValue[]).slice(0, index + 1),
+      (p as TagValue[])[index]!,
+      ...(p as TagValue[]).slice(index + 1),
+    ]);
   }
 
   function onTagSelect(selectedId: string) {
@@ -305,14 +335,14 @@ function TagUI({
         id={id}
         context={Launched.instance!}
       />
-      {options.isMutable && (
+      {isMutable && (
         <div
           onMouseDown={(e) => e.preventDefault()}
           className="Launched__tag-arrayControls Launched__toolbar-tools"
         >
           <button
             className="Launched__toolbar-button add"
-            onClick={() => console.log(`Add ${id}`)}
+            onClick={duplicateTagItem}
           >
             <svg viewBox="0 0 24 24" className="Launched__icon">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -321,7 +351,7 @@ function TagUI({
           </button>
           <button
             className="Launched__button remove"
-            onClick={() => console.log(`Remove ${id}`)}
+            // onClick={removeTagItem}
           >
             <svg viewBox="0 0 24 24" className="Launched__icon">
               <polyline points="3 6 5 6 21 6"></polyline>

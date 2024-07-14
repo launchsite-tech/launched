@@ -36,7 +36,7 @@ export type TagData = {
 export type Tag = {
   data: TagData;
   setData: (
-    value: TagData["value"],
+    value: TagData["value"] | ((prev: TagData["value"]) => TagData["value"]),
     config?: Partial<{ silent: boolean }>
   ) => void;
   el: React.RefObject<HTMLElement>;
@@ -130,17 +130,22 @@ export default class Launched {
       this.tags = Object.fromEntries(
         Object.entries(tags).map(([key, data]) => {
           const setData = (
-            value: TagData["value"],
+            value:
+              | TagData["value"]
+              | ((prev: TagData["value"]) => TagData["value"]),
             config?: Partial<{ silent: boolean }>
           ) => {
             if (!tags[key] || this.config.locked) return;
 
             setTags((p) => {
+              const newValue =
+                typeof value === "function" ? value(p[key]!.data.value) : value;
+
               if (!config?.silent)
                 Launched.events.emit(
                   "tag:change",
                   key,
-                  value,
+                  newValue,
                   p[key]?.data.value
                 );
 
@@ -148,7 +153,7 @@ export default class Launched {
               const tag = newTags[key];
 
               if (tag) {
-                tag.data = { ...tag.data, value };
+                tag.data = { ...tag.data, value: newValue };
               }
 
               return newTags;
