@@ -48,7 +48,9 @@ const defaultCards = [
 ];
 
 export default function Services() {
-  const [cards, cardsTag] = useTag("Feature cards", defaultCards);
+  const [cards, cardsTag] = useTag("Feature cards", defaultCards, "object", {
+    isMutable: true,
+  });
 
   return (
     <section id="SERVICES" className="mt-20 w-full max-w-7xl">

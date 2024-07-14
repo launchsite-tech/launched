@@ -8,7 +8,7 @@ import createTag from "./utils/createTag.js";
 import flattenTagValue from "./utils/flattenTagValue.js";
 import tagToValues from "./utils/tagToValues.js";
 import mergeDeep from "./utils/mergeDeep.js";
-import type { TagRenderer } from "./renderer.js";
+import type { TagRenderer, TagRenderOptions } from "./renderer.js";
 
 export type TagValue = string | number | Record<string, TagData>;
 export type TagSchemaValue =
@@ -67,7 +67,8 @@ interface LaunchedContextValue {
   useTag<V extends TagSchemaValue = TagData["value"]>(
     key: string,
     value?: V,
-    type?: string
+    type?: string,
+    options?: { isMutable?: boolean }
   ): readonly [
     V extends string | number
       ? V extends string // Nonsense to avoid constants
@@ -201,9 +202,12 @@ export default class Launched {
       );
     };
 
-    Launched.events.on("tag:ready", (key: string) => {
-      if (!this.config.locked) this.render(key);
-    });
+    Launched.events.on(
+      "tag:ready",
+      (...props: [string, Tag, TagRenderOptions]) => {
+        if (!this.config.locked) this.render(props[0], props[2]);
+      }
+    );
 
     Launched.events.on(
       "tag:change",
@@ -224,7 +228,8 @@ export default class Launched {
   private useTag = (<V extends TagSchemaValue = TagData["value"]>(
     key: string,
     value?: V,
-    type?: string
+    type?: string,
+    options?: TagRenderOptions
   ) => {
     const t = this ?? Launched.instance;
 
@@ -260,17 +265,19 @@ export default class Launched {
         if (!this.originalTags.has(key))
           this.originalTags.set(key, tag.data.value);
 
-        Launched.events.emit("tag:ready", key, tag);
+        Launched.events.emit("tag:ready", key, tag, options);
       },
     ] as const;
   }) as LaunchedContextValue["useTag"];
 
-  private render(tag?: string) {
+  private render(tag?: string, options?: TagRenderOptions) {
     if (tag && this.tags[tag])
-      this.renderer.renderSingleTagUI(this.tags[tag]!, String(tag));
+      this.renderer.renderSingleTagUI(this.tags[tag]!, String(tag), options);
     else
       Object.entries(this.tags).map(([key, tag]) =>
-        tag.el.current ? this.renderer.renderSingleTagUI(tag, key) : null
+        tag.el.current
+          ? this.renderer.renderSingleTagUI(tag, key, options)
+          : null
       );
   }
 

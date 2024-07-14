@@ -7,6 +7,10 @@ import type { Root } from "react-dom/client";
 import Launched from "./context.js";
 import flattenTagValue from "./utils/flattenTagValue.js";
 
+export type TagRenderOptions = Partial<{
+  isMutable: boolean;
+}>;
+
 type TagRendererFunctionState = {
   element?: HTMLElement;
 };
@@ -41,7 +45,11 @@ export default class Renderer {
     Renderer.formats.set(name, renderer);
   }
 
-  public renderSingleTagUI(parentTag: Tag, id: string): void {
+  public renderSingleTagUI(
+    parentTag: Tag,
+    id: string,
+    options?: TagRenderOptions
+  ): void {
     if (!parentTag || !parentTag.el.current)
       return console.warn(`Tag "${id}" was never bound to an element.`);
 
@@ -155,7 +163,14 @@ export default class Renderer {
             },
           };
 
-          root.render(<TagUI tag={t} renderer={renderer!} id={childId} />);
+          root.render(
+            <TagUI
+              tag={t}
+              renderer={renderer!}
+              id={childId}
+              options={options}
+            />
+          );
         }, 0);
       }
     }
@@ -181,6 +196,7 @@ function TagUI({
   tag,
   renderer,
   id,
+  options,
 }: {
   tag: Omit<Tag, "data"> & {
     data: {
@@ -190,7 +206,9 @@ function TagUI({
   };
   renderer: TagRenderer<any>;
   id: string;
+  options?: TagRenderOptions;
 }) {
+  console.log(id, options);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [selected, setSelected] = useState(false);

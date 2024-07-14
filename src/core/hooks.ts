@@ -6,11 +6,12 @@ import type { TagData, TagSchemaValue } from "../core/context.js";
 export function useTag<V extends TagSchemaValue = TagData["value"]>(
   key: string,
   value?: V,
-  type?: string
+  type?: string,
+  options?: { isMutable?: boolean }
 ) {
   if (!Launched.instance) error("Launched not initialized.");
 
   const { useTag } = useContext(Launched.instance.context);
 
-  return useTag(key, value, type);
+  return useTag(key, value, type, options);
 }
