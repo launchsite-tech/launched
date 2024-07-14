@@ -233,7 +233,8 @@ export default class Launched {
     if (!tag && value != null) {
       const newTag = createTag(
         value,
-        type ?? Array.isArray(value) ? typeof (value as any[])[0] : typeof value
+        type ??
+          (Array.isArray(value) ? typeof (value as any[])[0] : typeof value)
       );
 
       setTimeout(() => this.addTag(String(key), newTag), 0);
