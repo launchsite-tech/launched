@@ -285,6 +285,15 @@ function TagUI({
     ]);
   }
 
+  function removeTagItem() {
+    if (!Array.isArray(parentTag.data.value)) return;
+
+    parentTag.setData((p) => [
+      ...(p as TagValue[]).slice(0, index),
+      ...(p as TagValue[]).slice(index + 1),
+    ]);
+  }
+
   function onTagSelect(selectedId: string) {
     if (selectedId !== id) setSelected(false);
   }
@@ -349,10 +358,7 @@ function TagUI({
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
             </svg>
           </button>
-          <button
-            className="Launched__button remove"
-            // onClick={removeTagItem}
-          >
+          <button className="Launched__button remove" onClick={removeTagItem}>
             <svg viewBox="0 0 24 24" className="Launched__icon">
               <polyline points="3 6 5 6 21 6"></polyline>
               <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
