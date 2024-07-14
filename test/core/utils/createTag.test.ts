@@ -29,6 +29,15 @@ describe("#createTag", () => {
     });
   });
 
+  it("should create a tag with an array value of custom type", () => {
+    const tag = createTag(["foo", "bar"], "array");
+
+    expect(tag.data).toEqual({
+      type: "array",
+      value: ["foo", "bar"],
+    });
+  });
+
   it("should create a tag with an empty array value", () => {
     const tag = createTag([], "string");
 

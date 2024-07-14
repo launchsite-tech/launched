@@ -231,7 +231,10 @@ export default class Launched {
     let tag: Tag | Omit<Tag, "setData"> | undefined = t.tags[key];
 
     if (!tag && value != null) {
-      const newTag = createTag(value, type ?? typeof value);
+      const newTag = createTag(
+        value,
+        type ?? Array.isArray(value) ? typeof (value as any[])[0] : typeof value
+      );
 
       setTimeout(() => this.addTag(String(key), newTag), 0);
 
