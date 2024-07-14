@@ -11,6 +11,11 @@ export type TagRenderOptions = Partial<{
   isMutable: boolean;
 }>;
 
+type TagUIOptions = TagRenderOptions & {
+  index: number;
+  parentTag: Tag;
+};
+
 type TagRendererFunctionState = {
   element?: HTMLElement;
 };
@@ -37,6 +42,8 @@ export default class Renderer {
   public static formats = new Map<string, TagRenderer<any>>();
   public static roots = new Map<string, Root>();
 
+  private initialRenderOptions = new Map<string, TagUIOptions>();
+
   constructor() {}
 
   public static registerTagFormat<V>(name: string, renderer: TagRenderer<V>) {
@@ -53,7 +60,7 @@ export default class Renderer {
     if (!parentTag || !parentTag.el.current)
       return console.warn(`Tag "${id}" was never bound to an element.`);
 
-    function renderTag(parentTag: Tag, tag: Tag, childId: string): void {
+    const renderTag = (parentTag: Tag, tag: Tag, childId: string): void => {
       if (!tag.el.current) return;
 
       if (Array.isArray(tag.data.value)) {
@@ -137,10 +144,20 @@ export default class Renderer {
           );
         }
 
-        const id = `Lt-${childId.split(" ").join("-")}`;
-        const userOptions = {
-          isMutable: options?.isMutable && Array.isArray(parentTag.data.value),
-        };
+        const id = `Lt-${childId.replaceAll(" ", "-")}`;
+        let userOptions: TagUIOptions = {} as TagUIOptions;
+
+        if (this.initialRenderOptions.get(id))
+          userOptions = this.initialRenderOptions.get(id)!;
+        else {
+          userOptions = {
+            isMutable: options?.isMutable ?? false,
+            index: 0,
+            parentTag,
+          };
+
+          this.initialRenderOptions.set(id, userOptions);
+        }
 
         const existingNode = document.getElementById(id);
         if (existingNode) existingNode.remove();
@@ -155,7 +172,6 @@ export default class Renderer {
           rootNode.id = id;
           tag.el.current!.appendChild(rootNode);
           const root = createRoot(rootNode);
-
           Renderer.roots.set(childId, root);
 
           const t = {
@@ -176,7 +192,7 @@ export default class Renderer {
           );
         }, 0);
       }
-    }
+    };
 
     renderTag(parentTag, parentTag, id);
   }
@@ -209,7 +225,7 @@ function TagUI({
   };
   renderer: TagRenderer<any>;
   id: string;
-  options: TagRenderOptions;
+  options: TagUIOptions;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
