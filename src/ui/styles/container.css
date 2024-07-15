@@ -34,5 +34,25 @@
     & .Launched__tag-inlineEditor {
       color: var(--text);
     }
+
+    & .Launched__tag-arrayControls {
+      opacity: 1;
+      pointer-events: auto;
+    }
   }
+}
+
+.Launched__tag-arrayControls {
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  translate: 100% -50%;
+  flex-direction: column;
+  gap: 0.25rem !important;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease-out;
+
+  --color: var(--accent);
 }

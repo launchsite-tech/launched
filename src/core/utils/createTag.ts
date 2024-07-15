@@ -58,7 +58,7 @@ function transformTag(
       };
     } else
       return {
-        type: typeof tag[0],
+        type,
         value: tag as string[] | number[],
       };
   } else if (typeof tag === "object") {
