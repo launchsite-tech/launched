@@ -44,6 +44,7 @@ export type Tag = {
 
 export type Config = Partial<{
   locked: boolean;
+  arraysMutable: boolean;
   determineVisibility: (context?: Launched) => boolean;
   save: (tags: Record<string, TagData["value"]>) => void;
   onImageUpload: (file: File) => void;
@@ -55,6 +56,7 @@ export type Config = Partial<{
 
 const defaults: Config = {
   locked: false,
+  arraysMutable: false,
   determineVisibility: () =>
     window &&
     new URLSearchParams(window.location.search).get("mode") === "edit",
@@ -270,7 +272,12 @@ export default class Launched {
         if (!this.originalTags.has(key))
           this.originalTags.set(key, tag.data.value);
 
-        Launched.events.emit("tag:ready", key, tag, options);
+        const o = {
+          ...options,
+          isMutable: options?.isMutable ?? this.config.arraysMutable,
+        };
+
+        Launched.events.emit("tag:ready", key, tag, o);
       },
     ] as const;
   }) as LaunchedContextValue["useTag"];
