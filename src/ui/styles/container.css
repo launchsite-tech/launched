@@ -5,6 +5,10 @@
   inset: 0;
 }
 
+.tagged:has(.Launched__tag-container.active .Launched__tag-inlineEditor) {
+  color: transparent;
+}
+
 .Launched__tag-container {
   position: absolute;
   width: calc(100% + 8px);
