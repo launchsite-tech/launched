@@ -47,7 +47,7 @@ export type Config = Partial<{
   arraysMutable: boolean;
   determineVisibility: (context?: Launched) => boolean;
   save: (tags: Record<string, TagData["value"]>) => void;
-  onImageUpload: (file: File) => void;
+  onImageUpload: (file: File) => Promise<string | undefined>;
   toolbarOptions: Partial<{
     className: string;
     position: "center" | "right" | "left";
@@ -96,7 +96,7 @@ export default class Launched {
   }[] = [];
 
   public tags: Record<string, Tag> = {} as Record<string, Tag>;
-  public uploadImage?: (file: File) => void;
+  public uploadImage?: (file: File) => Promise<string | undefined>;
   public Provider: React.FC<{ children: React.ReactNode }>;
   public context = createContext<LaunchedContextValue>(
     {} as LaunchedContextValue
