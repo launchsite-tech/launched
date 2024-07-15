@@ -1,5 +1,6 @@
 import "../styles/toolbar.css";
 import Launched from "../../core/context.js";
+import { useState, useEffect } from "react";
 
 export default function Toolbar({
   position,
@@ -20,10 +21,29 @@ export default function Toolbar({
   save: () => void;
   revert: () => void;
 }) {
+  const [disabled, setDisabled] = useState(false);
+
+  useEffect(() => {
+    function onLock() {
+      setDisabled(true);
+    }
+    function onUnlock() {
+      setDisabled(false);
+    }
+
+    Launched.events.on("data:lock", onLock);
+    Launched.events.on("data:unlock", onUnlock);
+
+    return () => {
+      Launched.events.off("data:lock", onLock);
+      Launched.events.off("data:unlock", onUnlock);
+    };
+  }, []);
+
   return (
     <div
       data-position={position}
-      className={`Launched__toolbar ${className || ""}`}
+      className={`Launched__toolbar ${className || ""} ${disabled && "disabled"}`}
     >
       <div className="Launched__toolbar-tools">
         <button
