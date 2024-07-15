@@ -1,7 +1,6 @@
 import Text from "./Text.js";
 import Image from "./Image.js";
 import Link from "./Link.js";
-// import EditableArray from "./EditableArray.js";
 
 export type LaunchedComponentProps<
   v extends React.ReactNode,

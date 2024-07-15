@@ -3,7 +3,6 @@ import { useRef, useState, useEffect } from "react";
 import type { TagRenderer, TagRendererProps } from "../../core/renderer.js";
 
 export function InlineTextUI({
-  // element,
   value,
   selected,
   updateData,
