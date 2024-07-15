@@ -8,7 +8,7 @@ import createTag from "./utils/createTag.js";
 import flattenTagValue from "./utils/flattenTagValue.js";
 import tagToValues from "./utils/tagToValues.js";
 import mergeDeep from "./utils/mergeDeep.js";
-import type { TagRenderer } from "./renderer.js";
+import type { TagRenderer, TagRenderOptions } from "./renderer.js";
 
 export type TagValue = string | number | Record<string, TagData>;
 export type TagSchemaValue =
@@ -36,7 +36,7 @@ export type TagData = {
 export type Tag = {
   data: TagData;
   setData: (
-    value: TagData["value"],
+    value: TagData["value"] | ((prev: TagData["value"]) => TagData["value"]),
     config?: Partial<{ silent: boolean }>
   ) => void;
   el: React.RefObject<HTMLElement>;
@@ -67,7 +67,8 @@ interface LaunchedContextValue {
   useTag<V extends TagSchemaValue = TagData["value"]>(
     key: string,
     value?: V,
-    type?: string
+    type?: string,
+    options?: { isMutable?: boolean }
   ): readonly [
     V extends string | number
       ? V extends string // Nonsense to avoid constants
@@ -129,17 +130,22 @@ export default class Launched {
       this.tags = Object.fromEntries(
         Object.entries(tags).map(([key, data]) => {
           const setData = (
-            value: TagData["value"],
+            value:
+              | TagData["value"]
+              | ((prev: TagData["value"]) => TagData["value"]),
             config?: Partial<{ silent: boolean }>
           ) => {
             if (!tags[key] || this.config.locked) return;
 
             setTags((p) => {
+              const newValue =
+                typeof value === "function" ? value(p[key]!.data.value) : value;
+
               if (!config?.silent)
                 Launched.events.emit(
                   "tag:change",
                   key,
-                  value,
+                  newValue,
                   p[key]?.data.value
                 );
 
@@ -147,7 +153,7 @@ export default class Launched {
               const tag = newTags[key];
 
               if (tag) {
-                tag.data = { ...tag.data, value };
+                tag.data = { ...tag.data, value: newValue };
               }
 
               return newTags;
@@ -201,9 +207,12 @@ export default class Launched {
       );
     };
 
-    Launched.events.on("tag:ready", (key: string) => {
-      if (!this.config.locked) this.render(key);
-    });
+    Launched.events.on(
+      "tag:ready",
+      (...props: [string, Tag, TagRenderOptions]) => {
+        if (!this.config.locked) this.render(props[0], props[2]);
+      }
+    );
 
     Launched.events.on(
       "tag:change",
@@ -224,14 +233,19 @@ export default class Launched {
   private useTag = (<V extends TagSchemaValue = TagData["value"]>(
     key: string,
     value?: V,
-    type?: string
+    type?: string,
+    options?: TagRenderOptions
   ) => {
     const t = this ?? Launched.instance;
 
     let tag: Tag | Omit<Tag, "setData"> | undefined = t.tags[key];
 
     if (!tag && value != null) {
-      const newTag = createTag(value, type ?? typeof value);
+      const newTag = createTag(
+        value,
+        type ??
+          (Array.isArray(value) ? typeof (value as any[])[0] : typeof value)
+      );
 
       setTimeout(() => this.addTag(String(key), newTag), 0);
 
@@ -256,17 +270,19 @@ export default class Launched {
         if (!this.originalTags.has(key))
           this.originalTags.set(key, tag.data.value);
 
-        Launched.events.emit("tag:ready", key, tag);
+        Launched.events.emit("tag:ready", key, tag, options);
       },
     ] as const;
   }) as LaunchedContextValue["useTag"];
 
-  private render(tag?: string) {
+  private render(tag?: string, options?: TagRenderOptions) {
     if (tag && this.tags[tag])
-      this.renderer.renderSingleTagUI(this.tags[tag]!, String(tag));
+      this.renderer.renderSingleTagUI(this.tags[tag]!, String(tag), options);
     else
       Object.entries(this.tags).map(([key, tag]) =>
-        tag.el.current ? this.renderer.renderSingleTagUI(tag, key) : null
+        tag.el.current
+          ? this.renderer.renderSingleTagUI(tag, key, options)
+          : null
       );
   }
 

@@ -1,5 +1,3 @@
-import { useTag } from "../../../dist";
-
 import { Music, Activity, Search, Hash, Check } from "react-feather";
 import { TextArray } from "../../../dist/components";
 

@@ -7,6 +7,15 @@ import type { Root } from "react-dom/client";
 import Launched from "./context.js";
 import flattenTagValue from "./utils/flattenTagValue.js";
 
+export type TagRenderOptions = Partial<{
+  isMutable: boolean;
+}>;
+
+type TagUIOptions = TagRenderOptions & {
+  index: number;
+  parentTag: Tag;
+};
+
 type TagRendererFunctionState = {
   element?: HTMLElement;
 };
@@ -33,6 +42,8 @@ export default class Renderer {
   public static formats = new Map<string, TagRenderer<any>>();
   public static roots = new Map<string, Root>();
 
+  private initialRenderOptions = new Map<string, TagUIOptions>();
+
   constructor() {}
 
   public static registerTagFormat<V>(name: string, renderer: TagRenderer<V>) {
@@ -41,11 +52,20 @@ export default class Renderer {
     Renderer.formats.set(name, renderer);
   }
 
-  public renderSingleTagUI(parentTag: Tag, id: string): void {
+  public renderSingleTagUI(
+    parentTag: Tag,
+    id: string,
+    options?: TagRenderOptions
+  ): void {
     if (!parentTag || !parentTag.el.current)
       return console.warn(`Tag "${id}" was never bound to an element.`);
 
-    function renderTag(parentTag: Tag, tag: Tag, childId: string): void {
+    const renderTag = (
+      parentTag: Tag,
+      tag: Tag,
+      childId: string,
+      index: number
+    ): void => {
       if (!tag.el.current) return;
 
       if (Array.isArray(tag.data.value)) {
@@ -65,12 +85,17 @@ export default class Renderer {
               setData: (data) => {
                 tag.setData(
                   (tag.data.value as TagValue[]).map((v, index) =>
-                    index === i ? (data as TagValue) : v
+                    index === i
+                      ? ((typeof data === "function"
+                          ? data(v)
+                          : data) as TagValue)
+                      : v
                   )
                 );
               },
             },
-            `${id}-${i}`
+            `${id}-${i}`,
+            i
           );
         });
       } else if (
@@ -96,17 +121,25 @@ export default class Renderer {
                 value: tag.data.value[key]!.value,
               },
               setData: (data) => {
+                const newValue =
+                  typeof data === "function"
+                    ? data(
+                        (tag.data.value as Record<string, TagData>)[key]!.value
+                      )
+                    : data;
+
                 tag.setData({
                   ...(tag.data.value as Record<string, TagData>),
                   [key]: {
                     type: (tag.data.value as Record<string, TagData>)[key]!
                       .type,
-                    value: data,
+                    value: newValue,
                   },
                 });
               },
             },
-            `${childId}-${key}`
+            `${childId}-${key}`,
+            index
           );
         }
       } else {
@@ -129,7 +162,20 @@ export default class Renderer {
           );
         }
 
-        const id = `Lt-${childId.split(" ").join("-")}`;
+        const id = `Lt-${childId.replaceAll(" ", "-")}`;
+        let userOptions: TagUIOptions = {} as TagUIOptions;
+
+        if (this.initialRenderOptions.get(id))
+          userOptions = this.initialRenderOptions.get(id)!;
+        else {
+          userOptions = {
+            isMutable: options?.isMutable ?? false,
+            index,
+            parentTag,
+          };
+
+          this.initialRenderOptions.set(id, userOptions);
+        }
 
         const existingNode = document.getElementById(id);
         if (existingNode) existingNode.remove();
@@ -144,7 +190,6 @@ export default class Renderer {
           rootNode.id = id;
           tag.el.current!.appendChild(rootNode);
           const root = createRoot(rootNode);
-
           Renderer.roots.set(childId, root);
 
           const t = {
@@ -155,12 +200,19 @@ export default class Renderer {
             },
           };
 
-          root.render(<TagUI tag={t} renderer={renderer!} id={childId} />);
+          root.render(
+            <TagUI
+              tag={t}
+              renderer={renderer!}
+              id={childId}
+              options={userOptions}
+            />
+          );
         }, 0);
       }
-    }
+    };
 
-    renderTag(parentTag, parentTag, id);
+    renderTag(parentTag, parentTag, id, 0);
   }
 
   public unmountSingleTagUI(tagId: string): void {
@@ -181,6 +233,7 @@ function TagUI({
   tag,
   renderer,
   id,
+  options,
 }: {
   tag: Omit<Tag, "data"> & {
     data: {
@@ -190,16 +243,20 @@ function TagUI({
   };
   renderer: TagRenderer<any>;
   id: string;
+  options: TagUIOptions;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [selected, setSelected] = useState(false);
 
+  const { isMutable, parentTag, index } = options;
+
   function close() {
     setSelected(false);
-    (document.activeElement as HTMLElement).blur();
 
-    renderer?.onClose?.({
+    containerRef.current?.blur();
+
+    renderer.onClose?.({
       element: tag.el.current ?? undefined,
     });
 
@@ -209,13 +266,32 @@ function TagUI({
   function updateData(data: any) {
     tag.setData(data);
 
-    renderer?.onDataUpdate?.({
+    renderer.onDataUpdate?.({
       element: tag.el.current ?? undefined,
       data,
     });
 
     // @ts-expect-error
     tag.el.current = null;
+  }
+
+  function duplicateTagItem() {
+    if (!Array.isArray(parentTag.data.value)) return;
+
+    parentTag.setData((p) => [
+      ...(p as TagValue[]).slice(0, index + 1),
+      (p as TagValue[])[index]!,
+      ...(p as TagValue[]).slice(index + 1),
+    ]);
+  }
+
+  function removeTagItem() {
+    if (!Array.isArray(parentTag.data.value)) return;
+
+    parentTag.setData((p) => [
+      ...(p as TagValue[]).slice(0, index),
+      ...(p as TagValue[]).slice(index + 1),
+    ]);
   }
 
   function onTagSelect(selectedId: string) {
@@ -268,6 +344,28 @@ function TagUI({
         id={id}
         context={Launched.instance!}
       />
+      {isMutable && (
+        <div
+          onMouseDown={(e) => e.preventDefault()}
+          className="Launched__tag-arrayControls Launched__toolbar-tools"
+        >
+          <button
+            className="Launched__toolbar-button add"
+            onClick={duplicateTagItem}
+          >
+            <svg viewBox="0 0 24 24" className="Launched__icon">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+          <button className="Launched__button remove" onClick={removeTagItem}>
+            <svg viewBox="0 0 24 24" className="Launched__icon">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
