@@ -311,6 +311,8 @@ export default class Launched {
           );
         });
     });
+
+    Launched.events.emit("data:lock");
   }
 
   public static unlock() {
@@ -321,6 +323,8 @@ export default class Launched {
     Object.entries(Launched.instance.tags).map(([key]) => {
       Launched.instance!.render(key);
     });
+
+    Launched.events.emit("data:unlock");
   }
 
   public static toggle() {

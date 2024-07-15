@@ -34,3 +34,5 @@ export default class EventEmitter {
 // tag:deselect: tag UI loses focus => id, tag
 // tag:change: a single tag is updated => key, newValue, originalValue
 // data:update: tag data changes => newTagData
+// data:lock: tag data is locked
+// data:unlock: tag data is unlocked
