@@ -8,18 +8,18 @@ export function ImageUI({
   updateData,
   close,
 }: TagRendererProps<string>) {
-  function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
     try {
       const file = e.target.files?.[0];
       if (!file) return;
       else if (!file.type.startsWith("image/"))
         return console.error("Invalid file type. Please upload an image.");
 
-      context.uploadImage?.(file);
+      const uploadURL = await context.uploadImage?.(file);
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        updateData(reader.result as string);
+        updateData(uploadURL || (reader.result as string));
       };
       reader.readAsDataURL(file);
 
