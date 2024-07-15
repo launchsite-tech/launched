@@ -53,6 +53,7 @@
   translate: 100% -50%;
   flex-direction: column;
   gap: 0.25rem !important;
+  color: var(--text-secondary);
 
   opacity: 0;
   pointer-events: none;
