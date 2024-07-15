@@ -1,6 +1,7 @@
 import "../styles/inlineEditor.css";
 import { useRef, useState, useEffect } from "react";
 import type { TagRenderer, TagRendererProps } from "../../core/renderer.js";
+import { HTMLTextTags } from "./helpers/elementGroups";
 
 export function InlineTextUI({
   value,
@@ -60,7 +61,6 @@ export const InlineTextRenderer: TagRenderer<string> = {
     return <InlineTextUI {...props} />;
   },
   parentValidator: (element) => {
-    const whitelist = ["P", "H1", "H2", "H3", "H4", "H5", "H6", "SPAN", "DIV"];
-    return whitelist.includes(element.nodeName);
+    return HTMLTextTags.includes(element.nodeName);
   },
 };
