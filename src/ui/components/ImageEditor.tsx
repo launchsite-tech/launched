@@ -1,5 +1,6 @@
 import "../styles/imageEditor.css";
 import type { TagRenderer, TagRendererProps } from "../../core/renderer.js";
+import { HTMLTagsWithoutChildren } from "./helpers/elementGroups";
 
 export function ImageUI({
   id,
@@ -53,23 +54,7 @@ export const ImageRenderer: TagRenderer<string> = {
     return <ImageUI {...props} />;
   },
   parentValidator: (element) => {
-    const blacklist = [
-      "AREA",
-      "BASE",
-      "BR",
-      "COL",
-      "EMBED",
-      "HR",
-      "IMG",
-      "INPUT",
-      "LINK",
-      "META",
-      "PARAM",
-      "SOURCE",
-      "TRACK",
-      "WBR",
-    ];
-    const invalid = blacklist.includes(element.tagName);
+    const invalid = HTMLTagsWithoutChildren.includes(element.tagName);
 
     if (invalid)
       console.warn(

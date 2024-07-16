@@ -1,24 +1,14 @@
 import { useTag } from "../core/hooks.js";
 import { LaunchedComponentProps } from ".";
 import error from "../core/utils/error.js";
-
-type validTextTags =
-  | "p"
-  | "span"
-  | "div"
-  | "h1"
-  | "h2"
-  | "h3"
-  | "h4"
-  | "h5"
-  | "h6";
+import type { HTMLTextTags } from ".";
 
 export default function Text({
   tag,
   element = "p",
   children,
   ...rest
-}: LaunchedComponentProps<string, validTextTags>) {
+}: LaunchedComponentProps<string, HTMLTextTags>) {
   if (typeof children !== "string")
     error(
       "Text component only accepts string children. Create a custom component for more complex types."

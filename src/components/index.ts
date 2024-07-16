@@ -11,25 +11,5 @@ export type LaunchedComponentProps<
   element?: c;
 };
 
-export type HTMLTagsWithoutChildren =
-  | "img"
-  | "input"
-  | "hr"
-  | "br"
-  | "area"
-  | "base"
-  | "col"
-  | "embed"
-  | "link"
-  | "meta"
-  | "param"
-  | "source"
-  | "track"
-  | "wbr";
-
-export type HTMLTagsWithChildren = Exclude<
-  keyof JSX.IntrinsicElements,
-  HTMLTagsWithoutChildren
->;
-
 export { Text, Text as Number, Image, Link };
+export * from "../ui/components/helpers/elementGroups.js";

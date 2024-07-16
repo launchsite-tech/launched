@@ -1,6 +1,6 @@
 import "../styles/toolbar.css";
 import Launched from "../../core/context.js";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function Toolbar({
   position,
@@ -21,24 +21,8 @@ export default function Toolbar({
   save: () => void;
   revert: () => void;
 }) {
-  const [disabled, setDisabled] = useState(false);
-
-  useEffect(() => {
-    function onLock() {
-      setDisabled(true);
-    }
-    function onUnlock() {
-      setDisabled(false);
-    }
-
-    Launched.events.on("data:lock", onLock);
-    Launched.events.on("data:unlock", onUnlock);
-
-    return () => {
-      Launched.events.off("data:lock", onLock);
-      Launched.events.off("data:unlock", onUnlock);
-    };
-  }, []);
+  // @ts-expect-error
+  const [disabled, setDisabled] = useState(Launched.instance!.config.locked);
 
   return (
     <div
@@ -54,10 +38,16 @@ export default function Toolbar({
         </button>
         <select
           onChange={(e) => {
-            if (e.target.value === "locked") Launched.lock();
-            else Launched.unlock();
+            if (e.target.value === "locked") {
+              Launched.lock();
+              setDisabled(true);
+            } else {
+              Launched.unlock();
+              setDisabled(false);
+            }
           }}
           className="Launched__toolbar-lockMode"
+          value={disabled ? "locked" : "unlocked"}
         >
           <option value="unlocked">Edit</option>
           <option value="locked">Preview</option>
