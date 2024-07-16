@@ -1,3 +1,14 @@
+# v0.1.0-alpha.8 (7/15/24)
+
+## Features
+
+- ParentValidator helpers are now exposed globally
+- onImageUpload can now return upload URLs to image editors
+
+## Bug fixes
+
+- Toolbar will now start in preview mode if "locked" is toggled in config
+
 # v0.1.0-alpha.7 (7/15/24)
 
 ## Features
