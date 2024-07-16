@@ -1,7 +1,7 @@
 import "../styles/inlineEditor.css";
 import { useRef, useState, useEffect } from "react";
 import type { TagRenderer, TagRendererProps } from "../../core/renderer.js";
-import { HTMLTextTags } from "./helpers/elementGroups";
+import { HTMLTextTags } from "./helpers/elementGroups.js";
 
 export function InlineTextUI({
   value,
