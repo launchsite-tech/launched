@@ -55,7 +55,7 @@
 }
 
 .r-menu {
-  @apply flex items-center gap-1 rounded-full bg-white px-2 py-1 text-[#4E5069] shadow-lg;
+  @apply flex items-center gap-1 rounded-full border border-[#E5EAEE] bg-white px-2 py-1 text-[#4E5069] shadow-lg;
 
   > button {
     @apply grid h-8 w-8 place-items-center rounded-xl bg-transparent text-lg transition-colors;
@@ -73,6 +73,11 @@
 
   > div {
     @apply mx-1 h-8 border-r border-gray-100;
+  }
+
+  .tabler-icon {
+    width: 1em;
+    height: 1em;
   }
 }
 
