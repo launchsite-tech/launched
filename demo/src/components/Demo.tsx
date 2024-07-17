@@ -78,8 +78,8 @@ export default function Demo() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-20 rounded-2xl bg-white p-20 text-bg">
-      <div className="grid grid-cols-2 gap-20">
+    <div className="flex flex-col gap-10 rounded-2xl bg-white p-10 text-bg sm:gap-20 sm:p-20">
+      <div className="flex grid-cols-2 flex-col-reverse gap-20 lg:grid">
         <div className="flex flex-col gap-5">
           <Text element="h2" tag="title" className="text-5xl">
             Welcome to Launched.
@@ -94,26 +94,26 @@ export default function Demo() {
           classNames={{
             container:
               "grid h-full w-full place-items-center rounded-2xl rounded-tl-[200px] bg-bg",
-            image: "animate-hover-in-place h-3/4 w-3/4",
+            image: "animate-hover-in-place h-3/4",
           }}
           src="/chair.png"
           alt=""
           tag="hero image"
         />
       </div>
-      <ul ref={featuresTag} className="grid grid-cols-3 gap-10">
+      <ul ref={featuresTag} className="grid gap-10 lg:grid-cols-3">
         {features.map(({ title, description }, i: number) => (
           <Feature key={i} title={title} description={description}>
             {f[i].icon}
           </Feature>
         ))}
       </ul>
-      <div className="flex w-full overflow-hidden rounded-2xl bg-bg p-10">
-        <div className="flex w-72 flex-col gap-5">
+      <div className="relative flex w-full overflow-hidden rounded-2xl bg-bg p-5 sm:p-10">
+        <div className="z-10 flex w-72 flex-col gap-5">
           <Text
             element="h3"
             tag="banner title"
-            className="w-max text-5xl text-text-primary"
+            className="w-max text-3xl text-text-primary sm:text-5xl"
           >
             Get started.
           </Text>
@@ -122,7 +122,11 @@ export default function Demo() {
           </Rich>
           <button className="btn w-max text-text-secondary">Get started</button>
         </div>
-        <img className="-my-10 -ml-20" src="/space.png" alt="" />
+        <img
+          className="absolute right-0 top-0 -my-10 -ml-20 h-full object-cover md:static"
+          src="/space.png"
+          alt=""
+        />
       </div>
     </div>
   );
