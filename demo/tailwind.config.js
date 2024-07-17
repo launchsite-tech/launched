@@ -19,6 +19,15 @@ export default {
       fontFamily: {
         mono: ["JetBrains Mono", "monospace"],
       },
+      keyframes: {
+        "hover-in-place": {
+          "0%": { transform: "translateY(0)" },
+          "100%": { transform: "translateY(-0.25rem)" },
+        },
+      },
+      animation: {
+        "hover-in-place": "hover-in-place 3s ease-in-out infinite alternate",
+      },
     },
   },
   plugins: [],

@@ -1,27 +1,26 @@
 import Nav from "./components/Nav";
 import Hero from "./components/Hero";
-import Monologue from "./components/Monologue";
-import Lottie from "react-lottie";
+import Demo from "./components/Demo";
+import { LaunchedProvider } from "launched";
 
-import animation from "./animations/New_Lottie.json";
+import type { Config } from "launched";
+
+const config: Config = {
+  toolbarOptions: {
+    className: "!block !sticky w-max -order-1 !top-20 -mb-5",
+  },
+  determineVisibility: () => true,
+  locked: true,
+};
 
 export default function App() {
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: animation,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-    },
-  };
-
   return (
-    <div className="mx-auto w-full max-w-screen-lg">
+    <>
       <Nav />
       <Hero />
-      <div className="h-screen rounded-2xl bg-white"></div>
-      {/* <Monologue /> */}
-      {/* <Lottie options={defaultOptions} height={400} /> */}
-    </div>
+      <LaunchedProvider config={config}>
+        <Demo />
+      </LaunchedProvider>
+    </>
   );
 }

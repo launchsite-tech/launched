@@ -28,6 +28,10 @@
   background-color: theme("colors.bg");
 }
 
+#root {
+  @apply mx-auto flex w-full max-w-screen-lg flex-col;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
