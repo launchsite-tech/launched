@@ -76,7 +76,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <main className="relative -order-2 grid h-full place-items-center py-10 sm:py-40">
+    <main className="relative -order-2 grid h-full place-items-center pb-20 pt-10 sm:py-40">
       {/* <GridBackground cols={10} n={5} /> */}
       <div
         ref={root}
@@ -94,7 +94,9 @@ export default function Hero() {
           </span>
         </a>
         <h1 className="max-w-[500px] text-4xl tracking-tight text-text-primary sm:text-6xl/[69px]">
-          Finish the site, never look back.
+          Finish the site,
+          <br />
+          never look back.
         </h1>
         <p className="text-xl/[28px] text-text-secondary">
           You lay the groundwork, your client handles the details.

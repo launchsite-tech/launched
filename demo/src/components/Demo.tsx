@@ -93,8 +93,8 @@ export default function Demo() {
         <Image
           classNames={{
             container:
-              "grid h-full w-full place-items-center rounded-2xl rounded-tl-[200px] bg-bg",
-            image: "animate-hover-in-place h-3/4",
+              "h-full w-full flex items-center justify-center rounded-2xl rounded-tl-[200px] bg-bg sm:mb-0 -mb-10",
+            image: "animate-hover-in-place w-3/4",
           }}
           src="/chair.png"
           alt=""

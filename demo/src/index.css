@@ -841,6 +841,14 @@ video {
   margin-top: 5rem;
 }
 
+.-mt-10{
+  margin-top: -2.5rem;
+}
+
+.-mb-10{
+  margin-bottom: -2.5rem;
+}
+
 .\!block{
   display: block !important;
 }
@@ -1093,6 +1101,18 @@ video {
   padding-right: 1.25rem;
 }
 
+.pb-20{
+  padding-bottom: 5rem;
+}
+
+.pt-10{
+  padding-top: 2.5rem;
+}
+
+.pt-5{
+  padding-top: 1.25rem;
+}
+
 .text-center{
   text-align: center;
 }
@@ -1219,6 +1239,14 @@ video {
 
   .sm\:top-0{
     top: 0px;
+  }
+
+  .sm\:mt-0{
+    margin-top: 0px;
+  }
+
+  .sm\:mb-0{
+    margin-bottom: 0px;
   }
 
   .sm\:gap-20{
