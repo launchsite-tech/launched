@@ -32,6 +32,50 @@
   @apply mx-auto flex w-full max-w-screen-lg flex-col;
 }
 
+.r-body {
+  > .tiptap.ProseMirror-focused {
+    @apply outline-none;
+  }
+
+  > * > *:not(:last-child) {
+    @apply mb-3;
+  }
+
+  a {
+    @apply text-brand-dark underline;
+  }
+
+  ul {
+    @apply list-disc;
+
+    li {
+      @apply ml-6;
+    }
+  }
+}
+
+.r-menu {
+  @apply flex items-center gap-1 rounded-full bg-white px-2 py-1 text-[#4E5069] shadow-lg;
+
+  > button {
+    @apply grid h-8 w-8 place-items-center rounded-xl bg-transparent text-lg transition-colors;
+
+    &:not(:disabled):hover,
+    &:not(:disabled):focus,
+    &:not(:disabled).active {
+      @apply bg-gray-100;
+    }
+
+    &:disabled {
+      @apply cursor-not-allowed opacity-50;
+    }
+  }
+
+  > div {
+    @apply mx-1 h-8 border-r border-gray-100;
+  }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

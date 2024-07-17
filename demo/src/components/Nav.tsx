@@ -17,7 +17,7 @@ function NavItem({
   return (
     <a
       href={href}
-      className={`text-text-secondary text-sm hover:underline ${className}`}
+      className={`text-sm text-text-secondary hover:underline ${className}`}
     >
       {children}
     </a>
@@ -47,7 +47,7 @@ export default function Nav() {
   return (
     <div
       ref={root}
-      className="bg-bg fixed bottom-0 left-1/2 z-50 flex w-full -translate-x-1/2 items-center justify-center gap-10 py-5 pl-10 pr-5 transition-colors ease-out sm:bottom-auto sm:top-0 sm:bg-transparent"
+      className="fixed bottom-0 left-1/2 z-[1000] flex w-full -translate-x-1/2 items-center justify-center gap-10 bg-bg py-5 pl-10 pr-5 transition-colors ease-out sm:bottom-auto sm:top-0 sm:bg-transparent"
     >
       <nav className="flex items-center gap-5">
         {/* <svg
