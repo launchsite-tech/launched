@@ -70,7 +70,7 @@ interface LaunchedContextValue {
     key: string,
     value?: V,
     type?: string,
-    options?: { isMutable?: boolean }
+    options?: TagRenderOptions
   ): readonly [
     V extends string | number
       ? V extends string // Nonsense to avoid constants
@@ -274,7 +274,7 @@ export default class Launched {
 
         const o = {
           ...options,
-          isMutable: options?.isMutable ?? this.config.arraysMutable,
+          mutable: options?.mutable ?? this.config.arraysMutable,
         };
 
         Launched.events.emit("tag:ready", key, tag, o);

@@ -49,7 +49,7 @@ const defaultCards = [
 
 export default function Services() {
   const [cards, cardsTag] = useTag("Feature cards", defaultCards, "object", {
-    isMutable: true,
+    mutable: true,
   });
 
   return (
