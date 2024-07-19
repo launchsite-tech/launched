@@ -1,7 +1,8 @@
 import { useWindowSize } from "usehooks-ts";
 import { useRef, useState, useEffect } from "react";
 
-import { ChevronRight, ArrowRight } from "react-feather";
+import { ChevronRight, ArrowRight, Clipboard, Check } from "react-feather";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 import gsap from "gsap";
 
@@ -63,6 +64,8 @@ function GridBackground({ cols, n }: { cols: number; n: number }) {
 export default function Hero() {
   const root = useRef<HTMLDivElement>(null);
 
+  const [copied, setCopied] = useState(false);
+
   useEffect(() => {
     if (!root.current) return;
 
@@ -101,12 +104,28 @@ export default function Hero() {
         <p className="text-xl/[28px] text-text-secondary">
           You lay the groundwork, your client handles the details.
         </p>
-        <div className="mt-5 flex items-center gap-5 rounded-lg border border-black/10 bg-black/10 p-5 pr-10">
-          <ChevronRight className="text-brand-dark" />
-          <code className="text-sm text-text-primary">
-            npm install launched
-          </code>
-        </div>
+        <CopyToClipboard
+          onCopy={() => setCopied(true)}
+          text="npm install launched"
+        >
+          <div className="group relative mt-5 flex cursor-pointer items-center gap-5 rounded-lg border border-black/10 bg-black/10 p-5 pr-10">
+            <div className="absolute -top-2 left-1/2 flex w-max -translate-x-1/2 -translate-y-3/4 items-center gap-2 rounded-full bg-bg px-3 py-2 text-xs text-white/75 opacity-0 shadow transition-all ease-out group-hover:-translate-y-1/2 group-hover:opacity-100">
+              {!copied ? (
+                <>
+                  <Clipboard size={14} /> Tip: Click to copy!
+                </>
+              ) : (
+                <>
+                  <Check size={14} /> Copied!
+                </>
+              )}
+            </div>
+            <ChevronRight className="text-brand-dark" />
+            <code className="text-sm text-text-primary">
+              npm install launched
+            </code>
+          </div>
+        </CopyToClipboard>
       </div>
     </main>
   );
