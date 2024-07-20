@@ -13,25 +13,22 @@ export function InlineTextUI({
 
   const [text, setText] = useState(value);
 
+  function sanitizeText(text: string) {
+    return text.replace(/<[^>]*>?/gm, "");
+  }
+
   function handleContentChange() {
-    if (!editorRef.current) return;
+    if (!editorRef.current) return value;
 
-    const firstTag = editorRef.current.firstChild?.nodeName;
-    const keyTag = new RegExp(
-      firstTag === "#text" ? "<br" : "</" + firstTag,
-      "i"
-    );
-
-    const tmp = document.createElement("p");
-    tmp.innerHTML = editorRef.current.innerHTML
-      .replace(/<[^>]+>/g, (m) => (keyTag.test(m) ? "{ß®}" : ""))
-      .replace(/{ß®}$/, "");
-
-    const text = tmp.textContent?.replace(/{ß®}/g, "\n") || "";
+    const text = sanitizeText(editorRef.current.textContent || "");
     setText(text);
+
+    return text;
   }
 
   function onClose() {
+    const text = handleContentChange();
+
     if (text !== value) updateData(text);
     close();
   }
@@ -45,7 +42,7 @@ export function InlineTextUI({
   return (
     <div
       ref={editorRef}
-      onInput={handleContentChange}
+      onInput={() => setText(editorRef.current?.textContent || "")}
       onBlur={onClose}
       className="Launched__tag-inlineEditor"
       contentEditable
