@@ -1,5 +1,3 @@
-"use client";
-
 import { useEditor } from "@tiptap/react";
 import { useTag } from "launched";
 

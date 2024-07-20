@@ -3,8 +3,4 @@ dist
 .DS_Store
 coverage
 releases
-<<<<<<< Updated upstream
 .vercel
-=======
-.vercel
->>>>>>> Stashed changes
