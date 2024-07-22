@@ -4,19 +4,21 @@ import Demo from "./components/Demo";
 import Footer from "./components/Footer";
 import { LaunchedProvider } from "launched";
 import { richTextRenderer } from "./components/TiptapEditor";
+import { iconRenderer } from "./components/IconEditor";
 
 import type { Config } from "launched";
 
 import Launched from "launched";
 
 Launched.registerTagFormat("rich", richTextRenderer);
+Launched.registerTagFormat("icon", iconRenderer);
 
 const config: Config = {
   toolbarOptions: {
     className: "!block !relative w-max -order-1 -mb-5",
   },
   determineVisibility: () => true,
-  locked: true,
+  // locked: true,
 };
 
 export default function App() {

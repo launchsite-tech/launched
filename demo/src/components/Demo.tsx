@@ -6,20 +6,26 @@ import { Text, Image } from "launched/components";
 import { Rich } from "./TiptapEditor";
 
 import Launched from "launched";
+import { allIcons } from "./IconEditor";
 
 function Feature({
   title,
   description,
-  children,
+  icon,
 }: {
   title: string;
   description: string;
-  children: React.ReactNode;
+  icon: number;
 }) {
+  const Icon = allIcons[icon];
+
   return (
     <li className="flex flex-col gap-2.5">
-      <span className="grid h-10 w-10 place-items-center rounded-full bg-brand-light/10 text-brand-mid">
-        {children}
+      <span
+        data-key="icon"
+        className="bg-brand-light/10 text-brand-mid grid h-10 w-10 place-items-center rounded-full text-lg"
+      >
+        <Icon style={{ width: "1em", height: "1em" }} />
       </span>
       <h3 data-key="title" className="text-xl">
         {title}
@@ -37,32 +43,35 @@ const f = [
     title: "Controlled control.",
     description:
       "Launched is a client-side content management system. You decide what content is editable.",
-    icon: <Sliders size={18} />,
+    icon: Sliders,
   },
   {
     title: "Entirely yours.",
     description:
       "Launched generates the content, you decide how and where it should be stored. It's your data.",
-    icon: <HardDrive size={18} />,
+    icon: HardDrive,
   },
   {
     title: "All open-source.",
     description:
       "Launched is open-source. You can contribute to the project, or fork it and make it your own.",
-    icon: <GitBranch size={18} />,
+    icon: GitBranch,
   },
 ];
 
 export default function Demo() {
-  const defaultFeatures = f.map(({ title, description }) => ({
-    title: title,
+  const defaultFeatures = f.map(({ title, icon, description }) => ({
+    title,
+    icon: { type: "icon", value: allIcons.indexOf(icon) },
     description: { value: `<p>${description}</p>`, type: "rich" },
   }));
   const [features, featuresTag] = useTag(
     "features",
     defaultFeatures,
     "object",
-    { isMutable: true },
+    {
+      isMutable: true,
+    },
   );
 
   function onDataUpdate(data: any) {
@@ -78,7 +87,7 @@ export default function Demo() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-10 rounded-2xl bg-white p-10 text-bg sm:gap-20 sm:p-20">
+    <div className="text-bg flex flex-col gap-10 rounded-2xl bg-white p-10 sm:gap-20 sm:p-20">
       <div className="flex grid-cols-2 flex-col-reverse gap-20 lg:grid">
         <div className="flex flex-col gap-5">
           <Text element="h2" tag="title" className="text-5xl">
@@ -102,25 +111,23 @@ export default function Demo() {
         />
       </div>
       <ul ref={featuresTag} className="grid gap-10 lg:grid-cols-3">
-        {features.map(({ title, description }, i: number) => (
-          <Feature key={i} title={title} description={description}>
-            {f[i].icon}
-          </Feature>
+        {features.map((props, i: number) => (
+          <Feature key={i} {...props} />
         ))}
       </ul>
-      <div className="relative flex w-full overflow-hidden rounded-2xl bg-bg p-5 sm:p-10">
+      <div className="bg-bg relative flex w-full overflow-hidden rounded-2xl p-5 sm:p-10">
         <div className="z-10 flex w-72 flex-col gap-5">
           <Text
             element="h3"
             tag="banner title"
-            className="w-max text-3xl text-text-primary sm:text-5xl"
+            className="text-text-primary w-max text-3xl sm:text-5xl"
           >
             Get started.
           </Text>
           <Rich tag="banner text" className="text-text-secondary">
             Check out our quickstart guides to get up and running with Launched.
           </Rich>
-          <button className="btn w-max text-text-secondary">Get started</button>
+          <button className="btn text-text-secondary w-max">Get started</button>
         </div>
         <img
           className="absolute right-0 top-0 -my-10 -ml-20 h-full object-cover md:static"
