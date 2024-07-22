@@ -139,7 +139,9 @@ function RichTextComponent({
     const menu = document.querySelector(".r-menu");
     if (!editor || menu?.contains(e.relatedTarget)) return;
 
-    updateData(editor.getHTML());
+    const content = editor.getHTML();
+
+    if (content !== value) updateData(content);
     close();
   }
 
