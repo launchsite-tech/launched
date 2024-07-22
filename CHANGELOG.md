@@ -1,3 +1,17 @@
+# v0.1.0-alpha.9 (7/19/24)
+
+## Breaking changes
+
+- Renamed array 'isMutable' flag to 'mutable'
+
+## Features
+
+- Improved InlineEditor content sanitization
+
+## Bug fixes
+
+- Removed unnecessary flex container from toolbar
+
 # v0.1.0-alpha.8 (7/15/24)
 
 ## Features
