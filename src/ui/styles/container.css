@@ -5,6 +5,10 @@
   inset: 0;
 }
 
+.tagged:has(.Launched__tag-container.active .Launched__tag-inlineEditor) {
+  color: transparent;
+}
+
 .Launched__tag-container {
   position: absolute;
   width: calc(100% + 8px);
@@ -32,7 +36,28 @@
     z-index: 10;
 
     & .Launched__tag-inlineEditor {
-      color: inherit;
+      color: var(--text);
+    }
+
+    & .Launched__tag-arrayControls {
+      opacity: 1;
+      pointer-events: auto;
     }
   }
+}
+
+.Launched__tag-arrayControls {
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  translate: 100% -50%;
+  flex-direction: column;
+  gap: 0.25rem !important;
+  color: var(--text-secondary);
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease-out;
+
+  --color: var(--accent);
 }

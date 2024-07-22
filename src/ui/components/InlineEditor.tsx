@@ -1,19 +1,20 @@
 import "../styles/inlineEditor.css";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import type { TagRenderer, TagRendererProps } from "../../core/renderer.js";
+import { HTMLTextTags } from "./helpers/elementGroups.js";
 
 export function InlineTextUI({
-  // element,
   value,
   selected,
   updateData,
   close,
 }: TagRendererProps<string>) {
   const editorRef = useRef<HTMLDivElement>(null);
+
   const [text, setText] = useState(value);
 
-  function getText(): string {
-    if (!editorRef.current) return "";
+  function handleContentChange() {
+    if (!editorRef.current) return;
 
     const firstTag = editorRef.current.firstChild?.nodeName;
     const keyTag = new RegExp(
@@ -26,7 +27,8 @@ export function InlineTextUI({
       .replace(/<[^>]+>/g, (m) => (keyTag.test(m) ? "{ß®}" : ""))
       .replace(/{ß®}$/, "");
 
-    return tmp.innerText.replace(/{ß®}/g, "\n");
+    const text = tmp.textContent?.replace(/{ß®}/g, "\n") || "";
+    setText(text);
   }
 
   function onClose() {
@@ -34,15 +36,21 @@ export function InlineTextUI({
     close();
   }
 
+  useEffect(() => {
+    if (!editorRef.current) return;
+
+    editorRef.current.textContent = value;
+  }, []);
+
   return (
     <div
       ref={editorRef}
-      onInput={() => setText(getText())}
+      onInput={handleContentChange}
       onBlur={onClose}
       className="Launched__tag-inlineEditor"
       contentEditable
+      suppressContentEditableWarning
       data-empty={text === ""}
-      dangerouslySetInnerHTML={{ __html: value }}
       spellCheck={selected}
     ></div>
   );
@@ -53,7 +61,6 @@ export const InlineTextRenderer: TagRenderer<string> = {
     return <InlineTextUI {...props} />;
   },
   parentValidator: (element) => {
-    const whitelist = ["P", "H1", "H2", "H3", "H4", "H5", "H6", "SPAN", "DIV"];
-    return whitelist.includes(element.nodeName);
+    return HTMLTextTags.includes(element.nodeName);
   },
 };

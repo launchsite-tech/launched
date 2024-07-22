@@ -3,7 +3,7 @@
   "include": ["src/**/*.ts"],
   "lib": ["dom", "dom.iterable", "esnext"],
   "compilerOptions": {
-    "target": "es5",
+    "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
     "declaration": true,

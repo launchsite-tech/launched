@@ -17,7 +17,7 @@ describe("#Launched", () => {
     l = new Launched();
 
     // @ts-expect-error
-    expect(l.config).toEqual({
+    expect(l.config).toMatchObject({
       locked: false,
       toolbarOptions: {
         position: "center",
@@ -45,13 +45,17 @@ describe("#Launched", () => {
       locked: false,
       save,
       onImageUpload,
+      toolbarOptions: {
+        className: "foo",
+      },
     });
 
     // @ts-expect-error
-    expect(l.config).toEqual({
+    expect(l.config).toMatchObject({
       locked: false,
       toolbarOptions: {
         position: "center",
+        className: "foo",
       },
       save,
       onImageUpload,

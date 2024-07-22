@@ -54,7 +54,7 @@ import { LaunchedProvider } from "launched";
 
 /* Add the provider to your app */
 root.render(
-  <LaunchedProvider config={config}>
+  <LaunchedProvider>
     <App />
   </LaunchedProvider>
 );

@@ -1,5 +1,6 @@
 import "../styles/imageEditor.css";
 import type { TagRenderer, TagRendererProps } from "../../core/renderer.js";
+import { HTMLTagsWithoutChildren } from "./helpers/elementGroups.js";
 
 export function ImageUI({
   id,
@@ -8,18 +9,18 @@ export function ImageUI({
   updateData,
   close,
 }: TagRendererProps<string>) {
-  function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
     try {
       const file = e.target.files?.[0];
       if (!file) return;
       else if (!file.type.startsWith("image/"))
         return console.error("Invalid file type. Please upload an image.");
 
-      context.uploadImage?.(file);
+      const uploadURL = await context.uploadImage?.(file);
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        updateData(reader.result as string);
+        updateData(uploadURL || (reader.result as string));
       };
       reader.readAsDataURL(file);
 
@@ -53,23 +54,7 @@ export const ImageRenderer: TagRenderer<string> = {
     return <ImageUI {...props} />;
   },
   parentValidator: (element) => {
-    const blacklist = [
-      "AREA",
-      "BASE",
-      "BR",
-      "COL",
-      "EMBED",
-      "HR",
-      "IMG",
-      "INPUT",
-      "LINK",
-      "META",
-      "PARAM",
-      "SOURCE",
-      "TRACK",
-      "WBR",
-    ];
-    const invalid = blacklist.includes(element.tagName);
+    const invalid = HTMLTagsWithoutChildren.includes(element.tagName);
 
     if (invalid)
       console.warn(

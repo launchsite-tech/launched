@@ -1,5 +1,6 @@
 import "../styles/toolbar.css";
 import Launched from "../../core/context.js";
+import { useState } from "react";
 
 export default function Toolbar({
   position,
@@ -21,12 +22,12 @@ export default function Toolbar({
   revert: () => void;
 }) {
   // @ts-expect-error
-  const initiallyLocked = Launched.instance?.config?.locked;
+  const [disabled, setDisabled] = useState(Launched.instance!.config.locked);
 
   return (
     <div
       data-position={position}
-      className={`Launched__toolbar ${className || ""}`}
+      className={`Launched__toolbar ${className || ""} ${disabled && "disabled"}`}
     >
       <div className="Launched__toolbar-tools">
         <button
@@ -37,17 +38,19 @@ export default function Toolbar({
         </button>
         <select
           onChange={(e) => {
-            if (e.target.value === "locked") Launched.lock();
-            else Launched.unlock();
+            if (e.target.value === "locked") {
+              Launched.lock();
+              setDisabled(true);
+            } else {
+              Launched.unlock();
+              setDisabled(false);
+            }
           }}
           className="Launched__toolbar-lockMode"
+          value={disabled ? "locked" : "unlocked"}
         >
-          <option value="unlocked" selected={!initiallyLocked}>
-            Edit
-          </option>
-          <option value="locked" selected={initiallyLocked}>
-            Preview
-          </option>
+          <option value="unlocked">Edit</option>
+          <option value="locked">Preview</option>
         </select>
         <button
           disabled={!canUndo}

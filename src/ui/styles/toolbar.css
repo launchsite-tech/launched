@@ -4,6 +4,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  z-index: 999;
 }
 
 .Launched__toolbar[data-position="right"] {
