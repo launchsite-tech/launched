@@ -211,7 +211,7 @@ export default class Launched {
     Launched.events.on(
       "tag:ready",
       (...props: [string, Tag, TagRenderOptions]) => {
-        if (!this.config.locked) this.render(props[0], props[2]);
+        this.render(props[0], props[2]);
       }
     );
 
@@ -281,8 +281,11 @@ export default class Launched {
   }) as LaunchedContextValue["useTag"];
 
   private render(tag: string, options?: TagRenderOptions) {
-    if (tag && this.tags[tag])
-      this.renderer.renderSingleTagUI(this.tags[tag]!, String(tag), options);
+    if (!tag || !this.tags[tag]) return;
+
+    const dry = options && this.config.locked;
+
+    this.renderer.renderSingleTagUI(this.tags[tag]!, String(tag), options, dry);
   }
 
   public static lock() {

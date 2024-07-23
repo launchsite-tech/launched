@@ -56,7 +56,8 @@ export default class Renderer {
   public renderSingleTagUI(
     parentTag: Tag,
     id: string,
-    options?: TagRenderOptions
+    options?: TagRenderOptions,
+    dry?: boolean
   ): void {
     if (!parentTag || !parentTag.el.current)
       return console.warn(`Tag "${id}" was never bound to an element.`);
@@ -71,7 +72,6 @@ export default class Renderer {
 
       if (Array.isArray(tag.data.value)) {
         tag.data.value.forEach((t, i) => {
-          // TODO: Make configurable
           const childEl =
             (tag.el.current!.children[i] as HTMLElement) ?? tag.el.current;
 
@@ -164,7 +164,7 @@ export default class Renderer {
         }
 
         const id = `Lt-${childId.replaceAll(" ", "-")}`;
-        let userOptions: TagUIOptions = {} as TagUIOptions;
+        let userOptions: TagUIOptions;
 
         if (this.initialRenderOptions.get(id))
           userOptions = this.initialRenderOptions.get(id)!;
@@ -177,6 +177,8 @@ export default class Renderer {
 
           this.initialRenderOptions.set(id, userOptions);
         }
+
+        if (dry) return;
 
         const existingNode = document.getElementById(id);
         if (existingNode) existingNode.remove();
