@@ -1,134 +1,120 @@
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Gilda+Display&family=Kaushan+Script&family=Open+Sans:wght@400;500;600;700&family=Roboto:wght@300;400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap");
+
+@font-face {
+  font-family: "Faktum Test";
+  src: url("../public/fonts/FTRegular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Faktum Test";
+  font-weight: bold;
+  src: url("../public/fonts/FTBold.otf") format("opentype");
+}
+
+@property --bg1 {
+  syntax: "<color>";
+  initial-value: transparent;
+  inherits: false;
+}
+
+@property --bg2 {
+  syntax: "<color>";
+  initial-value: transparent;
+  inherits: false;
+}
+
+:root {
+  font-family: "Faktum Test", sans-serif;
+  background-color: theme("colors.bg");
+}
+
+#root {
+  @apply mx-auto flex w-full max-w-screen-lg flex-col;
+}
+
+.r-body {
+  > .tiptap.ProseMirror-focused {
+    @apply outline-none;
+  }
+
+  > * > *:not(:last-child) {
+    @apply mb-3;
+  }
+
+  a {
+    @apply text-brand-dark underline;
+  }
+
+  ul {
+    @apply list-disc;
+
+    li {
+      @apply ml-6;
+    }
+  }
+}
+
+.r-menu {
+  @apply flex items-center gap-1 rounded-full border border-[#E5EAEE] bg-white px-2 py-1 text-[#4E5069] shadow-lg;
+
+  > button {
+    @apply grid h-8 w-8 place-items-center rounded-xl bg-transparent text-lg transition-colors;
+
+    &:not(:disabled):hover,
+    &:not(:disabled):focus,
+    &:not(:disabled).active {
+      @apply bg-gray-100;
+    }
+
+    &:disabled {
+      @apply cursor-not-allowed opacity-50;
+    }
+  }
+
+  > div {
+    @apply mx-1 h-8 border-r border-gray-100;
+  }
+
+  .tabler-icon {
+    width: 1em;
+    height: 1em;
+  }
+}
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --amatic-sc: "Amatic SC", cursive;
-  --caveat: "Caveat", cursive;
-  --comfortaa: "Comfortaa", cursive;
-  --happy-monkey: "Happy Monkey", cursive;
-  --lobster: "Lobster", cursive;
-
-  --courier-prime: "Courier Prime", monospace;
-  --dm-mono: "DM Mono", monospace;
-  --roboto-mono: "Roboto Mono", monospace;
-
-  --eb-garamond: "EB Garamond", serif;
-  --gilda-display: "Gilda Display", serif;
-  --merriweather: "Merriweather", serif;
-  --playfair-display: "Playfair Display", serif;
-
-  --arial: Arial, sans-serif;
-  --helvetica: Helvetica, sans-serif;
-  --inter: "Inter", sans-serif;
-  --montserrat: "Montserrat", sans-serif;
-  --open-sans: "Open Sans", sans-serif;
-  --poppins: "Poppins", sans-serif;
-  --quicksand: "Quicksand", sans-serif;
-  --roboto: "Roboto", sans-serif;
-}
-
-@layer base {
-  #HOME h1,
-  #HOME h2,
-  #HOME h3 {
-    font-family: theme("fontFamily.display");
+@keyframes box-pulse {
+  0%,
+  100% {
+    filter: drop-shadow(0px 0px 0px rgba(8, 8, 21, 0.1));
   }
-
-  #HOME h1 {
-    font-size: theme("fontSize.h1");
-    line-height: theme("lineHeight.h1");
-  }
-
-  #HOME h2 {
-    font-size: theme("fontSize.h2");
-    line-height: theme("lineHeight.h2");
-  }
-
-  #HOME h3 {
-    font-size: theme("fontSize.h3");
-    line-height: theme("lineHeight.h3");
+  50% {
+    filter: drop-shadow(0px 7px 20px rgba(8, 8, 21, 0.1));
   }
 }
 
 @layer components {
-  .cta-mask {
-    mask: url("../public/utils/cta-mask.png");
-    -webkit-mask: url("../public/utils/cta-mask.png");
-    mask-size: 3000% 100%;
-    -webkit-mask-size: 3000% 100%;
+  .btn {
+    @apply rounded-lg border border-white/10 bg-white/10 px-3 py-1.5;
+    transition:
+      --bg1 300ms ease-out,
+      --bg2 300ms ease-out;
+    background-image: radial-gradient(
+      circle at 100% 300%,
+      var(--bg1) 0%,
+      var(--bg2) 100%
+    );
+
+    &:hover {
+      --bg1: rgba(255, 105, 36, 0.25);
+      --bg2: rgba(255, 149, 36, 0);
+    }
   }
 
-  .decorated {
-    position: relative;
-    z-index: -1;
-  }
-
-  *:has(.decorated) {
-    z-index: 0;
-  }
-
-  .decorated::before {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    width: 2.25em;
-    translate: 0.25em -0.5em;
-    aspect-ratio: 1;
-    border-radius: 100%;
-    right: 0;
-    top: 0;
-    background-color: theme("accentColor.salmon-lgt");
-  }
-}
-
-@layer utilities {
-  li {
-    list-style: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  ::-webkit-scrollbar {
-    height: 12px;
-    overflow: visible;
-    width: 12px;
-  }
-
-  ::-webkit-scrollbar-button {
-    width: 0;
-    height: 0;
-  }
-
-  ::-webkit-scrollbar-corner {
-    background-color: transparent;
-  }
-
-  body::-webkit-scrollbar-corner {
-    background-color: rgba(0, 0, 0, 0.05) !important;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.1);
-    border-radius: 50vw;
-    background-clip: padding-box;
-    padding: 2px;
-    border: 2px solid transparent;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 0, 0, 0.2);
-  }
-
-  ::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-
-  body:has(#HOME)::-webkit-scrollbar-track {
-    background-color: theme("accentColor.salmon") !important;
+  .box {
+    filter: drop-shadow(0px 7px 20px rgba(8, 8, 21, 0.075));
+    animation: box-pulse 4s infinite ease-in-out;
   }
 }
