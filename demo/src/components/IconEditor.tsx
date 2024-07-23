@@ -1,11 +1,11 @@
-// import { useTag } from "launched";
+// import { useTag } from "../dist";
 
 import * as icons from "react-feather";
 
-import type { TagRenderer, TagRendererProps } from "launched";
-// import type { LaunchedComponentProps } from "launched/components";
+import type { TagRenderer, TagRendererProps } from "../dist";
+// import type { LaunchedComponentProps } from "../dist/components";
 
-import { HTMLTagsWithoutChildren } from "launched/components";
+import { HTMLTagsWithoutChildren } from "../dist/components";
 
 export const allIcons = Object.values(icons);
 
@@ -26,7 +26,7 @@ function IconComponent({
             updateData(i);
             close();
           }}
-          className={`text-bg cursor-pointer rounded-md p-2 ${value === i ? "bg-gray-100" : "hover:bg-gray-100"} text-sm transition-colors ease-out`}
+          className={`cursor-pointer rounded-md p-2 text-bg ${value === i ? "bg-gray-100" : "hover:bg-gray-100"} text-sm transition-colors ease-out`}
         >
           <Icon
             style={{
