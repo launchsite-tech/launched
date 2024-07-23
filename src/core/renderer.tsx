@@ -9,6 +9,7 @@ import flattenTagValue from "./utils/flattenTagValue.js";
 
 export type TagRenderOptions = Partial<{
   arrayMutable: boolean;
+  type: string;
 }>;
 
 type TagUIOptions = TagRenderOptions & {

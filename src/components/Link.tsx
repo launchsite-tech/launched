@@ -16,7 +16,7 @@ export default function Link({
   const [link, linkRef] = useTag<{
     text: string;
     href: string;
-  }>(tag, { text: children, href }, "link");
+  }>(tag, { text: children, href }, { type: "link" });
 
   return (
     <a href={link.href} {...rest} ref={linkRef}>

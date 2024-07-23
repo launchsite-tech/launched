@@ -69,7 +69,6 @@ interface LaunchedContextValue {
   useTag<V extends TagSchemaValue = TagData["value"]>(
     key: string,
     value?: V,
-    type?: string,
     options?: TagRenderOptions
   ): readonly [
     V extends string | number
@@ -235,7 +234,6 @@ export default class Launched {
   private useTag = (<V extends TagSchemaValue = TagData["value"]>(
     key: string,
     value?: V,
-    type?: string,
     options?: TagRenderOptions
   ) => {
     const t = this ?? Launched.instance;
@@ -245,7 +243,7 @@ export default class Launched {
     if (!tag && value != null) {
       const newTag = createTag(
         value,
-        type ??
+        options?.type ??
           (Array.isArray(value) ? typeof (value as any[])[0] : typeof value)
       );
 

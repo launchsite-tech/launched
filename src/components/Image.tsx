@@ -24,7 +24,7 @@ export default function Image({
       "Image component requires a src prop of type string. Make sure to provide a valid image URL."
     );
 
-  const [img, imgRef] = useTag(tag, src, "image");
+  const [img, imgRef] = useTag(tag, src, { type: "image" });
 
   const Container = element as React.ElementType;
 
