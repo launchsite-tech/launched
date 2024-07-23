@@ -1,5 +1,5 @@
 import { useEditor } from "@tiptap/react";
-import { useTag } from "../dist";
+import { useTag } from "../dist/core/hooks";
 
 import History from "@tiptap/extension-history";
 import Document from "@tiptap/extension-document";

@@ -1,7 +1,7 @@
 import { useTag } from "../core/hooks.js";
 import { LaunchedComponentProps } from ".";
 import error from "../core/utils/error.js";
-import type { HTMLTagsWithChildren } from ".";
+import type { HTMLTagsWithChildrenType } from ".";
 
 export default function Image({
   tag,
@@ -13,7 +13,7 @@ export default function Image({
   LaunchedComponentProps<string, "img">,
   "children" | "className" | "element"
 > & {
-  element?: HTMLTagsWithChildren;
+  element?: HTMLTagsWithChildrenType;
   classNames?: {
     container?: string;
     image?: string;

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useTag } from "../dist";
+import { useTag } from "../dist/core/hooks";
 
 import { Sliders, HardDrive, GitBranch } from "react-feather";
 import { Text, Image } from "../dist/components";
