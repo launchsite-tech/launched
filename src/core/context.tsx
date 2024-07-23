@@ -270,9 +270,9 @@ export default class Launched {
         if (!this.originalTags.has(key))
           this.originalTags.set(key, tag.data.value);
 
-        const o = {
+        const o: TagRenderOptions = {
           ...options,
-          mutable: options?.arrayMutable ?? this.config.arraysMutable,
+          arrayMutable: options?.arrayMutable ?? this.config.arraysMutable,
         };
 
         Launched.events.emit("tag:ready", key, tag, o);
@@ -280,15 +280,9 @@ export default class Launched {
     ] as const;
   }) as LaunchedContextValue["useTag"];
 
-  private render(tag?: string, options?: TagRenderOptions) {
+  private render(tag: string, options?: TagRenderOptions) {
     if (tag && this.tags[tag])
       this.renderer.renderSingleTagUI(this.tags[tag]!, String(tag), options);
-    else
-      Object.entries(this.tags).map(([key, tag]) =>
-        tag.el.current
-          ? this.renderer.renderSingleTagUI(tag, key, options)
-          : null
-      );
   }
 
   public static lock() {
