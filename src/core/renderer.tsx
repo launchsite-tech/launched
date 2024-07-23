@@ -8,7 +8,8 @@ import Launched from "./context.js";
 import flattenTagValue from "./utils/flattenTagValue.js";
 
 export type TagRenderOptions = Partial<{
-  isMutable: boolean;
+  arrayMutable: boolean;
+  type: string;
 }>;
 
 type TagUIOptions = TagRenderOptions & {
@@ -55,7 +56,8 @@ export default class Renderer {
   public renderSingleTagUI(
     parentTag: Tag,
     id: string,
-    options?: TagRenderOptions
+    options?: TagRenderOptions,
+    dry?: boolean
   ): void {
     if (!parentTag || !parentTag.el.current)
       return console.warn(`Tag "${id}" was never bound to an element.`);
@@ -70,7 +72,6 @@ export default class Renderer {
 
       if (Array.isArray(tag.data.value)) {
         tag.data.value.forEach((t, i) => {
-          // TODO: Make configurable
           const childEl =
             (tag.el.current!.children[i] as HTMLElement) ?? tag.el.current;
 
@@ -163,19 +164,21 @@ export default class Renderer {
         }
 
         const id = `Lt-${childId.replaceAll(" ", "-")}`;
-        let userOptions: TagUIOptions = {} as TagUIOptions;
+        let userOptions: TagUIOptions;
 
         if (this.initialRenderOptions.get(id))
           userOptions = this.initialRenderOptions.get(id)!;
         else {
           userOptions = {
-            isMutable: options?.isMutable ?? false,
+            arrayMutable: options?.arrayMutable ?? false,
             index,
             parentTag,
           };
 
           this.initialRenderOptions.set(id, userOptions);
         }
+
+        if (dry) return;
 
         const existingNode = document.getElementById(id);
         if (existingNode) existingNode.remove();
@@ -249,7 +252,7 @@ function TagUI({
 
   const [selected, setSelected] = useState(false);
 
-  const { isMutable, parentTag, index } = options;
+  const { arrayMutable, parentTag, index } = options;
 
   function close() {
     setSelected(false);
@@ -344,7 +347,7 @@ function TagUI({
         id={id}
         context={Launched.instance!}
       />
-      {isMutable && (
+      {arrayMutable && (
         <div
           onMouseDown={(e) => e.preventDefault()}
           className="Launched__tag-arrayControls Launched__toolbar-tools"

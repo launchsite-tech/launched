@@ -69,8 +69,7 @@ interface LaunchedContextValue {
   useTag<V extends TagSchemaValue = TagData["value"]>(
     key: string,
     value?: V,
-    type?: string,
-    options?: { isMutable?: boolean }
+    options?: TagRenderOptions
   ): readonly [
     V extends string | number
       ? V extends string // Nonsense to avoid constants
@@ -212,7 +211,7 @@ export default class Launched {
     Launched.events.on(
       "tag:ready",
       (...props: [string, Tag, TagRenderOptions]) => {
-        if (!this.config.locked) this.render(props[0], props[2]);
+        this.render(props[0], props[2]);
       }
     );
 
@@ -235,7 +234,6 @@ export default class Launched {
   private useTag = (<V extends TagSchemaValue = TagData["value"]>(
     key: string,
     value?: V,
-    type?: string,
     options?: TagRenderOptions
   ) => {
     const t = this ?? Launched.instance;
@@ -245,7 +243,7 @@ export default class Launched {
     if (!tag && value != null) {
       const newTag = createTag(
         value,
-        type ??
+        options?.type ??
           (Array.isArray(value) ? typeof (value as any[])[0] : typeof value)
       );
 
@@ -272,9 +270,9 @@ export default class Launched {
         if (!this.originalTags.has(key))
           this.originalTags.set(key, tag.data.value);
 
-        const o = {
+        const o: TagRenderOptions = {
           ...options,
-          isMutable: options?.isMutable ?? this.config.arraysMutable,
+          arrayMutable: options?.arrayMutable ?? this.config.arraysMutable,
         };
 
         Launched.events.emit("tag:ready", key, tag, o);
@@ -282,15 +280,12 @@ export default class Launched {
     ] as const;
   }) as LaunchedContextValue["useTag"];
 
-  private render(tag?: string, options?: TagRenderOptions) {
-    if (tag && this.tags[tag])
-      this.renderer.renderSingleTagUI(this.tags[tag]!, String(tag), options);
-    else
-      Object.entries(this.tags).map(([key, tag]) =>
-        tag.el.current
-          ? this.renderer.renderSingleTagUI(tag, key, options)
-          : null
-      );
+  private render(tag: string, options?: TagRenderOptions) {
+    if (!tag || !this.tags[tag]) return;
+
+    const dry = options && this.config.locked;
+
+    this.renderer.renderSingleTagUI(this.tags[tag]!, String(tag), options, dry);
   }
 
   public static lock() {

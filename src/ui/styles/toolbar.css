@@ -1,9 +1,6 @@
 .Launched__toolbar {
   position: fixed;
   top: 0.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   z-index: 999;
 }
 

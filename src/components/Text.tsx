@@ -1,14 +1,14 @@
 import { useTag } from "../core/hooks.js";
 import { LaunchedComponentProps } from ".";
 import error from "../core/utils/error.js";
-import type { HTMLTextTags } from ".";
+import type { HTMLTextTagsType } from ".";
 
 export default function Text({
   tag,
   element = "p",
   children,
   ...rest
-}: LaunchedComponentProps<string, HTMLTextTags>) {
+}: LaunchedComponentProps<string, HTMLTextTagsType>) {
   if (typeof children !== "string")
     error(
       "Text component only accepts string children. Create a custom component for more complex types."

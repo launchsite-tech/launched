@@ -27,13 +27,13 @@ const HTMLTextTagsLower = [
   "div",
 ] as const;
 
-export type HTMLTagsWithoutChildren =
+export type HTMLTagsWithoutChildrenType =
   (typeof HTMLTagsWithoutChildrenLower)[number];
-export type HTMLTagsWithChildren = Exclude<
+export type HTMLTagsWithChildrenType = Exclude<
   keyof JSX.IntrinsicElements,
-  HTMLTagsWithoutChildren
+  HTMLTagsWithoutChildrenType
 >;
-export type HTMLTextTags = (typeof HTMLTextTagsLower)[number];
+export type HTMLTextTagsType = (typeof HTMLTextTagsLower)[number];
 
 export const HTMLTagsWithoutChildren = HTMLTagsWithoutChildrenLower.map((t) =>
   t.toUpperCase()

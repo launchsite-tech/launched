@@ -150,7 +150,7 @@
 }
 
 /*
-! tailwindcss v3.4.3 | MIT License | https://tailwindcss.com
+! tailwindcss v3.4.6 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -879,6 +879,10 @@ video {
   height: 1.5rem;
 }
 
+.h-64{
+  height: 16rem;
+}
+
 .h-full{
   height: 100%;
 }
@@ -910,6 +914,14 @@ video {
 .w-max{
   width: -webkit-max-content;
   width: max-content;
+}
+
+.max-w-48{
+  max-width: 12rem;
+}
+
+.max-w-7xl{
+  max-width: 80rem;
 }
 
 .max-w-\[500px\]{
@@ -951,6 +963,10 @@ video {
 
 .grid-cols-2{
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-cols-5{
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .grid-cols-6{
@@ -997,6 +1013,14 @@ video {
   gap: 1.25rem;
 }
 
+.gap-6{
+  gap: 1.5rem;
+}
+
+.gap-\[2vw\]{
+  gap: 2vw;
+}
+
 .overflow-hidden{
   overflow: hidden;
 }
@@ -1007,6 +1031,10 @@ video {
 
 .rounded-2xl{
   border-radius: 1rem;
+}
+
+.rounded-3xl{
+  border-radius: 1.5rem;
 }
 
 .rounded-full{
@@ -1073,6 +1101,10 @@ video {
   padding: 2.5rem;
 }
 
+.p-14{
+  padding: 3.5rem;
+}
+
 .p-2{
   padding: 0.5rem;
 }
@@ -1089,6 +1121,11 @@ video {
 .px-3{
   padding-left: 0.75rem;
   padding-right: 0.75rem;
+}
+
+.px-6{
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 .py-2{
@@ -1125,6 +1162,10 @@ video {
   text-align: center;
 }
 
+.font-sans{
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
 .text-3xl{
   font-size: 1.875rem;
   line-height: 2.25rem;
@@ -1148,6 +1189,11 @@ video {
 .text-sm{
   font-size: 0.875rem;
   line-height: 1.25rem;
+}
+
+.text-sm\/\[19\.6px\]{
+  font-size: 0.875rem;
+  line-height: 19.6px;
 }
 
 .text-xl{

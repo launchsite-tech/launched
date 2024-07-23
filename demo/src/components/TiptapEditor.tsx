@@ -1,5 +1,5 @@
 import { useEditor } from "@tiptap/react";
-import { useTag } from "launched";
+import { useTag } from "../dist/core/hooks";
 
 import History from "@tiptap/extension-history";
 import Document from "@tiptap/extension-document";
@@ -23,8 +23,8 @@ import {
 } from "@tabler/icons-react";
 
 import type { Editor } from "@tiptap/react";
-import type { TagRenderer, TagRendererProps } from "launched";
-import type { LaunchedComponentProps } from "launched/components";
+import type { TagRenderer, TagRendererProps } from "../dist";
+import type { LaunchedComponentProps } from "../dist/components";
 
 const extensions = [
   History,
@@ -174,7 +174,7 @@ export function Rich({
   className,
   ...rest
 }: LaunchedComponentProps<string, (typeof whitelist)[number]>) {
-  const [text, textRef] = useTag(tag, children, "rich");
+  const [text, textRef] = useTag(tag, children, { type: "rich" });
 
   const Container = element;
 
