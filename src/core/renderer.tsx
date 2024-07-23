@@ -8,7 +8,7 @@ import Launched from "./context.js";
 import flattenTagValue from "./utils/flattenTagValue.js";
 
 export type TagRenderOptions = Partial<{
-  mutable: boolean;
+  arrayMutable: boolean;
 }>;
 
 type TagUIOptions = TagRenderOptions & {
@@ -169,7 +169,7 @@ export default class Renderer {
           userOptions = this.initialRenderOptions.get(id)!;
         else {
           userOptions = {
-            mutable: options?.mutable ?? false,
+            arrayMutable: options?.arrayMutable ?? false,
             index,
             parentTag,
           };
@@ -249,7 +249,7 @@ function TagUI({
 
   const [selected, setSelected] = useState(false);
 
-  const { mutable, parentTag, index } = options;
+  const { arrayMutable, parentTag, index } = options;
 
   function close() {
     setSelected(false);
@@ -344,7 +344,7 @@ function TagUI({
         id={id}
         context={Launched.instance!}
       />
-      {mutable && (
+      {arrayMutable && (
         <div
           onMouseDown={(e) => e.preventDefault()}
           className="Launched__tag-arrayControls Launched__toolbar-tools"

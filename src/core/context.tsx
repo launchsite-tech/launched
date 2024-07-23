@@ -274,7 +274,7 @@ export default class Launched {
 
         const o = {
           ...options,
-          mutable: options?.mutable ?? this.config.arraysMutable,
+          mutable: options?.arrayMutable ?? this.config.arraysMutable,
         };
 
         Launched.events.emit("tag:ready", key, tag, o);
