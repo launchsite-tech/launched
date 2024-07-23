@@ -82,8 +82,8 @@ export default function Demo() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-10 rounded-2xl bg-white p-10 text-bg sm:gap-20 sm:p-20">
-      <div className="flex grid-cols-2 flex-col-reverse gap-20 lg:grid">
+    <div className="flex flex-col gap-10 rounded-2xl bg-white p-10 text-bg sm:gap-20 sm:pt-20">
+      <div className="flex grid-cols-2 flex-col-reverse gap-20 sm:px-10 lg:grid">
         <div className="flex flex-col gap-5">
           <Text element="h2" tag="title" className="text-5xl">
             Welcome to Launched.
@@ -105,7 +105,7 @@ export default function Demo() {
           tag="hero image"
         />
       </div>
-      <ul ref={featuresTag} className="grid gap-10 lg:grid-cols-3">
+      <ul ref={featuresTag} className="grid gap-10 sm:px-10 lg:grid-cols-3">
         {features.map((props, i: number) => (
           <Feature key={i} {...props} />
         ))}
