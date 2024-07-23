@@ -90,7 +90,7 @@ export default function Demo() {
           </Text>
           <Rich tag="description" className="text-lg">
             {
-              "<p>Launched makes client site content editable. It&rsquo;s free, easy to integrate, and user-friendly. Switch to edit mode to see it in action.</p>"
+              "<p>Launched makes client site content editable. It's free, easy to integrate, and user-friendly. Switch to edit mode to see it in action.</p>"
             }
           </Rich>
         </div>
@@ -120,7 +120,9 @@ export default function Demo() {
             Get started.
           </Text>
           <Rich tag="banner text" className="text-text-secondary">
-            Check out our quickstart guides to get up and running with Launched.
+            {
+              "<p>Check out our quickstart guides to get up and running with Launched.</p>"
+            }
           </Rich>
           <button className="btn w-max text-text-secondary">Get started</button>
         </div>
