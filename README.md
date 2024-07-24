@@ -1,23 +1,12 @@
 <h1 align="center">
   <img width="24" height="24" src="./demo/public/favicon.svg" />
-  Launched
+  <a href="https://launched.tech">Launched</a>
+  <p align="center">
+    <a href="https://npmjs.com/package/launched" title="Package Size"><img src="https://img.shields.io/bundlephobia/minzip/launched" alt="Package Size"></a>
+    <a href="https://npmjs.com/package/launched" title="Version"><img src="https://img.shields.io/npm/v/launched.svg" alt="Version"/a>
+    <a href="https://npmjs.com/package/launched" title="Downloads"><img src="https://img.shields.io/npm/dm/launched.svg" alt="Downloads"></a>
+  </p> 
 </h1>
-<!-- <p align="center">
-  <a title="Download" href="https://quilljs.com/docs/quickstart"><strong>Download</strong></a>
-  &#x2022;
-  <a title="Documentation" href="https://quilljs.com/docs/quickstart"><strong>Documentation</strong></a>
-  &#x2022;
-  <a title="Contributing" href="https://github.com/slab/quill/blob/main/.github/CONTRIBUTING.md"><strong>Contributing</strong></a>
-  &#x2022;
-  <a title="Interactive Demo" href="https://quilljs.com/playground/"><strong>Interactive Demo</strong></a>
-</p>
-<p align="center">
-  <a href="https://npmjs.com/package/quill" title="Package Size"><img src="https://img.shields.io/bundlephobia/minzip/quill" alt="Package Size"></a>
-  <a href="https://npmjs.com/package/quill" title="Version"><img src="https://img.shields.io/npm/v/quill.svg" alt="Version"></a>
-  <a href="https://npmjs.com/package/quill" title="Downloads"><img src="https://img.shields.io/npm/dm/quill.svg" alt="Downloads"></a>
-</p> 
-<hr/>
--->
 
 Launched is a tool to make website content editable to clients with no codebase access or coding knowledge required. It was created by [Michael Beck](https://linkedin.com/in/michaelbeck0) for the [Launch](https://launchsite.tech) platform.
 
@@ -39,7 +28,11 @@ npm install launched
 
 ```html
 <!-- Include the Launched library -->
-<script src="https://cdn.jsdelivr.net/npm/launched/dist/index.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/launched/dist/bundle.js"></script>
+
+<!-- Include React and ReactDOM dependencies -->
+<script crossorigin src="https://cdn.jsdelivr.net/npm/react@17/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@17/umd/react-dom.production.min.js"></script>
 ```
 
 ## Getting started

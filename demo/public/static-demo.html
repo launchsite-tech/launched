@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <title>Launched</title>
+
+    <link rel="shortcut icon" href="favicon.svg" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Include the Launched library -->
+    <script type="module" src="/dist/bundle.js"></script>
+    <!-- Include necessary React and ReactDOM libraries -->
+    <script
+      crossorigin
+      src="https://cdn.jsdelivr.net/npm/react@17/umd/react.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://cdn.jsdelivr.net/npm/react-dom@17/umd/react-dom.production.min.js"
+    ></script>
+    <!-- Initialize Launched -->
+    <script type="module" defer>
+      const { Launched } = launched;
+
+      const l = new Launched();
+      console.log(l);
+    </script>
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        list-style: none;
+      }
+
+      body {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      ul {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 12px;
+
+        li {
+          padding: 12px;
+          border: 1px solid #000;
+          border-radius: 4px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1 data-tag="heading">This is a heading.</h1>
+    <p data-tag="paragraph">
+      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ea quia
+      cupiditate architecto perferendis incidunt praesentium neque expedita
+      ipsam suscipit libero quae dolores veniam quasi, necessitatibus molestiae
+      dignissimos repellat ullam laborum numquam voluptatem. Officiis eos
+      dolorem velit a voluptas animi pariatur sint consequatur facilis quaerat?
+      Magnam asperiores delectus suscipit, ab odit cum voluptas. Corporis,
+      corrupti! Laudantium explicabo accusamus placeat, sint error, fugit
+      excepturi nam laboriosam earum blanditiis provident amet, iste modi cum
+      eveniet dolorum dolores commodi ipsa exercitationem quis eius incidunt
+      non. Saepe expedita quam ea. Quasi molestiae natus minus, nesciunt ab
+      exercitationem, voluptate facilis quis obcaecati magni pariatur possimus
+      molestias, nulla consequuntur voluptas necessitatibus rerum placeat
+      perferendis dignissimos cupiditate? Assumenda maxime delectus distinctio?
+      Recusandae hic porro nostrum, ab, maiores voluptatem minima, esse fugit
+      sunt consequuntur impedit facere cum!
+    </p>
+    <h2>These are some cards.</h2>
+    <ul>
+      <li>
+        <h3 data-tag="cards-0-title">Card 1</h3>
+        <p data-tag="cards-0-description">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+          quod.
+        </p>
+      </li>
+      <li>
+        <h3 data-tag="cards-1-title">Card 2</h3>
+        <p data-tag="cards-1-description">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+          quod.
+        </p>
+      </li>
+      <li>
+        <h3 data-tag="cards-2-title">Card 3</h3>
+        <p data-tag="cards-2-description">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+          quod.
+        </p>
+      </li>
+    </ul>
+  </body>
+</html>
