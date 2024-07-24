@@ -18,8 +18,10 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rimraf dist && ./scripts/build.sh dist",
-    "build:demo": "rimraf demo/src/dist && ./scripts/build.sh demo/src/dist",
+    "build:demo": "rimraf demo/src/dist && ./scripts/build.sh demo/src/dist tsc",
+    "build:demo-static": "rimraf demo/public/dist && ./scripts/build.sh demo/public/dist umd",
     "watch": "nodemon --exec \"npm run build:demo\"",
+    "watch:static": "nodemon --exec \"npm run build:demo-static\"",
     "test": "vitest run -u --config test/vitest.config.ts",
     "test:coverage": "vitest run -u --config test/vitest.config.ts --coverage",
     "test:watch": "vitest -u --config test/vitest.config.ts"

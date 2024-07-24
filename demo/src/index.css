@@ -758,10 +758,6 @@ video {
   animation: box-pulse 4s infinite ease-in-out;
 }
 
-.static{
-  position: static;
-}
-
 .fixed{
   position: fixed;
 }
