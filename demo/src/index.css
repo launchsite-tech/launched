@@ -827,6 +827,11 @@ video {
   margin-bottom: -2.5rem;
 }
 
+.-mx-10{
+  margin-left: -2.5rem;
+  margin-right: -2.5rem;
+}
+
 .-mb-10{
   margin-bottom: -2.5rem;
 }
@@ -1158,6 +1163,10 @@ video {
   padding-top: 2.5rem;
 }
 
+.pt-20{
+  padding-top: 5rem;
+}
+
 .text-center{
   text-align: center;
 }
@@ -1373,6 +1382,15 @@ video {
   .sm\:py-40{
     padding-top: 10rem;
     padding-bottom: 10rem;
+  }
+
+  .sm\:px-10{
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+
+  .sm\:pt-20{
+    padding-top: 5rem;
   }
 
   .sm\:text-5xl{
