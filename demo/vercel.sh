@@ -1,7 +1,6 @@
-#!/opt/homebrew/bin/bash
+#!/bin/bash
 
-# Define the directory to search in as the first argument to the script
-SEARCH_DIR=$1
+SEARCH_DIR="./src"
 
 # Find all .ts and .tsx files in the specified directory and its subdirectories
 find "$SEARCH_DIR" -type f \( -name "*.ts" -o -name "*.tsx" \) | while read -r file; do
@@ -12,3 +11,5 @@ find "$SEARCH_DIR" -type f \( -name "*.ts" -o -name "*.tsx" \) | while read -r f
 done
 
 echo "Replacement complete."
+
+npm run build
