@@ -34,45 +34,74 @@
 
 .r-body {
   > .tiptap.ProseMirror-focused {
-    @apply outline-none;
+    /* @apply outline-none; */
+    outline: none;
   }
 
   > * > *:not(:last-child) {
-    @apply mb-3;
+    /* @apply mb-3; */
+    margin-bottom: 0.75rem;
   }
 
   a {
-    @apply text-brand-dark underline;
+    /* @apply text-brand-dark underline; */
+    color: theme("colors.brand.dark");
+    text-decoration: underline;
   }
 
   ul {
-    @apply list-disc;
+    /* @apply list-disc; */
+    list-style-type: disc;
 
     li {
-      @apply ml-6;
+      /* @apply ml-6; */
+      margin-left: 1.5rem;
     }
   }
 }
 
 .r-menu {
-  @apply flex items-center gap-1 rounded-full border border-[#E5EAEE] bg-white px-2 py-1 text-[#4E5069] shadow-lg;
+  /* @apply flex items-center gap-1 rounded-full border border-[#E5EAEE] bg-white px-2 py-1 text-[#4E5069] shadow-lg; */
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  border: 1px solid #e5eaee;
+  background-color: white;
+  padding: 0.5rem 1rem;
+  color: #4e5069;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
   > button {
-    @apply grid h-8 w-8 place-items-center rounded-xl bg-transparent text-lg transition-colors;
+    /* @apply grid h-8 w-8 place-items-center rounded-xl bg-transparent text-lg transition-colors; */
+    display: grid;
+    height: 2rem;
+    width: 2rem;
+    place-items: center;
+    border-radius: 0.5rem;
+    background-color: transparent;
+    font-size: 1.125rem;
+    transition: color 300ms;
 
     &:not(:disabled):hover,
     &:not(:disabled):focus,
     &:not(:disabled).active {
-      @apply bg-gray-100;
+      /* @apply bg-gray-100; */
+      background-color: rgb(243, 244, 246);
     }
 
     &:disabled {
-      @apply cursor-not-allowed opacity-50;
+      /* @apply cursor-not-allowed opacity-50; */
+      cursor: not-allowed;
+      opacity: 0.5;
     }
   }
 
   > div {
-    @apply mx-1 h-8 border-r border-gray-100;
+    /* @apply mx-1 h-8 border-r border-gray-100; */
+    margin: 0 0.25rem;
+    height: 2rem;
+    border-right: 1px solid rgb(243, 244, 246);
   }
 
   .tabler-icon {
