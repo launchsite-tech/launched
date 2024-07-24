@@ -14,6 +14,9 @@ export default {
       "react-dom/client": "ReactDOM",
       "react/jsx-runtime": "jsxRuntime",
     },
+    outro: `
+      exports["Launched"] = exports.default;
+    `,
   },
   plugins: [
     typescript({
