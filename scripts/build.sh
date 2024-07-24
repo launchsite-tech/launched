@@ -13,7 +13,9 @@ if [ -d "$DIST" ]; then
 fi
 mkdir "$DIST"
 
+echo "----------------------------------------"
 echo "Copying files..."
+echo "----------------------------------------"
 
 shopt -s globstar
 for file in src/**/*.css; do
@@ -24,6 +26,14 @@ for file in src/**/*.css; do
     cp "$source" "$destination"
 done
 
-echo "Building project..."
+echo "----------------------------------------"
+echo "Generating UMD bundle..."
+echo "----------------------------------------"
 
-npx tsc --outDir "$DIST" && npx tsc-alias --outDir "$DIST" || { echo "Build failed"; exit 1; }
+npx rollup -c rollup.config.js || { echo "UMD build failed"; exit 1; }
+
+echo "----------------------------------------"
+echo "Building project..."
+echo "----------------------------------------"
+
+npx tsc --outDir "$DIST" && npx tsc-alias --outDir "$DIST" || { echo "TSC build failed"; exit 1; }
