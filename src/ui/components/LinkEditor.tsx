@@ -1,4 +1,3 @@
-import "../styles/linkEditor.css";
 import { InlineTextUI } from "./InlineEditor.js";
 import type { TagRenderer, TagRendererProps } from "../../core/renderer.js";
 import { useState, useEffect } from "react";

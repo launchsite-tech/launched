@@ -1,3 +1,9 @@
+@import url("styles/container.css");
+@import url("styles/imageEditor.css");
+@import url("styles/inlineEditor.css");
+@import url("styles/linkEditor.css");
+@import url("styles/toolbar.css");
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 
 :root {

@@ -10,6 +10,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
+    <!-- Include Launched styling -->
+    <link rel="stylesheet" href="/dist/ui/globals.css" />
+
     <!-- Include necessary dependencies -->
     <script
       crossorigin
@@ -76,6 +79,13 @@
     </style>
   </head>
   <body>
+    <img
+      data-tag="image"
+      data-target-attr="src"
+      src="https://picsum.photos/800/200"
+      alt=""
+      width="100%"
+    />
     <h1 data-tag="heading">This is a heading.</h1>
     <p data-tag="paragraph">
       Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ea quia
@@ -95,24 +105,24 @@
       sunt consequuntur impedit facere cum!
     </p>
     <h2>These are some cards.</h2>
-    <ul>
+    <ul data-tag="cards">
       <li>
-        <h3 data-tag="cards-0-title">Card 1</h3>
-        <p data-tag="cards-0-description">
+        <h3 data-key="title">Card 1</h3>
+        <p data-key="description">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
           quod.
         </p>
       </li>
       <li>
-        <h3 data-tag="cards-1-title">Card 2</h3>
-        <p data-tag="cards-1-description">
+        <h3 data-key="title">Card 2</h3>
+        <p data-key="description">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
           quod.
         </p>
       </li>
       <li>
-        <h3 data-tag="cards-2-title">Card 3</h3>
-        <p data-tag="cards-2-description">
+        <h3 data-key="title">Card 3</h3>
+        <p data-key="description">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
           quod.
         </p>

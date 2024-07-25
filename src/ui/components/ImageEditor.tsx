@@ -1,4 +1,3 @@
-import "../styles/imageEditor.css";
 import type { TagRenderer, TagRendererProps } from "../../core/renderer.js";
 import { HTMLTagsWithoutChildren } from "./helpers/elementGroups.js";
 
