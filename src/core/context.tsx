@@ -1,6 +1,8 @@
 import React from "react";
 import EventEmitter from "./events.js";
 import { useState, useEffect, createContext } from "react";
+import { hydrateRoot } from "react-dom/client";
+import HTMLToJSX from "./utils/HTMLToTSX.js";
 import Renderer from "./renderer.js";
 import Toolbar from "../ui/components/Toolbar.js";
 import error from "./utils/error.js";
@@ -43,6 +45,7 @@ export type Tag = {
 };
 
 export type Config = Partial<{
+  mode: "dynamic" | "static";
   locked: boolean;
   arraysMutable: boolean;
   determineVisibility: (context?: Launched) => boolean;
@@ -55,8 +58,7 @@ export type Config = Partial<{
 }>;
 
 const defaults: Config = {
-  locked: false,
-  arraysMutable: false,
+  mode: "dynamic",
   determineVisibility: () =>
     window &&
     new URLSearchParams(window.location.search).get("mode") === "edit",
@@ -229,6 +231,16 @@ export default class Launched {
         this.setCanUndo(true);
       }
     );
+
+    if (this.config.mode === "static") {
+      const content = document.body.innerHTML;
+      hydrateRoot(
+        document.body,
+        <this.Provider>
+          <HTMLToJSX value={content} />
+        </this.Provider>
+      );
+    }
   }
 
   private useTag = (<V extends TagSchemaValue = TagData["value"]>(

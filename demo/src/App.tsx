@@ -19,6 +19,7 @@ const config: Config = {
   },
   determineVisibility: () => true,
   locked: true,
+  save: (data) => console.log(data),
 };
 
 export default function App() {
