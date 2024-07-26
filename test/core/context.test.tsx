@@ -8,7 +8,11 @@ import {
   render,
   screen,
 } from "../.helpers/test-utils";
-import Launched, { Tag, LaunchedProvider } from "../../src/core/context";
+import Launched, {
+  Tag,
+  LaunchedProvider,
+  defaults,
+} from "../../src/core/context";
 
 var l: Launched;
 
@@ -16,13 +20,7 @@ describe("#Launched", () => {
   it("should create a new Launched instance", () => {
     l = new Launched();
 
-    // @ts-expect-error
-    expect(l.config).toMatchObject({
-      locked: false,
-      toolbarOptions: {
-        position: "center",
-      },
-    });
+    expect(l.config).toMatchObject(defaults);
 
     expect(l.tags).toEqual({});
     expect(l.Provider).toBeDefined();
@@ -37,8 +35,9 @@ describe("#Launched", () => {
       console.log(tags);
     }
 
-    function onImageUpload(file: File) {
+    async function onImageUpload(file: File) {
       console.log(file);
+      return "";
     }
 
     l = new Launched({
@@ -50,7 +49,6 @@ describe("#Launched", () => {
       },
     });
 
-    // @ts-expect-error
     expect(l.config).toMatchObject({
       locked: false,
       toolbarOptions: {
@@ -103,7 +101,6 @@ describe("#Launched.lock", () =>
   it("should lock the editor", () => {
     Launched.lock();
 
-    // @ts-expect-error
     expect(l.config.locked).toEqual(true);
   }));
 
@@ -111,7 +108,6 @@ describe("#Launched.unlock", () =>
   it("should unlock the editor", () => {
     Launched.unlock();
 
-    // @ts-expect-error
     expect(l.config.locked).toEqual(false);
   }));
 
@@ -119,12 +115,10 @@ describe("#Launched.toggle", () =>
   it("should toggle the editor", () => {
     Launched.toggle();
 
-    // @ts-expect-error
     expect(l.config.locked).toEqual(true);
 
     Launched.toggle();
 
-    // @ts-expect-error
     expect(l.config.locked).toEqual(false);
   }));
 
@@ -300,7 +294,6 @@ describe("#LaunchedProvider", () => {
 
     expect(screen.getByText("hi")).toBeInTheDocument();
     expect(Launched.instance).not.toEqual(l);
-    // @ts-expect-error
     expect(Launched.instance!.config.locked).toEqual(true);
 
     l = Launched.instance!;

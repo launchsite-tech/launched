@@ -57,7 +57,7 @@ export type Config = Partial<{
   }>;
 }>;
 
-const defaults: Config = {
+export const defaults: Config = {
   mode: "dynamic",
   determineVisibility: () =>
     window &&
@@ -83,7 +83,6 @@ interface LaunchedContextValue {
 }
 
 export default class Launched {
-  private readonly config: Config;
   private renderer = new Renderer();
   private addTag: (key: string, tag: Omit<Tag, "setData">) => void = () => {};
   private originalTags = new Map<string, TagData["value"]>();
@@ -96,6 +95,7 @@ export default class Launched {
     prevValue: TagData["value"];
   }[] = [];
 
+  public readonly config: Config;
   public tags: Record<string, Tag> = {} as Record<string, Tag>;
   public uploadImage?: (file: File) => Promise<string | undefined>;
   public Provider: React.FC<{ children: React.ReactNode }>;
