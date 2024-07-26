@@ -30,7 +30,10 @@
     <script type="module" defer>
       const { Launched } = launched;
 
-      const l = new Launched({ mode: "static" });
+      const l = new Launched({
+        mode: "static",
+        save: (data) => console.log(data),
+      });
     </script>
     <style>
       *,
