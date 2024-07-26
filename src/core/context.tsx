@@ -1,8 +1,8 @@
 import React from "react";
 import EventEmitter from "./events.js";
-import { useState, useEffect, createContext } from "react";
+import { memo, useRef, useState, useEffect, createContext } from "react";
+import { useGenerateStaticTags } from "./hooks.js";
 import { hydrateRoot } from "react-dom/client";
-import HTMLToJSX from "./utils/HTMLToTSX.js";
 import Renderer from "./renderer.js";
 import Toolbar from "../ui/components/Toolbar.js";
 import error from "./utils/error.js";
@@ -234,10 +234,24 @@ export default class Launched {
 
     if (this.config.mode === "static") {
       const content = document.body.innerHTML;
+
+      // ! Ugly hack to avoid generating another root component
+      const Raw = memo(({ value }: { value: string }) => {
+        const ref = useRef<HTMLDivElement>(null);
+
+        useGenerateStaticTags(this.config.mode !== "static");
+
+        useEffect(() => {
+          ref.current!.outerHTML = value;
+        }, []);
+
+        return <div ref={ref} />;
+      });
+
       hydrateRoot(
         document.body,
         <this.Provider>
-          <HTMLToJSX value={content} />
+          <Raw value={content} />
         </this.Provider>
       );
     }

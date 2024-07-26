@@ -4,6 +4,12 @@ import error from "./utils/error.js";
 import type { TagData, TagSchemaValue } from "../core/context.js";
 import type { TagRenderOptions } from "../core/renderer.js";
 
+type TagInfo = {
+  type: string;
+  value: TagSchemaValue;
+  el: HTMLElement;
+};
+
 export function useTag<V extends TagSchemaValue = TagData["value"]>(
   key: string,
   value?: V,
@@ -14,4 +20,87 @@ export function useTag<V extends TagSchemaValue = TagData["value"]>(
   const { useTag } = useContext(Launched.instance.context);
 
   return useTag(key, value, options);
+}
+
+export function useGenerateStaticTags(skip: boolean) {
+  if (skip) return;
+  if (!Launched.instance) error("Launched not initialized.");
+
+  const taggedElements = Object.values(
+    document.querySelectorAll("[data-tag]")
+  ) as HTMLElement[];
+
+  const getElType = (el: HTMLElement, fallback?: string) =>
+    el.getAttribute("data-type") ?? fallback ?? "string";
+
+  const getTagInfo = (el: HTMLElement) => {
+    const type = getElType(el);
+    const targetAttribute = el.getAttribute("data-target-attr") ?? "innerHTML";
+    const value =
+      el.getAttribute(targetAttribute) ??
+      ((el as HTMLElement)[targetAttribute as keyof HTMLElement] as string) ??
+      "";
+
+    return { type, value, el };
+  };
+
+  const getObjectTagInfo = (el: HTMLElement) => {
+    const keys = el.querySelectorAll("[data-key]");
+    const obj: Record<string, TagInfo> = {};
+
+    keys.forEach((key) => {
+      const keyName = key.getAttribute("data-key")!;
+
+      obj[keyName] = getTagInfo(key as HTMLElement);
+    });
+
+    return obj;
+  };
+
+  const tagInfo: (TagInfo & { tag: string })[] = taggedElements.map((el) => {
+    const tag = el.getAttribute("data-tag")!;
+
+    const info = (t: any) => ({
+      ...t,
+      tag,
+    });
+
+    const tagKeys = Object.values(el.querySelectorAll("[data-key]"));
+
+    if (tagKeys.length) {
+      if (
+        tagKeys.every(
+          (c) =>
+            el.querySelectorAll(`[data-key="${c.getAttribute("data-key")}"]`)
+              .length === 1
+        )
+      ) {
+        return info({
+          value: getObjectTagInfo(el),
+          type: getElType(el, "object"),
+          el,
+        });
+      } else {
+        const numChildren = el.children.length;
+
+        if (tagKeys.length % numChildren !== 0)
+          error("All children of arrays must have the same keys.");
+
+        const value = Object.values(el.children).map((el) =>
+          getObjectTagInfo(el as HTMLElement)
+        );
+
+        return info({
+          type: getElType(el, "object"),
+          value,
+          el,
+        });
+      }
+    } else return info(getTagInfo(el));
+  });
+
+  tagInfo.forEach(({ tag, type, value, el }) => {
+    const [, ref] = useTag(tag, value, { type });
+    ref(el);
+  });
 }
