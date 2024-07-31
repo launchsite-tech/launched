@@ -20,7 +20,6 @@ export default function Toolbar({
   save: () => void;
   revert: () => void;
 }) {
-  // @ts-expect-error
   const [disabled, setDisabled] = useState(Launched.instance!.config.locked);
 
   return (
