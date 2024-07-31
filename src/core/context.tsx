@@ -92,7 +92,6 @@ export default class Launched {
   private history: {
     key: string;
     value: TagData["value"];
-    prevValue: TagData["value"];
   }[] = [];
 
   public readonly config: Config;
@@ -217,20 +216,17 @@ export default class Launched {
       }
     );
 
-    Launched.events.on(
-      "tag:change",
-      (key: string, value: TagData["value"], prevValue: TagData["value"]) => {
-        if (this.version !== this.history.length - 1) {
-          this.history = this.history.slice(0, this.version + 1);
-          this.setCanRedo(false);
-        }
-
-        this.version++;
-        this.history.push({ key: String(key), value, prevValue });
-
-        this.setCanUndo(true);
+    Launched.events.on("tag:change", (key: string, value: TagData["value"]) => {
+      if (this.version !== this.history.length - 1) {
+        this.history = this.history.slice(0, this.version + 1);
+        this.setCanRedo(false);
       }
-    );
+
+      this.version++;
+      this.history.push({ key: String(key), value });
+
+      this.setCanUndo(true);
+    });
 
     if (this.config.mode === "static") {
       const content = document.body.innerHTML;
@@ -386,11 +382,11 @@ export default class Launched {
       return;
     }
 
-    const { key, prevValue } = this.history[this.version--]!;
+    const { key, value } = this.history[--this.version]!;
 
-    Launched.events.emit("data:undo", prevValue, this.tags[key]!.data.value);
+    Launched.events.emit("data:undo", value, this.tags[key]!.data.value);
 
-    this.tags[key]!.setData(prevValue, { silent: true });
+    this.tags[key]!.setData(value, { silent: true });
 
     this.setCanRedo(true);
   }
