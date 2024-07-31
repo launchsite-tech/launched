@@ -388,6 +388,8 @@ export default class Launched {
 
     const { key, prevValue } = this.history[this.version--]!;
 
+    Launched.events.emit("data:undo", prevValue, this.tags[key]!.data.value);
+
     this.tags[key]!.setData(prevValue, { silent: true });
 
     this.setCanRedo(true);
@@ -403,6 +405,8 @@ export default class Launched {
 
     const { key, value } = this.history[++this.version]!;
 
+    Launched.events.emit("data:redo", value, this.tags[key]!.data.value);
+
     this.tags[key]!.setData(value, { silent: true });
 
     this.setCanUndo(true);
@@ -417,6 +421,8 @@ export default class Launched {
 
     this.setCanUndo(false);
     this.setCanRedo(false);
+
+    Launched.events.emit("data:restore", this.originalTags, this.tags);
 
     Array.from(this.originalTags.entries()).map(([key, value]) => {
       if (this.tags[key]?.data.value !== value) {
