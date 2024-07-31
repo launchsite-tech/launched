@@ -2,7 +2,7 @@ import React from "react";
 import EventEmitter from "./events.js";
 import { memo, useRef, useState, useEffect, createContext } from "react";
 import { useGenerateStaticTags } from "./hooks.js";
-import { hydrateRoot } from "react-dom/client";
+import { createRoot } from "react-dom/client";
 import Renderer from "./renderer.js";
 import Toolbar from "../ui/components/Toolbar.js";
 import error from "./utils/error.js";
@@ -250,8 +250,9 @@ export default class Launched {
         return <div ref={ref} />;
       });
 
-      hydrateRoot(
-        document.body,
+      const root = createRoot(document.body);
+
+      root.render(
         <this.Provider>
           <Raw value={content} />
         </this.Provider>
