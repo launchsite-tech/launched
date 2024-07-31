@@ -238,12 +238,14 @@ export default class Launched {
       // ! Ugly hack to avoid generating another root component
       const Raw = memo(({ value }: { value: string }) => {
         const ref = useRef<HTMLDivElement>(null);
-
-        useGenerateStaticTags(this.config.mode !== "static");
+        const [, set] = useState(0);
 
         useEffect(() => {
           ref.current!.outerHTML = value;
+          set(1);
         }, []);
+
+        useGenerateStaticTags(this.config.mode !== "static" || !ref.current);
 
         return <div ref={ref} />;
       });

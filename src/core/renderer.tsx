@@ -37,6 +37,10 @@ export type TagRenderer<V> = {
   onClose?: (state: TagRendererFunctionState) => void;
   onSelect?: (state: TagRendererFunctionState) => void;
   onDataUpdate?: (state: TagRendererFunctionState & { data: V }) => void;
+  getStaticProperties?: (el: HTMLElement) => V;
+  updateStaticProperties?: (
+    state: Required<TagRendererFunctionState> & { data: V }
+  ) => void;
 };
 
 export default class Renderer {
@@ -269,10 +273,15 @@ function TagUI({
   function updateData(data: any) {
     tag.setData(data);
 
-    renderer.onDataUpdate?.({
+    const state = {
       element: tag.el.current ?? undefined,
       data,
-    });
+    };
+
+    renderer.onDataUpdate?.(state);
+
+    if (Launched.instance!.config.mode === "static" && state.element)
+      renderer.updateStaticProperties?.(state as any);
 
     // @ts-expect-error
     tag.el.current = null;
@@ -342,8 +351,8 @@ function TagUI({
         element={tag.el.current}
         value={tag.data.value}
         selected={selected}
-        updateData={(v) => updateData(v)}
-        close={() => close()}
+        updateData={updateData}
+        close={close}
         id={id}
         context={Launched.instance!}
       />

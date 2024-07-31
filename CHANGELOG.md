@@ -1,3 +1,13 @@
+# v0.2.0-alpha.1
+
+## Features
+
+- Added UMD bundle
+
+## Bug fixes
+
+- Fixed rich text styling on demo
+
 # v0.1.1-alpha.1 (7/23/24)
 
 ## Breaking changes

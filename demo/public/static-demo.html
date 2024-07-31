@@ -16,7 +16,7 @@
     <!-- Include necessary dependencies -->
     <script
       crossorigin
-      src="//cdn.jsdelivr.net/combine/npm/react@18.3.1/umd/react.production.min.js,npm/react-dom@18.3.1/umd/react-dom.production.min.js"
+      src="https://cdn.jsdelivr.net/combine/npm/react@18.3.1/umd/react.production.min.js,npm/react-dom@18.3.1/umd/react-dom.production.min.js"
     ></script>
     <script
       crossorigin
@@ -82,14 +82,6 @@
     </style>
   </head>
   <body>
-    <img
-      data-tag="image"
-      data-target-attr="src"
-      data-type="image"
-      src="https://picsum.photos/800/200"
-      alt=""
-      width="100%"
-    />
     <h1 data-tag="heading">This is a heading.</h1>
     <p data-tag="paragraph">
       Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ea quia
@@ -134,14 +126,9 @@
     </ul>
     <section data-tag="section">
       <h2 data-key="heading">This is a section.</h2>
-      <img
-        data-key="image"
-        data-target-attr="src"
-        data-type="image"
-        src="https://picsum.photos/800/200"
-        alt=""
-        width="100%"
-      />
+      <div data-key="image" data-type="image">
+        <img src="https://picsum.photos/800/200" alt="" width="100%" />
+      </div>
     </section>
   </body>
 </html>

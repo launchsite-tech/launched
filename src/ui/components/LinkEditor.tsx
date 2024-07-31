@@ -74,7 +74,15 @@ export const LinkRenderer: TagRenderer<Link> = {
   component: (props) => {
     return <LinkUI {...props} />;
   },
-  parentValidator: (element) => {
-    return element.nodeName === "A";
+  parentValidator: (el) => {
+    return el.nodeName === "A";
+  },
+  getStaticProperties: (el) => ({
+    text: el.textContent || "",
+    href: el.getAttribute("href") || "",
+  }),
+  updateStaticProperties: ({ element, data }) => {
+    element.textContent = data.text;
+    element.setAttribute("href", data.href);
   },
 };

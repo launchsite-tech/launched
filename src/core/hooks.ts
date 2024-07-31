@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import Launched from "./context.js";
 import error from "./utils/error.js";
+import Renderer from "../core/renderer.js";
 import type { TagData, TagSchemaValue } from "../core/context.js";
 import type { TagRenderOptions } from "../core/renderer.js";
 
@@ -35,11 +36,16 @@ export function useGenerateStaticTags(skip: boolean) {
 
   const getTagInfo = (el: HTMLElement) => {
     const type = getElType(el);
-    const targetAttribute = el.getAttribute("data-target-attr") ?? "innerHTML";
-    const value =
-      el.getAttribute(targetAttribute) ??
-      ((el as HTMLElement)[targetAttribute as keyof HTMLElement] as string) ??
-      "";
+    const renderer = Renderer.formats.get(type);
+
+    if (!renderer) error(`Invalid tag type "${type}".`);
+    else if (!renderer.getStaticProperties)
+      error(`Renderer "${type}" has no configuration for static properties.`);
+
+    const value = renderer.getStaticProperties(el);
+
+    if (value == null)
+      error(`No value found for tag "${el.getAttribute("data-tag")}".`);
 
     return { type, value, el };
   };
