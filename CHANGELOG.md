@@ -2,11 +2,23 @@
 
 ## Features
 
+- Added static renderer! (🥳)
 - Added UMD bundle
+- Made Launched.config public
+- Updated error messages and testing
+- Added history events
+  - `data:undo`: changes are undone => newValue, prevValue
+  - `data:redo`: changes are redone => newValue, prevValue
+  - `data:restore`: changes are reset => newTags, oldTags
+
+## Breaking changes
+
+- Added explicit event types
 
 ## Bug fixes
 
 - Fixed rich text styling on demo
+- Moved CSS imports to a single file
 
 # v0.1.1-alpha.1 (7/23/24)
 

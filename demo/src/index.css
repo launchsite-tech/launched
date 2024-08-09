@@ -1013,6 +1013,10 @@ video {
   background-color: rgb(0 0 0 / 0.1);
 }
 
+.bg-black\/50{
+  background-color: rgb(0 0 0 / 0.5);
+}
+
 .bg-brand-light\/10{
   background-color: rgb(255 149 36 / 0.1);
 }
@@ -1025,10 +1029,6 @@ video {
 .bg-white{
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-
-.bg-black\/50{
-  background-color: rgb(0 0 0 / 0.5);
 }
 
 .object-cover{
@@ -1083,12 +1083,12 @@ video {
   padding-right: 1.25rem;
 }
 
-.pt-10{
-  padding-top: 2.5rem;
-}
-
 .pt-0{
   padding-top: 0px;
+}
+
+.pt-10{
+  padding-top: 2.5rem;
 }
 
 .text-center{
