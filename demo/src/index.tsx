@@ -1,4 +1,5 @@
 import "./index.css";
+import "./components.css";
 
 import ReactDOM from "react-dom/client";
 

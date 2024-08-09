@@ -19,7 +19,8 @@ const config: Config = {
   },
   determineVisibility: () => true,
   locked: true,
-  save: (data) => console.log(data),
+  save: () =>
+    document.getElementById("dataview")?.scrollIntoView({ behavior: "smooth" }),
 };
 
 export default function App() {
