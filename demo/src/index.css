@@ -960,6 +960,10 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
+.bg-black\/50{
+  background-color: rgb(0 0 0 / 0.5);
+}
+
 .object-cover{
   object-fit: cover;
 }
@@ -1016,8 +1020,16 @@ video {
   padding-top: 2.5rem;
 }
 
+.pt-0{
+  padding-top: 0px;
+}
+
 .text-center{
   text-align: center;
+}
+
+.font-mono{
+  font-family: JetBrains Mono, monospace;
 }
 
 .text-3xl{
