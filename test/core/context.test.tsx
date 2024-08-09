@@ -135,7 +135,6 @@ describe("#History", () => {
     expect(l.history[0]).toEqual({
       key: "foo",
       value: "baz",
-      prevValue: "bar",
     });
     // @ts-expect-error
     expect(l.version).toEqual(version + 1);
@@ -172,7 +171,6 @@ describe("#History", () => {
     expect(l.history[1]).toEqual({
       key: "foo",
       value: "qux",
-      prevValue: "baz",
     });
 
     l.undo();
