@@ -82,7 +82,9 @@ export const LinkRenderer: TagRenderer<Link> = {
     href: el.getAttribute("href") || "",
   }),
   updateStaticProperties: ({ element, data }) => {
-    element.textContent = data.text;
+    const textNode = element.firstChild;
+    if (textNode) textNode.textContent = data.text;
+
     element.setAttribute("href", data.href);
   },
 };

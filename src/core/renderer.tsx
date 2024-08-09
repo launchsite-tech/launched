@@ -63,8 +63,7 @@ export default class Renderer {
     options?: TagRenderOptions,
     dry?: boolean
   ): void {
-    if (!parentTag || !parentTag.el.current)
-      return console.warn(`Tag "${id}" was never bound to an element.`);
+    if (!parentTag || !parentTag.el.current) return;
 
     const renderTag = (
       parentTag: Tag,
@@ -72,7 +71,7 @@ export default class Renderer {
       childId: string,
       index: number
     ): void => {
-      if (!tag.el.current) return;
+      if (!tag.el.current) return console.error("Element is null.");
 
       if (Array.isArray(tag.data.value)) {
         tag.data.value.forEach((t, i) => {
@@ -273,16 +272,6 @@ function TagUI({
   function updateData(data: any) {
     tag.setData(data);
 
-    const state = {
-      element: tag.el.current ?? undefined,
-      data,
-    };
-
-    renderer.onDataUpdate?.(state);
-
-    if (Launched.instance!.config.mode === "static" && state.element)
-      renderer.updateStaticProperties?.(state as any);
-
     // @ts-expect-error
     tag.el.current = null;
   }
@@ -320,13 +309,30 @@ function TagUI({
     }
 
     Launched.events.emit("tag:mount", id, tag);
+
     Launched.events.on("tag:select", onTagSelect);
 
     return () => {
       Launched.events.emit("tag:unmount", id, tag);
+
       Launched.events.off("tag:select", onTagSelect);
     };
   }, []);
+
+  useEffect(() => {
+    const state = {
+      element: tag.el.current ?? undefined,
+      data: tag.data.value,
+    };
+
+    renderer.onDataUpdate?.(state);
+
+    if (Launched.instance!.config.mode === "static" && state.element) {
+      const changed =
+        renderer.getStaticProperties?.(state.element) !== state.data;
+      if (changed) renderer.updateStaticProperties?.(state as any);
+    }
+  }, [tag.data.value]);
 
   function select() {
     if (selected) return;

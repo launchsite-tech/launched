@@ -61,6 +61,10 @@ export const InlineTextRenderer: TagRenderer<string> = {
   },
   getStaticProperties: (el) => el.textContent || "",
   updateStaticProperties: ({ element, data }) => {
-    element.textContent = data;
+    const textNode = element.firstChild;
+    if (!textNode)
+      return console.warn("No text node found in element", element);
+
+    textNode.textContent = data;
   },
 };
