@@ -13,9 +13,6 @@ Launched is a tool to make website content editable to clients with no codebase 
 To get started, check out [https://launched.tech](https://launched.tech) for documentation, guides, and demos.
 
 > [!NOTE]
-> Your site needs to be made with react for Launched to work. Learn react [here](https://react.dev).
-
-> [!NOTE]
 > Launched is still in development. Be careful when using it in production.
 
 ## Download
