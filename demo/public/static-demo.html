@@ -11,7 +11,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <!-- Include Launched styling -->
-    <link rel="stylesheet" href="/dist/ui/globals.css" />
+    <!-- <link rel="stylesheet" href="/dist/ui/globals.css" /> -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/launched@latest/dist/ui/globals.css"
+    />
 
     <!-- Include necessary dependencies -->
     <script
@@ -24,7 +28,11 @@
     ></script>
 
     <!-- Include the Launched library -->
-    <script type="module" src="/dist/bundle.js"></script>
+    <!-- <script type="module" src="/dist/bundle.js"></script> -->
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/launched@latest/dist/bundle.js"
+    ></script>
 
     <!-- Initialize Launched -->
     <script type="module" defer>
@@ -33,6 +41,7 @@
       const l = new Launched({
         mode: "static",
         save: (data) => console.log(data),
+        determineVisibility: () => true,
       });
     </script>
     <style>

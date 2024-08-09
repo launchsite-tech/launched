@@ -1,4 +1,10 @@
-# v0.2.0-alpha.1
+# v0.2.0-alpha.2 (8/9/24)
+
+## Bug fixes
+
+- Properly bundle css
+
+# v0.2.0-alpha.1 (8/9/24)
 
 ## Features
 
