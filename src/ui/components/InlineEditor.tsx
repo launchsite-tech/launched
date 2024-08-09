@@ -1,4 +1,3 @@
-import "../styles/inlineEditor.css";
 import { useRef, useState, useEffect } from "react";
 import type { TagRenderer, TagRendererProps } from "../../core/renderer.js";
 import { HTMLTextTags } from "./helpers/elementGroups.js";
@@ -57,7 +56,15 @@ export const InlineTextRenderer: TagRenderer<string> = {
   component: (props) => {
     return <InlineTextUI {...props} />;
   },
-  parentValidator: (element) => {
-    return HTMLTextTags.includes(element.nodeName);
+  parentValidator: (el) => {
+    return HTMLTextTags.includes(el.nodeName);
+  },
+  getStaticProperties: (el) => el.textContent || "",
+  updateStaticProperties: ({ element, data }) => {
+    const textNode = element.firstChild;
+    if (!textNode)
+      return console.warn("No text node found in element", element);
+
+    textNode.textContent = data;
   },
 };

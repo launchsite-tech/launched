@@ -1,6 +1,8 @@
 import React from "react";
 import EventEmitter from "./events.js";
-import { useState, useEffect, createContext } from "react";
+import { memo, useRef, useState, useEffect, createContext } from "react";
+import { useGenerateStaticTags } from "./hooks.js";
+import { createRoot } from "react-dom/client";
 import Renderer from "./renderer.js";
 import Toolbar from "../ui/components/Toolbar.js";
 import error from "./utils/error.js";
@@ -43,6 +45,7 @@ export type Tag = {
 };
 
 export type Config = Partial<{
+  mode: "dynamic" | "static";
   locked: boolean;
   arraysMutable: boolean;
   determineVisibility: (context?: Launched) => boolean;
@@ -54,9 +57,8 @@ export type Config = Partial<{
   }>;
 }>;
 
-const defaults: Config = {
-  locked: false,
-  arraysMutable: false,
+export const defaults: Config = {
+  mode: "dynamic",
   determineVisibility: () =>
     window &&
     new URLSearchParams(window.location.search).get("mode") === "edit",
@@ -81,7 +83,6 @@ interface LaunchedContextValue {
 }
 
 export default class Launched {
-  private readonly config: Config;
   private renderer = new Renderer();
   private addTag: (key: string, tag: Omit<Tag, "setData">) => void = () => {};
   private originalTags = new Map<string, TagData["value"]>();
@@ -91,9 +92,9 @@ export default class Launched {
   private history: {
     key: string;
     value: TagData["value"];
-    prevValue: TagData["value"];
   }[] = [];
 
+  public readonly config: Config;
   public tags: Record<string, Tag> = {} as Record<string, Tag>;
   public uploadImage?: (file: File) => Promise<string | undefined>;
   public Provider: React.FC<{ children: React.ReactNode }>;
@@ -215,20 +216,44 @@ export default class Launched {
       }
     );
 
-    Launched.events.on(
-      "tag:change",
-      (key: string, value: TagData["value"], prevValue: TagData["value"]) => {
-        if (this.version !== this.history.length - 1) {
-          this.history = this.history.slice(0, this.version + 1);
-          this.setCanRedo(false);
-        }
-
-        this.version++;
-        this.history.push({ key: String(key), value, prevValue });
-
-        this.setCanUndo(true);
+    Launched.events.on("tag:change", (key: string, value: TagData["value"]) => {
+      if (this.version !== this.history.length - 1) {
+        this.history = this.history.slice(0, this.version + 1);
+        this.setCanRedo(false);
       }
-    );
+
+      this.version++;
+      this.history.push({ key: String(key), value });
+
+      this.setCanUndo(true);
+    });
+
+    if (this.config.mode === "static") {
+      const content = document.body.innerHTML;
+
+      // ! Ugly hack to avoid generating another root component
+      const Raw = memo(({ value }: { value: string }) => {
+        const ref = useRef<HTMLDivElement>(null);
+        const [, set] = useState(0);
+
+        useEffect(() => {
+          ref.current!.outerHTML = value;
+          set(1);
+        }, []);
+
+        useGenerateStaticTags(this.config.mode !== "static" || !ref.current);
+
+        return <div ref={ref} />;
+      });
+
+      const root = createRoot(document.body);
+
+      root.render(
+        <this.Provider>
+          <Raw value={content} />
+        </this.Provider>
+      );
+    }
   }
 
   private useTag = (<V extends TagSchemaValue = TagData["value"]>(
@@ -357,9 +382,11 @@ export default class Launched {
       return;
     }
 
-    const { key, prevValue } = this.history[this.version--]!;
+    const { key, value } = this.history[--this.version]!;
 
-    this.tags[key]!.setData(prevValue, { silent: true });
+    Launched.events.emit("data:undo", value, this.tags[key]!.data.value);
+
+    this.tags[key]!.setData(value, { silent: true });
 
     this.setCanRedo(true);
   }
@@ -373,6 +400,8 @@ export default class Launched {
       return;
 
     const { key, value } = this.history[++this.version]!;
+
+    Launched.events.emit("data:redo", value, this.tags[key]!.data.value);
 
     this.tags[key]!.setData(value, { silent: true });
 
@@ -388,6 +417,8 @@ export default class Launched {
 
     this.setCanUndo(false);
     this.setCanRedo(false);
+
+    Launched.events.emit("data:restore", this.originalTags, this.tags);
 
     Array.from(this.originalTags.entries()).map(([key, value]) => {
       if (this.tags[key]?.data.value !== value) {

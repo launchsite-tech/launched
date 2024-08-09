@@ -1,4 +1,3 @@
-import "../styles/imageEditor.css";
 import type { TagRenderer, TagRendererProps } from "../../core/renderer.js";
 import { HTMLTagsWithoutChildren } from "./helpers/elementGroups.js";
 
@@ -53,8 +52,8 @@ export const ImageRenderer: TagRenderer<string> = {
   component: (props) => {
     return <ImageUI {...props} />;
   },
-  parentValidator: (element) => {
-    const invalid = HTMLTagsWithoutChildren.includes(element.tagName);
+  parentValidator: (el) => {
+    const invalid = HTMLTagsWithoutChildren.includes(el.tagName);
 
     if (invalid)
       console.warn(
@@ -62,5 +61,25 @@ export const ImageRenderer: TagRenderer<string> = {
       );
 
     return !invalid;
+  },
+  getStaticProperties: (el) => {
+    const image = el.querySelector("img");
+
+    if (!image) {
+      console.warn("An image tag must contain an IMG element as a child.");
+      return "";
+    }
+
+    return image.src;
+  },
+  updateStaticProperties: ({ element, data }) => {
+    const image = element.querySelector("img");
+
+    if (!image) {
+      console.warn("An image tag must contain an IMG element as a child.");
+      return;
+    }
+
+    image.src = data;
   },
 };

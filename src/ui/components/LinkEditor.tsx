@@ -1,4 +1,3 @@
-import "../styles/linkEditor.css";
 import { InlineTextUI } from "./InlineEditor.js";
 import type { TagRenderer, TagRendererProps } from "../../core/renderer.js";
 import { useState, useEffect } from "react";
@@ -75,7 +74,17 @@ export const LinkRenderer: TagRenderer<Link> = {
   component: (props) => {
     return <LinkUI {...props} />;
   },
-  parentValidator: (element) => {
-    return element.nodeName === "A";
+  parentValidator: (el) => {
+    return el.nodeName === "A";
+  },
+  getStaticProperties: (el) => ({
+    text: el.textContent || "",
+    href: el.getAttribute("href") || "",
+  }),
+  updateStaticProperties: ({ element, data }) => {
+    const textNode = element.firstChild;
+    if (textNode) textNode.textContent = data.text;
+
+    element.setAttribute("href", data.href);
   },
 };

@@ -10,25 +10,31 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
+    <!-- Include Launched styling -->
+    <link rel="stylesheet" href="/dist/ui/globals.css" />
+
+    <!-- Include necessary dependencies -->
+    <script
+      crossorigin
+      src="https://cdn.jsdelivr.net/combine/npm/react@18.3.1/umd/react.production.min.js,npm/react-dom@18.3.1/umd/react-dom.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://update.greasyfork.org/scripts/499179/1402245/react_jsx-runtime-umd.js"
+    ></script>
+
     <!-- Include the Launched library -->
     <script type="module" src="/dist/bundle.js"></script>
-    <!-- Include necessary React and ReactDOM libraries -->
-    <script
-      crossorigin
-      src="https://cdn.jsdelivr.net/npm/react@17/umd/react.production.min.js"
-    ></script>
-    <script
-      crossorigin
-      src="https://cdn.jsdelivr.net/npm/react-dom@17/umd/react-dom.production.min.js"
-    ></script>
+
     <!-- Initialize Launched -->
     <script type="module" defer>
       const { Launched } = launched;
 
-      const l = new Launched();
-      console.log(l);
+      const l = new Launched({
+        mode: "static",
+        save: (data) => console.log(data),
+      });
     </script>
-
     <style>
       *,
       *::before,
@@ -37,6 +43,18 @@
         padding: 0;
         box-sizing: border-box;
         list-style: none;
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Oxygen,
+          Ubuntu,
+          Cantarell,
+          "Open Sans",
+          "Helvetica Neue",
+          sans-serif;
       }
 
       body {
@@ -55,6 +73,10 @@
           padding: 12px;
           border: 1px solid #000;
           border-radius: 4px;
+
+          > :nth-child(2) {
+            margin-top: 6px;
+          }
         }
       }
     </style>
@@ -79,28 +101,35 @@
       sunt consequuntur impedit facere cum!
     </p>
     <h2>These are some cards.</h2>
-    <ul>
+    <ul data-tag="cards">
       <li>
-        <h3 data-tag="cards-0-title">Card 1</h3>
-        <p data-tag="cards-0-description">
+        <h3 data-key="title">Card 1</h3>
+        <p data-key="description">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
           quod.
         </p>
       </li>
       <li>
-        <h3 data-tag="cards-1-title">Card 2</h3>
-        <p data-tag="cards-1-description">
+        <h3 data-key="title">Card 2</h3>
+        <p data-key="description">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
           quod.
         </p>
       </li>
       <li>
-        <h3 data-tag="cards-2-title">Card 3</h3>
-        <p data-tag="cards-2-description">
+        <h3 data-key="title">Card 3</h3>
+        <p data-key="description">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
           quod.
         </p>
       </li>
     </ul>
+    <section data-tag="section">
+      <h2 data-key="heading">This is a section.</h2>
+      <div data-key="image" data-type="image">
+        <img src="https://picsum.photos/800/200" alt="" width="100%" />
+      </div>
+    </section>
+    <a href="#" data-tag="link" data-type="link">Go back</a>
   </body>
 </html>

@@ -2,6 +2,7 @@
   position: fixed;
   top: 0.25rem;
   z-index: 999;
+  font-familiy: var(--font);
 }
 
 .Launched__toolbar[data-position="right"] {
