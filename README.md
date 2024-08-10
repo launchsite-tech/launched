@@ -25,14 +25,31 @@ npm install launched
 
 ```html
 <!-- Include the Launched library -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/launched/dist/bundle.js"></script>
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/npm/launched@latest/dist/bundle.js"
+></script>
 
-<!-- Include React and ReactDOM dependencies -->
-<script crossorigin src="https://cdn.jsdelivr.net/npm/react@17/umd/react.production.min.js"></script>
-<script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@17/umd/react-dom.production.min.js"></script>
+<!-- Include necessary dependencies -->
+<script
+  crossorigin
+  src="https://cdn.jsdelivr.net/combine/npm/react@18.3.1/umd/react.production.min.js,npm/react-dom@18.3.1/umd/react-dom.production.min.js"
+></script>
+<script
+  crossorigin
+  src="https://update.greasyfork.org/scripts/499179/1402245/react_jsx-runtime-umd.js"
+></script>
+
+<!-- Include stylesheets -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/launched@latest/dist/ui/globals.css"
+/>
 ```
 
 ## Getting started
+
+### React
 
 ```jsx
 // src/index.jsx
@@ -66,6 +83,29 @@ export default function App() {
     </div>
   )
 }
+```
+
+### Static HTML
+
+```html
+<!-- index.html -->
+
+<!-- Initialize Launched -->
+<script type="module" defer>
+  const { Launched } = launched;
+
+  const l = new Launched({
+    mode: "static",
+    save: (data) => console.log(data),
+    determineVisibility: () => true,
+  });
+</script>
+
+...
+
+<body>
+  <h1 data-tag="title">Hello world!</h1>
+</body>
 ```
 
 <!--
