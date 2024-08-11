@@ -1,0 +1,127 @@
+---
+description: Start using Launched in under 5 minutes.
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import CodeBlock from "@theme/CodeBlock";
+
+# Quickstart
+
+Start using Launched in under 5 minutes.
+
+## Installation
+
+<Tabs
+  groupId="mode"
+  defaultValue="react"
+>
+<TabItem label="React" value="react">
+    
+```bash
+npm install launched
+```
+
+</TabItem>
+<TabItem label="Static HTML" value="static">
+  
+```html
+<!-- Include Launched styling -->
+<link rel="stylesheet" href="/dist/ui/globals.css" />
+
+<!-- Include necessary dependencies -->
+
+<script
+  crossorigin
+  src="https://cdn.jsdelivr.net/combine/npm/react@18.3.1/umd/react.production.min.js,npm/react-dom@18.3.1/umd/react-dom.production.min.js"
+></script>
+
+<script
+  crossorigin
+  src="https://update.greasyfork.org/scripts/499179/1402245/react_jsx-runtime-umd.js"
+></script>
+
+<!-- Include the Launched library -->
+
+<script type="module" src="/dist/bundle.js"></script>
+
+````
+
+</TabItem>
+</Tabs>
+
+## Usage
+
+<Tabs groupId="mode">
+<TabItem label="React" value="react">
+
+Wrap your app with the `LaunchedProvider` to enable Launched component rendering:
+
+```jsx title="src/index.jsx"
+/* Import the Launched provider */
+import { LaunchedProvider } from "launched";
+
+...
+
+/* Add the provider to your app */
+root.render(
+  <LaunchedProvider>
+    <App />
+  </LaunchedProvider>
+);
+```
+
+Import the premade Launched components to start managing your content:
+
+```jsx title="src/app.jsx"
+/* Import the Launched Text element */
+import { Text } from "launched/components";
+
+...
+
+export default function App() {
+  return (
+    <div>
+      <Text tag="title" element="h1">Hello, world!</Text>
+      <Text tag="description">Welcome to my site.</Text>
+    </div>
+  )
+}
+```
+
+</TabItem>
+<TabItem label="Static HTML" value="static">
+
+Initialize Launched:
+
+```html title="src/index.html"
+<script type="module" defer>
+  const { Launched } = launched;
+
+  new Launched({
+    mode: "static", // You must include this line!
+    save: (data) => console.log(data),
+  });
+</script>
+```
+
+Add Launched attributes to the elements you want to be editable:
+
+```html title="src/index.html"
+<body>
+  <h1 data-tag="title">Hello, world!</h1>
+  <p data-tag="description">Welcome to my site.</p>
+</body>
+```
+
+</TabItem>
+</Tabs>
+
+And that's all! You're ready to start using Launched. To preview edit mode, add the `?mode=edit` query parameter to your URL.
+
+## Next Steps
+
+- [Learn about the core concepts of Launched](/Get%20Started/01%20concepts)
+- [Check out some other builtin components](/Components)
+- [Visit the detailed usage guide](/Usage)
+````
