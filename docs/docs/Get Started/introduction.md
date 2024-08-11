@@ -1,6 +1,7 @@
 ---
 slug: /
 description: Launched makes website content editable by clients, no codebase access required.
+sidebar_position: 1
 ---
 
 # Introduction
@@ -18,9 +19,11 @@ Launched is a headless CMS that makes elements of your choosing editable. It's d
 - **Easy integration** with any website and database
 - **Customizable** styles, components, editors, and more
 
+Check out the demo at [launched.tech](https://launched.tech).
+
 ## Get Started
 
-To get started, check out the [quickstart guide](/Get%20Started/02%20quickstart).
+To get started, check out the [quickstart guide](/Get%20Started/quickstart).
 
 ## Contributing
 
