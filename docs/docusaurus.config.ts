@@ -67,7 +67,7 @@ const config: Config = {
     },
   } satisfies Preset.ThemeConfig,
 
-  themes: ["@docusaurus/theme-mermaid"],
+  themes: ["@docusaurus/theme-mermaid", "@docusaurus/theme-live-codeblock"],
   markdown: {
     mermaid: true,
   },

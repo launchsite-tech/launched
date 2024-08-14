@@ -1,0 +1,8 @@
+{
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "title": "Components",
+    "description": "Launched comes with a few prebuilt React components to get you started. These components should not be used with static mode."
+  }
+}
