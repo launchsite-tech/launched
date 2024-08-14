@@ -6,7 +6,7 @@ import Launched, { LaunchedProvider } from "launched";
 import { Text, Number, Image, Link } from "launched/components";
 import ReactJson from "react-json-view";
 
-import type { Config, Tag, TagData } from "launched";
+import type { Config, Tag } from "launched";
 
 import flattenTagValue from "@site/utils/flattenTagValue";
 
@@ -72,6 +72,7 @@ const LaunchedWrapper = ({ children }: { children: React.ReactNode }) => {
             enableClipboard={false}
             displayDataTypes={false}
             displayObjectSize={false}
+            collapseStringsAfterLength={50}
           />
         </div>
       </div>

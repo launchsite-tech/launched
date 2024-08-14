@@ -21,8 +21,8 @@ function App(props) {
 
 ## Props
 
-| Name     | Type                                                                     | Default | Description                                                   |
-| -------- | ------------------------------------------------------------------------ | ------- | ------------------------------------------------------------- |
-| tag      | `string`                                                                 | `null`  | The text's associated [tag](/Get%20Started/concepts#tagging). |
-| element  | `"p" \| "h1" \| "h2" \| "h3" \| "h4" \| "h5" \| "h6" \| "span" \| "div"` | `"p"`   | The HTML element to render the text under.                    |
-| children | [`ReactNode`](https://react.dev/learn/typescript#typing-children)        | `null`  | The text to render.                                           |
+| Name     | Type                                                                                                                                                           | Default | Description                                                   |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------------------------------------------------------------- |
+| tag      | `string`                                                                                                                                                       | `null`  | The text's associated [tag](/Get%20Started/concepts#tagging). |
+| element  | [`HTMLTextTagsType`](https://github.com/launchsite-tech/launched/blob/5013cfc2a6dd1e7f1e9d84a8c612ff1997859fcb/src/ui/components/helpers/elementGroups.ts#L36) | `"p"`   | The HTML element to render the text under.                    |
+| children | [`ReactNode`](https://react.dev/learn/typescript#typing-children)                                                                                              | `null`  | The text to render.                                           |
