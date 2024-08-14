@@ -1,0 +1,30 @@
+---
+sidebar_position: 3
+description: A component for rendering links.
+---
+
+# Link
+
+A component for rendering links.
+
+## Usage
+
+```jsx live
+function App(props) {
+  return (
+    <LaunchedWrapper>
+      <Link href="#" tag="link" style={{ marginTop: "32px" }}>
+        This is a link.
+      </Link>
+    </LaunchedWrapper>
+  );
+}
+```
+
+## Props
+
+| Name     | Type                                                              | Default | Description                                                   |
+| -------- | ----------------------------------------------------------------- | ------- | ------------------------------------------------------------- |
+| tag      | `string`                                                          | `null`  | The link's associated [tag](/Get%20Started/concepts#tagging). |
+| href     | `string`                                                          | `null`  | The link's destination.                                       |
+| children | [`ReactNode`](https://react.dev/learn/typescript#typing-children) | `null`  | The link's rendered text.                                     |
