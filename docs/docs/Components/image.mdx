@@ -1,0 +1,29 @@
+---
+sidebar_position: 4
+description: A component for rendering images.
+---
+
+# Image
+
+A component for rendering images.
+
+## Usage
+
+```jsx live
+function App(props) {
+  return (
+    <LaunchedWrapper>
+      <Image tag="exampleimage" src="https://picsum.photos/200/200" />
+    </LaunchedWrapper>
+  );
+}
+```
+
+## Props
+
+| Name       | Type                                                                                                                                                                   | Default     | Description                                                   |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------- |
+| tag        | `string`                                                                                                                                                               | `null`      | The link's associated [tag](/Get%20Started/concepts#tagging). |
+| element    | [`HTMLTagsWithChildrenType`](https://github.com/launchsite-tech/launched/blob/5013cfc2a6dd1e7f1e9d84a8c612ff1997859fcb/src/ui/components/helpers/elementGroups.ts#L32) | `"div"`     | The HTML element for the image container.                     |
+| src        | `string`                                                                                                                                                               | `null`      | The image source.                                             |
+| classNames | `{ container?: string; image?: string; } \| undefined`                                                                                                                 | `undefined` | The class names for the image container and image.            |
