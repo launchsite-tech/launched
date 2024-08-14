@@ -8,19 +8,24 @@ import ReactJson from "react-json-view";
 
 import type { Config, Tag, TagData } from "launched";
 
+import flattenTagValue from "@site/utils/flattenTagValue";
+
 const config: Config = {
   determineVisibility: () => true,
   toolbarOptions: {},
 };
 
 const LaunchedWrapper = ({ children }: { children: React.ReactNode }) => {
-  const [tagData, setTagData] = useState<Record<string, TagData["value"]>>({
+  const [tagData, setTagData] = useState<Record<string, any>>({
     message: "Update some data to get started.",
   } as any);
 
   function onDataUpdate(rawData: Record<string, Tag>) {
     const data = Object.fromEntries(
-      Object.entries(rawData).map(([key, tag]) => [key, tag.data.value])
+      Object.entries(rawData).map(([key, tag]) => [
+        key,
+        flattenTagValue(tag.data).value,
+      ])
     );
 
     setTagData(data);
