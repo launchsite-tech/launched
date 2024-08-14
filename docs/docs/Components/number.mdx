@@ -1,0 +1,37 @@
+---
+sidebar_position: 2
+title: Number
+description: A component for rendering numbers.
+---
+
+:::info
+
+The Number export currently points to the [Text component](/Components/text). This is a placeholder for future development.
+
+:::
+
+<br />
+
+# Number
+
+A component for rendering numbers.
+
+## Usage
+
+```jsx live
+function App(props) {
+  return (
+    <LaunchedWrapper>
+      <Number tag="examplenumber">3</Number>
+    </LaunchedWrapper>
+  );
+}
+```
+
+## Props
+
+| Name       | Type                                                                     | Default | Description                                                                           |
+| ---------- | ------------------------------------------------------------------------ | ------- | ------------------------------------------------------------------------------------- |
+| `tag`      | `string`                                                                 | `null`  | The number's associated tag. See [tags](/Get%20Started/concepts#tagging) for details. |
+| `element`  | `"p" \| "h1" \| "h2" \| "h3" \| "h4" \| "h5" \| "h6" \| "span" \| "div"` | `"p"`   | The HTML element to render the number under.                                          |
+| `children` | [`ReactNode`](https://react.dev/learn/typescript#typing-children)        | `null`  | The number to render.                                                                 |
