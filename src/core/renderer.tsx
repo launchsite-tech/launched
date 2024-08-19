@@ -273,7 +273,7 @@ function TagUI({
     tag.setData(data);
 
     // @ts-expect-error
-    tag.el.current = null;
+    options.parentTag.el.current = null;
   }
 
   function duplicateTagItem() {

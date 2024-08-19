@@ -212,6 +212,7 @@ export default class Launched {
     Launched.events.on(
       "tag:ready",
       (...props: [string, Tag, TagRenderOptions]) => {
+        console.log("rendering", props[0]);
         this.render(props[0], props[2]);
       }
     );
@@ -288,7 +289,7 @@ export default class Launched {
     return [
       v,
       <T extends HTMLElement | null>(el: T) => {
-        if (!el) return;
+        if (!el || tag.el.current) return;
 
         (tag!.el.current as T) = el;
 
