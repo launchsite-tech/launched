@@ -1,3 +1,9 @@
+# v0.2.0-alpha.3 (8/19/24)
+
+## Bug fixes
+
+- Minimized unnecessary component re-renders
+
 # v0.2.0-alpha.2 (8/9/24)
 
 ## Bug fixes
