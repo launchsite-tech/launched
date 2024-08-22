@@ -1,0 +1,74 @@
+---
+sidebar_position: 1
+description: Using Launched with databases.
+---
+
+# Database Integration
+
+Launched is designed to work with any database. It doesn't store your data, but instead manages it in the browser. This means that you can use any database you wish, as long as you handle the data fetching and saving yourself.
+
+## Data Structure
+
+On save, Launched returns all data in a consistent JSON format like so:
+
+```js
+{
+  heading: "Hello, world!",
+  paragraph: "This is a paragraph of text.",
+  cards: [
+    {
+      title: "Card 1",
+      content: "This is the content of card 1."
+    },
+    {
+      title: "Card 2",
+      content: "This is the content of card 2."
+    }
+  ]
+}
+```
+
+Internally, Launched stores tags in a slightly different structure; see [Tags](/Get%20Started/concepts#tags) for more information.
+
+## Managing Data
+
+### Retrieving
+
+:::warning keep in mind
+
+Fetching data client-side can affect application performance and page load speed. Consider server-side rendering or pre-fetching data to improve performance.
+
+:::
+
+You can use any method to retrieve data before passing it to your components. Here's an example using NextJS for server-side rendering:
+
+```js title="app/page.jsx"
+import { getDatabaseData } from "../lib/database";
+import HomePage from "../components/HomePage";
+
+export default async function Page() {
+  const data = await getDatabaseData();
+  return <HomePage data={data} />;
+}
+```
+
+### Saving
+
+Once again, you can use any method to save data back to your database:
+
+```js title="components/LaunchedClientProvider.jsx"
+"use client";
+
+import { saveData } from "../lib/database";
+import { LaunchedProvider } from "launched";
+
+const config = {
+  save: async (data) => {
+    await saveData(data);
+  },
+};
+
+export default function LaunchedClientProvider({ children }) {
+  <LaunchedProvider config={config}>{children}</LaunchedProvider>;
+}
+```
