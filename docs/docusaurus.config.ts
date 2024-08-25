@@ -1,6 +1,7 @@
 import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
+import path from "path";
 
 const config: Config = {
   title: "Launched Docs",
@@ -59,6 +60,11 @@ const config: Config = {
           label: "GitHub",
           position: "right",
         },
+        {
+          to: "api",
+          label: "API",
+          position: "left",
+        },
       ],
     },
     prism: {
@@ -71,6 +77,16 @@ const config: Config = {
   markdown: {
     mermaid: true,
   },
+
+  plugins: [
+    [
+      "docusaurus-plugin-typedoc-api",
+      {
+        projectRoot: path.join(__dirname, ".."),
+        packages: ["."],
+      },
+    ],
+  ],
 };
 
 export default config;
