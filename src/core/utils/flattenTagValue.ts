@@ -1,5 +1,16 @@
 import type { TagData, FlatTagValue } from "../context.js";
 
+/**
+ * @internal
+ *
+ * Flatten an object tag's value recursively.
+ *
+ * @param value - The object to flatten
+ *
+ * @returns The flattened object
+ *
+ * @see {@link FlatTagValue}
+ */
 export default function flattenTagValue<V extends TagData>(
   value: Record<string, V> | Record<string, V>[] | V | V[]
 ): FlatTagValue<V> {
