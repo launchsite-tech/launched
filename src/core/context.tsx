@@ -162,7 +162,7 @@ export const defaults: Config = {
 
 /** The context value for the Launched instance. */
 interface LaunchedContextValue {
-  /** {@inheritDoc Launched.useTag} */
+  /** @see {@link Launched.useTag} */
   useTag<V extends TagSchemaValue = TagData["value"]>(
     key: string,
     value?: V,
@@ -567,7 +567,7 @@ export default class Launched {
     return Launched.instance.config.determineVisibility!(Launched.instance);
   }
 
-  /** {@inheritDoc Renderer.registerTagFormat} */
+  /** @see {@link Renderer.registerTagFormat} */
   public static registerTagFormat<V>(name: string, renderer: TagRenderer<V>) {
     Renderer.registerTagFormat(name, renderer);
   }
