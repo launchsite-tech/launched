@@ -2,6 +2,13 @@ import { createRef } from "react";
 import error from "./error.js";
 import type { Tag, TagData, TagSchemaValue } from "../context.js";
 
+/**
+ * @internal
+ *
+ * Determine whether an object tag's values are valid.
+ *
+ * @param tag - The object to validate
+ * */
 function validateObject(tag: Record<string, any>) {
   if ("type" in tag && "value" in tag) return;
 
@@ -14,6 +21,14 @@ function validateObject(tag: Record<string, any>) {
   }
 }
 
+/**
+ * @internal
+ *
+ * Transform an object tag's values into a valid TagData object.
+ *
+ * @param value - The object to transform
+ * @param type - The type of the object
+ * */
 function transformObjectToTagData(
   value: Record<string, any>,
   type: string
@@ -31,6 +46,14 @@ function transformObjectToTagData(
   );
 }
 
+/**
+ * @internal
+ *
+ * Transform a tag into a valid TagData object.
+ *
+ * @param tag - The tag to transform
+ * @param type - The type of the tag
+ */
 function transformTag(
   tag: TagSchemaValue | Partial<TagData>,
   type: string
@@ -78,6 +101,14 @@ function transformTag(
   }
 }
 
+/**
+ * @internal
+ *
+ * Create a tag object.
+ *
+ * @param tag - The tag to create
+ * @param type - The type of the tag
+ */
 export default function createTag(
   tag: TagSchemaValue | TagData,
   type: string
