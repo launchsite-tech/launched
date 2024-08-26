@@ -1,3 +1,11 @@
+/**
+ * @internal
+ *
+ * Merge two objects deeply.
+ *
+ * @param target - The target object
+ * @param sources - The source objects
+ */
 export default function mergeDeep(target: any, ...sources: any) {
   const isObject = (t: any) => t && typeof t === "object" && !Array.isArray(t);
 
