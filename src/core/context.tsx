@@ -485,7 +485,7 @@ export default class Launched {
    * @remarks
    * This method is called when the user clicks the "Preview" button in the toolbar.
    *
-   * All tag editors are unmounted, and the {@link Launched.events | data:lock} event is emitted.
+   * All tag editors are unmounted.
    *
    * @see {@link Launched.unlock}
    */
@@ -524,7 +524,7 @@ export default class Launched {
    * @remarks
    * This method is called when the user clicks the "Edit" button in the toolbar.
    *
-   * All tag editors are remounted, and the {@link Launched.events | data:unlock} event is emitted.
+   * All tag editors are remounted.
    *
    * @see {@link Launched.lock}
    */
@@ -578,7 +578,7 @@ export default class Launched {
    * @remarks
    * This method is called when the user clicks the "Undo" button in the toolbar.
    *
-   * The {@link Launched.events | data:undo} event is emitted, and the {@link Launched.tags | tags} are updated to reflect the previous state.
+   * The {@link Launched.tags | tags} are updated to reflect the previous state.
    *
    * @see {@link Launched.redo}
    */
@@ -609,7 +609,7 @@ export default class Launched {
    * @remarks
    * This method is called when the user clicks the "Redo" button in the toolbar.
    *
-   * The {@link Launched.events | data:redo} event is emitted, and the {@link Launched.tags | tags} are updated to reflect the next state.
+   * The {@link Launched.tags | tags} are updated to reflect the next state.
    *
    * @see {@link Launched.undo}
    */
@@ -639,7 +639,7 @@ export default class Launched {
    * @remarks
    * This method is called when the user clicks the "Revert" button in the toolbar.
    *
-   * The {@link Launched.events | data:restore} event is emitted, and the {@link Launched.tags | tags} are updated to reflect the original state.
+   * The {@link Launched.tags | tags} are updated to reflect the original state.
    */
   public restore(hard?: boolean) {
     if (this.config.locked) return;
