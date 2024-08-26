@@ -5,12 +5,19 @@ import Renderer from "../core/renderer.js";
 import type { TagData, TagSchemaValue } from "../core/context.js";
 import type { TagRenderOptions } from "../core/renderer.js";
 
+/** @internal Information about static tags. */
 type TagInfo = {
+  /** @see {@link TagData.type} */
   type: string;
+
+  /** The value of the static tag. */
   value: TagSchemaValue;
+
+  /** The element that the tag is attached to. */
   el: HTMLElement;
 };
 
+/** @see {@link Launched.useTag} */
 export function useTag<V extends TagSchemaValue = TagData["value"]>(
   key: string,
   value?: V,
@@ -23,6 +30,13 @@ export function useTag<V extends TagSchemaValue = TagData["value"]>(
   return useTag(key, value, options);
 }
 
+/**
+ * @internal
+ *
+ * Generates static tags from the DOM.
+ *
+ * @param skip - Whether to skip generation.
+ */
 export function useGenerateStaticTags(skip: boolean) {
   if (skip) return;
   if (!Launched.instance) error("Launched not initialized.");
