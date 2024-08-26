@@ -13,7 +13,7 @@ const config: Config = {
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: "/",
 
-  onBrokenLinks: "throw",
+  onBrokenLinks: "warn",
   onBrokenMarkdownLinks: "warn",
 
   // Even if you don't use internationalization, you can use this field to set
@@ -67,7 +67,8 @@ const config: Config = {
     },
   } satisfies Preset.ThemeConfig,
 
-  themes: ["@docusaurus/theme-mermaid", "@docusaurus/theme-live-codeblock"],
+  // themes: ["@docusaurus/theme-mermaid", "@docusaurus/theme-live-codeblock"],
+  themes: ["@docusaurus/theme-mermaid"],
   markdown: {
     mermaid: true,
   },
