@@ -12,13 +12,17 @@ import tagToValues from "./utils/tagToValues.js";
 import mergeDeep from "./utils/mergeDeep.js";
 import type { TagRenderer, TagRenderOptions } from "./renderer.js";
 
+/** The value used in {@link TagData}. The format that all tag values are stored in. */
 export type TagValue = string | number | Record<string, TagData>;
+
+/** @internal A value that can be passed into {@link Launched.useTag | useTag}. Later transformed into {@link TagData.value} by {@link createTag}. */
 export type TagSchemaValue =
   | TagValue
   | TagValue[]
   | Record<string, Partial<TagData> | string | number>
   | Record<string, Partial<TagData> | string | number>[];
 
+/** @internal Flattens a {@link TagData.value} object recursively to exclude {@link TagData.type | type} parameters. */
 export type FlatTagValue<T> =
   T extends Array<infer R>
     ? Array<FlatTagValue<R>>
@@ -30,33 +34,122 @@ export type FlatTagValue<T> =
         }
       : T;
 
+/** The data structure for a tag. */
 export type TagData = {
+  /**
+   * @internal The data type of the tag's value.
+   *
+   * @remarks
+   * This is used to determine how the tag should be rendered.
+   *
+   * Builtin types:
+   * - `string`
+   * - `number`
+   * - `link`
+   * - `image`
+   */
   readonly type: string;
+
+  /**
+   * @internal The value of the tag.
+   *
+   * @remarks
+   * Builtin data types:
+   * - `string`: `string`
+   * - `number`: `number`
+   * - `link`: `{ href: string, text: string }`
+   * - `image`: `string`
+   */
   readonly value: TagValue | TagValue[];
 };
 
+/** The format that every tag is stored in. */
 export type Tag = {
+  /** The data of the tag. @see {@link TagData} */
   data: TagData;
+
+  /**
+   * A function that updates the tag's value.
+   *
+   * @param value The new value of the tag
+   * @param config Additional configuration options
+   *
+   * @remarks
+   * - `config.silent`: If `true`, the change will not be recorded in history
+   */
   setData: (
     value: TagData["value"] | ((prev: TagData["value"]) => TagData["value"]),
     config?: Partial<{ silent: boolean }>
   ) => void;
+
+  /** A reference to the tag's associated element. */
   el: React.RefObject<HTMLElement>;
 };
 
+/** {@link Launched} configuration options. */
 export type Config = Partial<{
+  /**
+   * The instance's register mode.
+   *
+   * - `dynamic`: Tags are registered via the {@link Launched.useTag | useTag} hook
+   * - `static`: Tags are registered automatically from element attributes (see {@link useGenerateStaticTags})
+   */
   mode: "dynamic" | "static";
+
+  /** Whether or not data is initially editable. */
   locked: boolean;
+
+  /** Whether or not arrays are mutable by default. Can be overridden individually by {@link TagRenderOptions.arrayMutable}. */
   arraysMutable: boolean;
+
+  /**
+   * A function that determines whether Launched tooling should be visible.
+   *
+   * @param context The current {@link Launched} instance
+   *
+   * @returns Whether the data should be visible
+   *
+   * @remarks
+   * By default, all tooling (i.e. the toolbar and all tag editors) is hidden unless the current URL's `mode` query parameter is set to `edit`.
+   */
   determineVisibility: (context?: Launched) => boolean;
+
+  /**
+   * A function that dictates what to do with saved data.
+   *
+   * @param tags The current tag data
+   *
+   * @remarks
+   * This function is called when the user clicks the "Save" button in the toolbar. This is where you should save your data to a database.
+   */
   save: (tags: Record<string, TagData["value"]>) => void;
+
+  /**
+   * A function that uploads an image.
+   *
+   * @param file The image file to upload
+   *
+   * @returns The URL of the uploaded image
+   *
+   * @remarks
+   * This function is called when an image is uploaded via the image tag editor. This is where you should upload the image to your server.
+   */
   onImageUpload: (file: File) => Promise<string | undefined>;
+
+  /**
+   * Configuration for the toolbar.
+   *
+   * @remarks
+   * - `position`: The position of the toolbar. Can be `center`, `right`, or `left`.
+   * - `className`: Additional classes to apply to the toolbar.
+   */
   toolbarOptions: Partial<{
     className: string;
     position: "center" | "right" | "left";
   }>;
 }>;
 
+/** The default configuration options. */
 export const defaults: Config = {
   mode: "dynamic",
   determineVisibility: () =>
@@ -67,7 +160,9 @@ export const defaults: Config = {
   },
 };
 
+/** The context value for the Launched instance. */
 interface LaunchedContextValue {
+  /** {@inheritDoc Launched.useTag} */
   useTag<V extends TagSchemaValue = TagData["value"]>(
     key: string,
     value?: V,
@@ -82,29 +177,76 @@ interface LaunchedContextValue {
   ];
 }
 
+/**
+ * The main class of Launched, responsible for managing tag data and core functionality. Only one instance should exist at a time.
+ *
+ * An instance of Launched is automatically created by {@link LaunchedProvider}.
+ */
 export default class Launched {
+  /** @internal The Launched instance's assigned {@link Renderer}. */
   private renderer = new Renderer();
+
+  /** @internal A helper method for updating a specific {@link Launched.tags | tag}. */
   private addTag: (key: string, tag: Omit<Tag, "setData">) => void = () => {};
+
+  /** @internal Initial tag data. Used when {@link Launched.restore | restoring data}. */
   private originalTags = new Map<string, TagData["value"]>();
+
+  /** @internal An index of the current revision, referenced by {@link Launched.history}. */
   private version: number = -1;
+
+  /** @internal Set whether there are changes to undo. */
   private setCanUndo: React.Dispatch<React.SetStateAction<boolean>> = () => {};
+
+  /** @internal Set whether there are changes to redo. */
   private setCanRedo: React.Dispatch<React.SetStateAction<boolean>> = () => {};
+
+  /**
+   * @internal A history of changes made to tags.
+   *
+   * @see {@link Launched.undo} and {@link Launched.redo}
+   */
   private history: {
     key: string;
     value: TagData["value"];
   }[] = [];
 
+  /** The provided config object, merged with {@link defaults}. */
   public readonly config: Config;
-  public tags: Record<string, Tag> = {} as Record<string, Tag>;
+
+  /**
+   * A map of all tags, indexed by their key.
+   *
+   * @see {@link Launched.useTag}
+   */
+  public tags: Record<string, Tag> = {};
+
+  /** @internal Upload an image using the function from {@link Launched.config}. */
   public uploadImage?: (file: File) => Promise<string | undefined>;
+
+  /** @internal The context provider for the Launched instance. */
   public Provider: React.FC<{ children: React.ReactNode }>;
+
+  /** @internal The context for the Launched instance. Exposes the {@link Launched.useTag} method. */
   public context = createContext<LaunchedContextValue>(
     {} as LaunchedContextValue
   );
 
+  /** @internal The current instance of {@link Launched}. */
   public static instance: Launched | null;
+
+  /**
+   * A static event emitter for global events.
+   *
+   * @see {@link EventEmitter}
+   */
   public static events = new EventEmitter();
 
+  /**
+   * Create a new instance of Launched.
+   *
+   * @param config The configuration object for the instance
+   */
   constructor(config?: Config) {
     if (Launched.instance) {
       error("There can only be one instance of Launched.");
@@ -256,6 +398,22 @@ export default class Launched {
     }
   }
 
+  /**
+   * A hook for creating new tags or accessing existing ones.
+   *
+   * @param key The unique key of the tag
+   * @param value The initial value of the tag
+   * @param options Additional {@link TagRenderOptions | options} for rendering the tag
+   *
+   * @returns A tuple containing the tag's value and a ref to the tag's element
+   *
+   * @example
+   * ```tsx
+   * const [title, titleRef] = useTag("title", "Hello, world!");
+   *
+   * return <h1 ref={titleRef}>{title}</h1>;
+   * ```
+   */
   private useTag = (<V extends TagSchemaValue = TagData["value"]>(
     key: string,
     value?: V,
@@ -305,6 +463,14 @@ export default class Launched {
     ] as const;
   }) as LaunchedContextValue["useTag"];
 
+  /**
+   * @internal
+   *
+   * {@link Renderer.renderSingleTagUI | Render} a tag with the specified key.
+   *
+   * @param tag The key of the tag to render
+   * @param options Additional options for rendering the tag
+   */
   private render(tag: string, options?: TagRenderOptions) {
     if (!tag || !this.tags[tag]) return;
 
@@ -313,6 +479,16 @@ export default class Launched {
     this.renderer.renderSingleTagUI(this.tags[tag]!, String(tag), options, dry);
   }
 
+  /**
+   * Lock the current Launched instance's data, preventing edits from being made.
+   *
+   * @remarks
+   * This method is called when the user clicks the "Preview" button in the toolbar.
+   *
+   * All tag editors are unmounted, and the {@link Launched.events | data:lock} event is emitted.
+   *
+   * @see {@link Launched.unlock}
+   */
   public static lock() {
     if (!Launched.instance) error("Launched is not initialized.");
 
@@ -342,6 +518,16 @@ export default class Launched {
     Launched.events.emit("data:lock");
   }
 
+  /**
+   * Unlock the current Launched instance's data, allowing edits to be made.
+   *
+   * @remarks
+   * This method is called when the user clicks the "Edit" button in the toolbar.
+   *
+   * All tag editors are remounted, and the {@link Launched.events | data:unlock} event is emitted.
+   *
+   * @see {@link Launched.lock}
+   */
   public static unlock() {
     if (!Launched.instance) error("Launched is not initialized.");
 
@@ -354,22 +540,48 @@ export default class Launched {
     Launched.events.emit("data:unlock");
   }
 
+  /**
+   * Toggle the current Launched instance's lock state.
+   *
+   * @see {@link Launched.lock} and {@link Launched.unlock}
+   */
   public static toggle() {
     if (!Launched.instance) error("Launched is not initialized.");
 
     Launched.instance.config.locked ? Launched.unlock() : Launched.lock();
   }
 
+  /**
+   * Determine whether the current Launched instance is visible.
+   *
+   * @returns Whether the instance is visible
+   *
+   * @remarks
+   * "Visibility" is determined by the {@link Config.determineVisibility | determineVisibility} function in the instance's configuration. An instance that isn't visible will not render any tooling.
+   *
+   * By default, Launched is only visible when the current URL's `mode` query parameter is set to `edit`.
+   */
   public static isVisible() {
     if (!Launched.instance) error("Launched is not initialized.");
 
     return Launched.instance.config.determineVisibility!(Launched.instance);
   }
 
+  /** {@inheritDoc Renderer.registerTagFormat} */
   public static registerTagFormat<V>(name: string, renderer: TagRenderer<V>) {
     Renderer.registerTagFormat(name, renderer);
   }
 
+  /**
+   * Undo the last change made to the current Launched instance's data.
+   *
+   * @remarks
+   * This method is called when the user clicks the "Undo" button in the toolbar.
+   *
+   * The {@link Launched.events | data:undo} event is emitted, and the {@link Launched.tags | tags} are updated to reflect the previous state.
+   *
+   * @see {@link Launched.redo}
+   */
   public undo() {
     if (this.version === -1 || this.config.locked) return;
     else if (this.version === 0) {
@@ -391,6 +603,16 @@ export default class Launched {
     this.setCanRedo(true);
   }
 
+  /**
+   * Redo the last change made to the current Launched instance's data.
+   *
+   * @remarks
+   * This method is called when the user clicks the "Redo" button in the toolbar.
+   *
+   * The {@link Launched.events | data:redo} event is emitted, and the {@link Launched.tags | tags} are updated to reflect the next state.
+   *
+   * @see {@link Launched.undo}
+   */
   public redo() {
     if (
       !this.history.length ||
@@ -409,6 +631,16 @@ export default class Launched {
     if (this.version === this.history.length - 1) this.setCanRedo(false);
   }
 
+  /**
+   * Restore the current Launched instance's data to its original state.
+   *
+   * @param hard Whether to clear the {@link Launched.history | history} and {@link Launched.version | version}
+   *
+   * @remarks
+   * This method is called when the user clicks the "Revert" button in the toolbar.
+   *
+   * The {@link Launched.events | data:restore} event is emitted, and the {@link Launched.tags | tags} are updated to reflect the original state.
+   */
   public restore(hard?: boolean) {
     if (this.config.locked) return;
 
@@ -428,6 +660,31 @@ export default class Launched {
   }
 }
 
+/**
+ * A context provider for the Launched instance. This is the main entry point for using Launched in React.
+ *
+ * @param config The configuration object for the Launched instance
+ * @param children The children to render
+ *
+ * @example
+ * ```tsx
+ * import { LaunchedProvider } from "launched";
+ *
+ * const config = {
+ *   save: (tags) => {
+ *     console.log(tags);
+ *   },
+ * };
+ *
+ * export default function App() {
+ *   return (
+ *     <LaunchedProvider config={config}>
+ *       <AppContent />
+ *     </LaunchedProvider>
+ *   );
+ * }
+ * ```
+ */
 export function LaunchedProvider({
   config,
   children,
