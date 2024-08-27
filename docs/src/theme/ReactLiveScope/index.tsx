@@ -45,36 +45,33 @@ const LaunchedWrapper = ({ children }: { children: React.ReactNode }) => {
         <LaunchedProvider config={config}>{children}</LaunchedProvider>
       </div>
       <div id="output">
-        <div id="header">Output</div>
-        <div id="dataview">
-          <ReactJson
-            src={tagData}
-            theme={{
-              base00: "transparent",
-              base01: "white",
-              base02: "white",
-              base03: "white",
-              base04: "white",
-              base05: "white",
-              base06: "white",
-              base07: "white",
-              base08: "white",
-              base09: "#FF7F24",
-              base0A: "white",
-              base0B: "white",
-              base0C: "white",
-              base0D: "white",
-              base0E: "white",
-              base0F: "white",
-            }}
-            collapsed={false}
-            name={null}
-            enableClipboard={false}
-            displayDataTypes={false}
-            displayObjectSize={false}
-            collapseStringsAfterLength={50}
-          />
-        </div>
+        <ReactJson
+          src={tagData}
+          theme={{
+            base00: "transparent",
+            base01: "var(--ifm-menu-color-active)",
+            base02: "var(--ifm-menu-color-active)",
+            base03: "var(--ifm-menu-color-active)",
+            base04: "var(--ifm-menu-color-active)",
+            base05: "var(--ifm-menu-color-active)",
+            base06: "var(--ifm-menu-color-active)",
+            base07: "var(--ifm-menu-color-active)",
+            base08: "var(--ifm-menu-color-active)",
+            base09: "#FF7F24",
+            base0A: "var(--ifm-menu-color-active)",
+            base0B: "var(--ifm-menu-color-active)",
+            base0C: "var(--ifm-menu-color-active)",
+            base0D: "var(--ifm-menu-color-active)",
+            base0E: "var(--ifm-menu-color-active)",
+            base0F: "var(--ifm-menu-color-active)",
+          }}
+          collapsed={false}
+          name={null}
+          enableClipboard={false}
+          displayDataTypes={false}
+          displayObjectSize={false}
+          collapseStringsAfterLength={50}
+        />
       </div>
     </div>
   );
