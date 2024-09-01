@@ -21,29 +21,29 @@
   transition:
     outline-color 200ms ease-out,
     border-radius 200ms ease-out;
+}
 
-  &:hover,
-  &:focus {
-    outline-color: var(--accent);
-    border-radius: 1px;
-  }
+.Launched__tag-container:hover,
+.Launched__tag-container:focus {
+  outline-color: var(--accent);
+  border-radius: 1px;
+}
 
-  &.active {
-    outline-color: var(--accent);
-    border-radius: 1px;
-    outline-style: solid;
-    box-shadow: var(--shadow);
-    z-index: 10;
+.Launched__tag-container.active {
+  outline-color: var(--accent);
+  border-radius: 1px;
+  outline-style: solid;
+  box-shadow: var(--shadow);
+  z-index: 10;
+}
 
-    & .Launched__tag-inlineEditor {
-      color: var(--text);
-    }
+.Launched__tag-container.active .Launched__tag-inlineEditor {
+  color: var(--text);
+}
 
-    & .Launched__tag-arrayControls {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  }
+.Launched__tag-container.active .Launched__tag-arrayControls {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .Launched__tag-arrayControls {

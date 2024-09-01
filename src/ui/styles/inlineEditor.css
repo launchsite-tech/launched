@@ -29,14 +29,14 @@
   text-justify: inherit;
   text-overflow: inherit;
   text-orientation: inherit;
+}
 
-  &[data-empty="true"] {
-    color: inherit;
+.Launched__tag-inlineEditor[data-empty="true"] {
+  color: inherit;
+}
 
-    &::after {
-      content: "Enter text...";
-      pointer-events: none;
-      width: 100%;
-    }
-  }
+.Launched__tag-inlineEditor[data-empty="true"]::after {
+  content: "Enter text...";
+  pointer-events: none;
+  width: 100%;
 }

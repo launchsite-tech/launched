@@ -17,8 +17,8 @@
 .Launched__tag-linkInput > input {
   outline: none !important;
   max-width: 100%;
+}
 
-  &:placeholder {
-    color: var(--text-secondary);
-  }
+.Launched__tag-linkInput > input:placeholder {
+  color: var(--text-secondary);
 }

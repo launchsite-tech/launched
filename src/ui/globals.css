@@ -50,13 +50,13 @@
   transition: background-color 200ms ease-out;
   font-size: 14px;
   background-color: var(--color);
+}
 
-  &:hover {
-    background-color: color-mix(in srgb, rgba(255, 255, 255) 25%, var(--color));
-  }
+.Launched__button:hover {
+  background-color: color-mix(in srgb, rgba(255, 255, 255) 25%, var(--color));
+}
 
-  & > .Launched__icon {
-    width: 1rem;
-    height: 1rem;
-  }
+.Launched__button > .Launched__icon {
+  width: 1rem;
+  height: 1rem;
 }
