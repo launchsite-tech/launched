@@ -17,7 +17,22 @@ type TagInfo = {
   el: HTMLElement;
 };
 
-/** @see {@link Launched.useTag} */
+/**
+ * A hook for creating new tags or accessing existing ones.
+ *
+ * @param key The unique key of the tag
+ * @param value The initial value of the tag
+ * @param options Additional {@link TagRenderOptions | options} for rendering the tag
+ *
+ * @returns A tuple containing the tag's value and a ref to the tag's element
+ *
+ * @example
+ * ```tsx
+ * const [title, titleRef] = useTag("title", "Hello, world!");
+ *
+ * return <h1 ref={titleRef}>{title}</h1>;
+ * ```
+ */
 export function useTag<V extends TagSchemaValue = TagData["value"]>(
   key: string,
   value?: V,
