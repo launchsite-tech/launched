@@ -2,15 +2,15 @@
   position: absolute;
   right: 0.25rem;
   top: 0.25rem;
+}
 
-  > input {
-    display: none;
-  }
+.Launched__tag-imageUpload > input {
+  display: none;
+}
 
-  > label {
-    display: block;
-    padding: 0.5rem;
-    cursor: pointer;
-    --color: var(--accent);
-  }
+.Launched__tag-imageUpload > label {
+  display: block;
+  padding: 0.5rem;
+  cursor: pointer;
+  --color: var(--accent);
 }

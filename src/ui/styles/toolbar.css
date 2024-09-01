@@ -2,7 +2,7 @@
   position: fixed;
   top: 0.25rem;
   z-index: 999;
-  font-familiy: var(--font);
+  font-family: var(--font);
 }
 
 .Launched__toolbar[data-position="right"] {
@@ -37,14 +37,10 @@ select.Launched__toolbar-lockMode {
   cursor: pointer;
   transition: background-color 200ms ease-out;
   background-color: color-mix(in srgb, rgba(0, 0, 0, 0.1) 30%, var(--surface));
+}
 
-  &:hover {
-    background-color: color-mix(
-      in srgb,
-      rgba(0, 0, 0, 0.1) 50%,
-      var(--surface)
-    );
-  }
+select.Launched__toolbar-lockMode:hover {
+  background-color: color-mix(in srgb, rgba(0, 0, 0, 0.1) 50%, var(--surface));
 }
 
 .Launched__toolbar-saveButton {
@@ -60,17 +56,13 @@ select.Launched__toolbar-lockMode {
   border-radius: 4px;
   transition: background-color 200ms ease-out;
   background-color: color-mix(in srgb, rgba(0, 0, 0, 0.1) 30%, var(--surface));
+}
 
-  &:hover {
-    background-color: color-mix(
-      in srgb,
-      rgba(0, 0, 0, 0.1) 50%,
-      var(--surface)
-    );
-  }
+.Launched__toolbar-button:hover {
+  background-color: color-mix(in srgb, rgba(0, 0, 0, 0.1) 50%, var(--surface));
+}
 
-  & > .Launched__icon {
-    width: 1rem;
-    height: 1rem;
-  }
+.Launched__toolbar-button > .Launched__icon {
+  width: 1rem;
+  height: 1rem;
 }
