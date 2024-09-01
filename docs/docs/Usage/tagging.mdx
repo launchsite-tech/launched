@@ -1,0 +1,73 @@
+---
+sidebar_position: 1
+description: Setting up tagging in Launched.
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Tagging
+
+A basic overview of tags is available under [Concepts](/Get%20Started/concepts#tags).
+
+## Creating Tags
+
+### Components
+
+Components handle tag creation for you. For example, here's how you'd create a tag called "heading" with a `string` value defaulting to "My App", all rendered within an `h1` element:
+
+<Tabs
+  groupId="mode"
+  defaultValue="react"
+>
+<TabItem label="React" value="react">
+
+```jsx title="app.jsx"
+import { Text } from "launched/components";
+
+export default function App() {
+  return (
+    <Text tag="heading" element="h1">
+      My App
+    </Text>
+  );
+}
+```
+
+</TabItem>
+<TabItem label="Static HTML" value="static">
+
+```html title="index.html"
+<h1 data-launched-tag="heading">My App</h1>
+```
+
+</TabItem>
+</Tabs>
+
+:::note
+
+In static mode, "components" are rendered for you through attributes. In dynamic mode, you can use both components and the `useTag` hook directly.
+
+:::
+
+### The useTag Hook
+
+Every tag is created using the `useTag` hook under the hood. In prepackaged [components](/Components), the hook is called automatically when you use the component. For example, here's how the `Text` component works internally:
+
+```jsx title="launched/components/Text.jsx"
+import { useTag } from "launched";
+
+export default function Text({ tag, element, children, ...rest }) {
+  const [text, textRef] = useTag(tag, children);
+
+  const Container = element;
+
+  return (
+    <Container {...rest} ref={textRef}>
+      {text}
+    </Container>
+  );
+}
+```
+
+For more complex data types, you can use the `useTag` hook directly.
