@@ -1,6 +1,6 @@
 {
   "name": "launched",
-  "version": "0.2.0-alpha.3",
+  "version": "0.2.0-alpha.4",
   "type": "module",
   "description": "Make website content editable by clients, no codebase access required.",
   "keywords": [
@@ -59,7 +59,7 @@
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
   },
-  "dependencies": {
+  "peerDependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   }

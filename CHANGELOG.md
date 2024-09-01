@@ -1,3 +1,9 @@
+# v0.2.0-alpha.4 (9/1/24)
+
+## Bug fixes
+
+- Removed nested CSS styles to support older browsers and compilers
+
 # v0.2.0-alpha.3 (8/19/24)
 
 ## Bug fixes
