@@ -379,23 +379,27 @@ export default class Renderer {
   }
 }
 
-/** @internal A tag editor. */
-function TagUI({
-  tag,
-  renderer,
-  id,
-  options,
-}: {
+interface TagUIProps {
+  /** The editor's associated tag.  */
   tag: Omit<Tag, "data"> & {
     data: {
       type: string;
       value: any;
     };
   };
+
+  /** The tag's renderer. */
   renderer: TagRenderer<any>;
+
+  /** The tag's unique identifier. */
   id: string;
+
+  /** The options for rendering the tag editor. */
   options: TagUIOptions;
-}) {
+}
+
+/** @internal A tag editor. */
+function TagUI({ tag, renderer, id, options }: TagUIProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [selected, setSelected] = useState(false);

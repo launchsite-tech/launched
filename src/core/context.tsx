@@ -660,11 +660,18 @@ export default class Launched {
   }
 }
 
+interface LaunchedProviderProps {
+  /** @see {@link Config} */
+  config?: Config;
+
+  /** The children of the provider. */
+  children: React.ReactNode;
+}
+
 /**
  * A context provider for the Launched instance. This is the main entry point for using Launched in React.
  *
- * @param config The configuration object for the Launched instance
- * @param children The children to render
+ * @param props The provider's props; see {@link LaunchedProviderProps}
  *
  * @example
  * ```tsx
@@ -685,13 +692,7 @@ export default class Launched {
  * }
  * ```
  */
-export function LaunchedProvider({
-  config,
-  children,
-}: {
-  config?: Config;
-  children: React.ReactNode;
-}) {
+export function LaunchedProvider({ config, children }: LaunchedProviderProps) {
   const L = Launched.instance ?? new Launched(config);
 
   return <L.Provider>{children}</L.Provider>;
